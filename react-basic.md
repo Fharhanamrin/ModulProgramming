@@ -2791,8 +2791,902 @@ export default App;
 Dengan menyelesaikan modul ini dan project To-Do List, Anda akan memiliki pemahaman yang kuat tentang konsep fundamental React seperti state, props, hooks, rendering, dan lifecycle. Kemampuan ini akan menjadi dasar yang solid untuk mempelajari topik React yang lebih lanjut seperti Context API, Redux, dan React Router.
 
 END MODULE 3
+# MODUL 4: REACT ECOSYSTEM & ROUTING
+
+**Durasi**: 2 minggu  
+**Tujuan**: Memahami ekosistem React dan implementasi routing  
+
+## Daftar Isi
+1. [Pendahuluan](#pendahuluan)
+2. [React Router](#react-router)
+3. [Navigation dan URL Parameters](#navigation-dan-url-parameters)
+4. [Nested Routes](#nested-routes)
+5. [Protected Routes](#protected-routes)
+6. [Code Splitting](#code-splitting)
+7. [Lazy Loading](#lazy-loading)
+8. [Project: Multi-page Application dengan React Router](#project-multi-page-application-dengan-react-router)
+9. [Referensi Tambahan](#referensi-tambahan)
+
+## Pendahuluan
+
+Setelah mempelajari dasar-dasar React, saatnya kita memahami bagaimana membangun aplikasi React multi-halaman yang lebih kompleks. Pada modul ini, kita akan mempelajari konsep **routing** di React, yang memungkinkan kita membuat aplikasi dengan banyak halaman tanpa harus me-refresh browser.
+
+React sendiri berfokus hanya pada pembuatan UI dan tidak menyediakan sistem routing bawaan. Oleh karena itu, kita akan menggunakan library tambahan bernama **React Router** yang menjadi standar de facto untuk routing di aplikasi React.
+
+## React Router
+
+### Apa itu React Router?
+
+React Router adalah library paling populer untuk menangani routing di aplikasi React. Dengan React Router, kita dapat:
+
+- Membuat aplikasi multi-halaman dengan Single Page Application (SPA)
+- Menampilkan komponen berbeda berdasarkan URL
+- Mengelola navigasi antar halaman tanpa refresh browser
+- Membuat UI yang sinkron dengan URL
+
+### Instalasi React Router
+
+Untuk menginstal React Router, jalankan perintah berikut:
+
+```bash
+# Menggunakan npm
+npm install react-router-dom
+
+# Menggunakan yarn
+yarn add react-router-dom
+```
+
+### Komponen Dasar React Router
+
+React Router menyediakan beberapa komponen utama:
+
+1. **BrowserRouter**: Wrapper utama yang harus membungkus seluruh aplikasi yang menggunakan React Router
+2. **Routes**: Container untuk mengelompokkan rute-rute yang berbeda
+3. **Route**: Mendefinisikan pemetaan antara path URL dan komponen yang akan dirender
+4. **Link**: Untuk navigasi antar halaman (pengganti tag `<a>`)
+5. **Navigate**: Untuk navigasi melalui kode (redirect programatis)
+
+### Contoh Dasar React Router
+
+```jsx
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+
+// Komponen halaman
+const Home = () => <h1>Halaman Beranda</h1>;
+const About = () => <h1>Tentang Kami</h1>;
+const Contact = () => <h1>Kontak Kami</h1>;
+
+function App() {
+  return (
+    <BrowserRouter>
+      {/* Navigasi */}
+      <nav>
+        <ul>
+          <li><Link to="/">Beranda</Link></li>
+          <li><Link to="/about">Tentang</Link></li>
+          <li><Link to="/contact">Kontak</Link></li>
+        </ul>
+      </nav>
+
+      {/* Konfigurasi Rute */}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;
+```
+
+Dalam contoh di atas:
+- `BrowserRouter` membungkus seluruh aplikasi
+- `Routes` berisi definisi rute-rute aplikasi
+- `Route` mendefinisikan komponen yang akan ditampilkan untuk path tertentu
+- `Link` digunakan untuk navigasi antar halaman
+
+## Navigation dan URL Parameters
+
+### Navigation dengan Link dan NavLink
+
+React Router menyediakan dua komponen untuk navigasi:
+
+1. **Link**: Komponen dasar untuk navigasi
+2. **NavLink**: Versi Link yang lebih canggih dengan kemampuan styling saat aktif
+
+```jsx
+import { Link, NavLink } from 'react-router-dom';
+
+const Navigation = () => {
+  return (
+    <nav>
+      {/* Link dasar */}
+      <Link to="/">Beranda</Link>
+      
+      {/* NavLink dengan styling saat aktif */}
+      <NavLink 
+        to="/products" 
+        style={({ isActive }) => isActive ? { fontWeight: 'bold' } : {}}
+      >
+        Produk
+      </NavLink>
+    </nav>
+  );
+};
+```
+
+### Navigasi Programatis dengan useNavigate
+
+Kadang kita perlu melakukan navigasi melalui kode, misalnya setelah submit form atau setelah operasi asinkron:
+
+```jsx
+import { useNavigate } from 'react-router-dom';
+
+const LoginForm = () => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // Logic login
+    const success = await loginUser(/* ... */);
+    
+    if (success) {
+      // Arahkan ke dashboard setelah login berhasil
+      navigate('/dashboard');
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      {/* Form fields */}
+      <button type="submit">Login</button>
+    </form>
+  );
+};
+```
+
+### URL Parameters
+
+URL Parameters memungkinkan kita menangkap nilai dinamis dari URL. Ini sangat berguna untuk halaman detail atau filter.
+
+```jsx
+// Definisi rute dengan parameter
+<Route path="/products/:productId" element={<ProductDetail />} />
+
+// Komponen untuk mengakses parameter
+import { useParams } from 'react-router-dom';
+
+const ProductDetail = () => {
+  const { productId } = useParams();
+  
+  return <h1>Detail Produk ID: {productId}</h1>;
+};
+```
+
+### Query Parameters
+
+Query parameters (seperti `?search=term&category=books`) dapat diakses menggunakan hook `useSearchParams`:
+
+```jsx
+import { useSearchParams } from 'react-router-dom';
+
+const ProductList = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  // Mendapatkan nilai query parameter
+  const search = searchParams.get('search') || '';
+  const category = searchParams.get('category') || 'all';
+  
+  // Mengubah query parameter
+  const updateCategory = (newCategory) => {
+    setSearchParams({ search, category: newCategory });
+  };
+  
+  return (
+    <div>
+      <h1>Daftar Produk</h1>
+      <p>Pencarian: {search}</p>
+      <p>Kategori: {category}</p>
+      <button onClick={() => updateCategory('books')}>Buku</button>
+      <button onClick={() => updateCategory('electronics')}>Elektronik</button>
+    </div>
+  );
+};
+```
+
+## Nested Routes
+
+Nested Routes (Rute Bersarang) memungkinkan kita membuat layout bersarang di mana beberapa komponen UI memiliki rute anaknya sendiri. Ini sangat berguna untuk membuat layout yang konsisten dengan area konten yang berubah.
+
+### Definisi Nested Routes
+
+```jsx
+import { BrowserRouter, Routes, Route, Outlet, Link } from 'react-router-dom';
+
+// Layout komponen
+const Dashboard = () => {
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      <nav>
+        <Link to="/dashboard">Overview</Link>
+        <Link to="/dashboard/stats">Statistik</Link>
+        <Link to="/dashboard/profile">Profil</Link>
+      </nav>
+      
+      {/* Outlet adalah tempat di mana rute anak akan dirender */}
+      <Outlet />
+    </div>
+  );
+};
+
+// Komponen anak
+const DashboardOverview = () => <div>Overview Dashboard</div>;
+const DashboardStats = () => <div>Statistik Dashboard</div>;
+const DashboardProfile = () => <div>Profil User</div>;
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        
+        {/* Nested routes untuk Dashboard */}
+        <Route path="/dashboard" element={<Dashboard />}>
+          <Route index element={<DashboardOverview />} />
+          <Route path="stats" element={<DashboardStats />} />
+          <Route path="profile" element={<DashboardProfile />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
+}
+```
+
+Dalam contoh di atas:
+- `Dashboard` adalah komponen induk yang menyediakan layout umum
+- `Outlet` menentukan di mana komponen anak akan dirender
+- `index` route ditampilkan saat parent path cocok secara tepat
+
+### Keuntungan Nested Routes
+
+1. **Membuat layout bersama** yang konsisten untuk beberapa halaman
+2. **Mengurangi duplikasi kode** untuk elemen UI yang sama (header, sidebar, dll)
+3. **Membuat kode lebih modular** dan mudah dikelola
+4. **Mengelompokkan fungsionalitas terkait** dalam struktur hirarki yang jelas
+
+## Protected Routes
+
+Protected Routes (Rute Terproteksi) adalah rute yang hanya dapat diakses jika kondisi tertentu terpenuhi, biasanya jika pengguna sudah login atau memiliki izin tertentu.
+
+### Implementasi Protected Routes
+
+```jsx
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+
+// Komponen untuk protected route
+const ProtectedRoute = ({ isAuthenticated }) => {
+  const location = useLocation();
+  
+  if (!isAuthenticated) {
+    // Redirect ke login dengan menyimpan lokasi yang ingin dikunjungi
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+  
+  // Render children route jika terautentikasi
+  return <Outlet />;
+};
+
+// Penggunaan dalam config route
+function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+        
+        {/* Protected routes */}
+        <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/profile" element={<Profile />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
+}
+```
+
+### Menangani Redirect Setelah Login
+
+Saat user dialihkan ke halaman login, kita bisa menyimpan halaman yang ingin mereka kunjungi dan mengarahkannya kembali setelah login:
+
+```jsx
+import { useNavigate, useLocation } from 'react-router-dom';
+
+const Login = ({ setIsAuthenticated }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Ambil URL yang ingin dikunjungi dari state
+  const from = location.state?.from?.pathname || "/dashboard";
+  
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    // Logic login
+    const success = await loginUser(/* ... */);
+    
+    if (success) {
+      setIsAuthenticated(true);
+      // Arahkan ke halaman yang diinginkan sebelumnya
+      navigate(from, { replace: true });
+    }
+  };
+  
+  return (
+    <form onSubmit={handleLogin}>
+      {/* Form fields */}
+      <button type="submit">Login</button>
+    </form>
+  );
+};
+```
+
+### Role-Based Access Control
+
+Protected Routes juga bisa dikembangkan untuk mendukung akses berdasarkan peran (role):
+
+```jsx
+const ProtectedRoute = ({ isAuthenticated, allowedRoles, userRole }) => {
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  // Cek apakah user memiliki peran yang diizinkan
+  if (allowedRoles && !allowedRoles.includes(userRole)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+  
+  return <Outlet />;
+};
+
+// Penggunaan:
+<Route 
+  element={
+    <ProtectedRoute 
+      isAuthenticated={isAuthenticated} 
+      allowedRoles={['admin']} 
+      userRole={userRole} 
+    />
+  }
+>
+  <Route path="/admin" element={<AdminDashboard />} />
+</Route>
+```
+
+## Code Splitting
+
+Code Splitting adalah teknik untuk memecah bundle JavaScript aplikasi menjadi beberapa chunk yang lebih kecil yang dapat dimuat secara terpisah sesuai kebutuhan. Ini sangat penting untuk aplikasi besar untuk meningkatkan performa loading awal.
+
+### Mengapa Code Splitting Penting?
+
+1. **Mengurangi ukuran bundle awal** yang harus dimuat
+2. **Mempercepat waktu loading pertama** dari aplikasi
+3. **Menunda loading kode** yang tidak dibutuhkan segera
+4. **Mengoptimalkan penggunaan bandwidth** pengguna
+
+### Dynamic Import dengan React
+
+React mendukung dynamic import menggunakan sintaks ES:
+
+```jsx
+// Tanpa code splitting
+import HeavyComponent from './HeavyComponent';
+
+// Dengan code splitting (dynamic import)
+import { useState } from 'react';
+
+const MyComponent = () => {
+  const [HeavyComponent, setHeavyComponent] = useState(null);
+  
+  const loadHeavyComponent = async () => {
+    // Dynamic import
+    const module = await import('./HeavyComponent');
+    setHeavyComponent(() => module.default);
+  };
+  
+  return (
+    <div>
+      <button onClick={loadHeavyComponent}>Load Heavy Component</button>
+      {HeavyComponent && <HeavyComponent />}
+    </div>
+  );
+};
+```
+
+### Code Splitting dengan Route-Based Splitting
+
+Cara paling umum menggunakan code splitting adalah dengan memecah kode berdasarkan rute, sehingga setiap halaman dimuat secara terpisah. Ini akan dibahas lebih lanjut di bagian Lazy Loading.
+
+## Lazy Loading
+
+Lazy Loading adalah implementasi code splitting yang memungkinkan kita memuat komponen hanya ketika benar-benar dibutuhkan. React menyediakan `React.lazy` dan `Suspense` untuk mengimplementasikan lazy loading dengan mudah.
+
+### React.lazy dan Suspense
+
+```jsx
+import React, { Suspense, lazy } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+// Komponen yang di-lazy load
+const Home = lazy(() => import('./pages/Home'));
+const About = lazy(() => import('./pages/About'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Profile = lazy(() => import('./pages/Profile'));
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/profile" element={<Profile />} />
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
+  );
+}
+```
+
+Dalam contoh di atas:
+- `lazy()` membuat komponen yang dimuat secara lazy (saat dibutuhkan)
+- `Suspense` menampilkan fallback selama komponen dimuat
+- Setiap halaman akan menjadi chunk JavaScript terpisah
+
+### Prefetching untuk UX yang Lebih Baik
+
+Untuk meningkatkan UX, kita bisa melakukan prefetch komponen saat user mengarahkan mouse ke link sebelum mengklik:
+
+```jsx
+import { Link } from 'react-router-dom';
+import { lazy } from 'react';
+
+// Referensi ke komponen yang akan diprefetch
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+
+const NavLink = ({ to, children }) => {
+  const prefetchComponent = () => {
+    // Prefetch saat hover
+    if (to === '/dashboard') {
+      import('./pages/Dashboard');
+    }
+  };
+  
+  return (
+    <Link 
+      to={to} 
+      onMouseEnter={prefetchComponent}
+      onFocus={prefetchComponent}
+    >
+      {children}
+    </Link>
+  );
+};
+```
+
+### Error Boundary dengan Lazy Loading
+
+Untuk menangani error saat loading komponen, kita bisa menggunakan Error Boundary:
+
+```jsx
+import { Component } from 'react';
+
+class ErrorBoundary extends Component {
+  state = { hasError: false };
+  
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+  
+  componentDidCatch(error, errorInfo) {
+    console.error('Error loading component:', error, errorInfo);
+  }
+  
+  render() {
+    if (this.state.hasError) {
+      return <div>Terjadi kesalahan saat memuat halaman. Silakan coba lagi.</div>;
+    }
+    
+    return this.props.children;
+  }
+}
+
+// Penggunaan:
+<ErrorBoundary>
+  <Suspense fallback={<div>Loading...</div>}>
+    <Routes>
+      {/* Routes */}
+    </Routes>
+  </Suspense>
+</ErrorBoundary>
+```
+
+## Project: Multi-page Application dengan React Router
+
+Saatnya mengaplikasikan semua yang telah dipelajari dengan membuat project multi-page application menggunakan React Router.
+
+### Deskripsi Project
+
+Kita akan membuat aplikasi **E-Learning Platform** sederhana dengan fitur:
+
+- Halaman Home untuk menampilkan highlight kursus
+- Halaman Courses untuk menjelajahi daftar kursus
+- Halaman Course Detail untuk detail kursus tertentu
+- Halaman Dashboard untuk pengguna yang sudah login
+- Halaman Login/Register
+- Protected routes untuk area member
+
+### Struktur Project
+
+```
+src/
+├── components/            # Shared components
+│   ├── Header.jsx
+│   ├── Footer.jsx
+│   ├── CourseCard.jsx
+│   └── ...
+├── pages/                 # Page components
+│   ├── Home.jsx
+│   ├── Courses.jsx
+│   ├── CourseDetail.jsx
+│   ├── Dashboard.jsx
+│   ├── Login.jsx
+│   └── Register.jsx
+├── layouts/               # Layout components
+│   ├── MainLayout.jsx
+│   └── DashboardLayout.jsx
+├── context/               # Context for state management
+│   └── AuthContext.jsx
+├── hooks/                 # Custom hooks
+│   └── useAuth.jsx
+├── data/                  # Mock data
+│   └── courses.js
+├── App.jsx                # Main App component with routes
+└── index.js               # Entry point
+```
+
+### Langkah-langkah Implementasi
+
+1. **Setup Project**
+
+```bash
+npx create-react-app elearning-platform
+cd elearning-platform
+npm install react-router-dom
+```
+
+2. **Membuat Context untuk Autentikasi**
+
+```jsx
+// src/context/AuthContext.jsx
+import { createContext, useState, useEffect } from 'react';
+
+export const AuthContext = createContext();
+
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    // Cek localStorage untuk user yang tersimpan
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+    setLoading(false);
+  }, []);
+  
+  const login = (userData) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
+  
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+  };
+  
+  return (
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+```
+
+3. **Membuat Custom Hook untuk Autentikasi**
+
+```jsx
+// src/hooks/useAuth.jsx
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+
+export const useAuth = () => {
+  return useContext(AuthContext);
+};
+```
+
+4. **Membuat Layout Components**
+
+```jsx
+// src/layouts/MainLayout.jsx
+import { Outlet } from 'react-router-dom';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+
+const MainLayout = () => {
+  return (
+    <div className="main-layout">
+      <Header />
+      <main>
+        <Outlet />
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+export default MainLayout;
+
+// src/layouts/DashboardLayout.jsx
+import { Outlet, Link } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+
+const DashboardLayout = () => {
+  const { user } = useAuth();
+  
+  return (
+    <div className="dashboard-layout">
+      <aside className="sidebar">
+        <div className="user-info">
+          <img src={user.avatar || '/default-avatar.png'} alt={user.name} />
+          <h3>{user.name}</h3>
+        </div>
+        <nav>
+          <ul>
+            <li><Link to="/dashboard">Overview</Link></li>
+            <li><Link to="/dashboard/courses">My Courses</Link></li>
+            <li><Link to="/dashboard/profile">Profile</Link></li>
+          </ul>
+        </nav>
+      </aside>
+      <main className="dashboard-content">
+        <Outlet />
+      </main>
+    </div>
+  );
+};
+
+export default DashboardLayout;
+```
+
+5. **Membuat Protected Route Component**
+
+```jsx
+// src/components/ProtectedRoute.jsx
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+
+const ProtectedRoute = () => {
+  const { user, loading } = useAuth();
+  const location = useLocation();
+  
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+  
+  return <Outlet />;
+};
+
+export default ProtectedRoute;
+```
+
+6. **Setup App dengan Routes**
+
+```jsx
+// src/App.jsx
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Suspense, lazy } from 'react';
+import { AuthProvider } from './context/AuthContext';
+
+// Layouts
+import MainLayout from './layouts/MainLayout';
+import DashboardLayout from './layouts/DashboardLayout';
+
+// Components
+import ProtectedRoute from './components/ProtectedRoute';
+
+// Lazy loaded pages
+const Home = lazy(() => import('./pages/Home'));
+const Courses = lazy(() => import('./pages/Courses'));
+const CourseDetail = lazy(() => import('./pages/CourseDetail'));
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const MyCourses = lazy(() => import('./pages/MyCourses'));
+const Profile = lazy(() => import('./pages/Profile'));
+const NotFound = lazy(() => import('./pages/NotFound'));
+
+function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <Suspense fallback={<div className="loading">Loading...</div>}>
+          <Routes>
+            {/* Public routes with MainLayout */}
+            <Route element={<MainLayout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/courses" element={<Courses />} />
+              <Route path="/courses/:courseId" element={<CourseDetail />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+            </Route>
+            
+            {/* Protected routes with DashboardLayout */}
+            <Route element={<ProtectedRoute />}>
+              <Route element={<DashboardLayout />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/dashboard/courses" element={<MyCourses />} />
+                <Route path="/dashboard/profile" element={<Profile />} />
+              </Route>
+            </Route>
+            
+            {/* 404 route */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
+      </BrowserRouter>
+    </AuthProvider>
+  );
+}
+
+export default App;
+```
+
+7. **Implementasikan Komponen-komponen Halaman**
+
+Sekarang kita perlu mengimplementasikan setiap halaman yang telah kita definisikan:
+- Home.jsx
+- Courses.jsx
+- CourseDetail.jsx
+- Login.jsx
+- Register.jsx
+- Dashboard.jsx
+- MyCourses.jsx
+- Profile.jsx
+- NotFound.jsx
+
+Contoh implementasi Login.jsx:
+
+```jsx
+// src/pages/Login.jsx
+import { useState } from 'react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+
+const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  const from = location.state?.from?.pathname || "/dashboard";
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError('');
+    
+    // Simulasi login (dalam aplikasi nyata gunakan API)
+    if (email === 'user@example.com' && password === 'password') {
+      login({
+        id: 1,
+        name: 'John Doe',
+        email: 'user@example.com',
+        avatar: '/avatar.png'
+      });
+      navigate(from, { replace: true });
+    } else {
+      setError('Email atau password salah!');
+    }
+  };
+  
+  return (
+    <div className="login-page">
+      <h1>Login</h1>
+      
+      {error && <div className="error">{error}</div>}
+      
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        
+        <button type="submit">Login</button>
+      </form>
+      
+      <p>
+        Belum punya akun? <Link to="/register">Register</Link>
+      </p>
+    </div>
+  );
+};
+
+export default Login;
+```
+
+Implementasikan komponen-komponen lainnya dengan pendekatan serupa, menyesuaikan dengan kebutuhan masing-masing halaman.
+
+### Testing Project
+
+Setelah mengimplementasikan semua komponen, jalankan aplikasi untuk menguji fungsionalitas:
+
+```bash
+npm start
+```
+
+Pastikan untuk menguji:
+1. Navigasi antar halaman menggunakan menu
+2. Mengakses halaman detail dengan parameter URL
+3. Login dan logout
+4. Akses ke halaman terproteksi (Dashboard)
+5. Lazy loading komponen
+6. Responsifitas aplikasi
+
+## Referensi Tambahan
+
+1. [Dokumentasi Resmi React Router](https://reactrouter.com/)
+2. [Code Splitting di React](https://reactjs.org/docs/code-splitting.html)
+3. [React.lazy dan Suspense](https://reactjs.org/docs/code-splitting.html#reactlazy)
+4. [Patterns for Authentication dengan React Router](https://ui.dev/react-router-protected-routes-authentication)
+
+---
+
+Dengan menyelesaikan modul ini, kamu sekarang memiliki pemahaman komprehensif tentang routing di React dan bagaimana membangun aplikasi multi-halaman yang kompleks. Konsep-konsep seperti protected routes, nested routes, dan lazy loading sangat penting untuk mengembangkan aplikasi React yang skalabel dan performant di dunia nyata.
 
 Selamat belajar Web Development! Modul ini merupakan fondasi penting untuk melanjutkan ke tahap React Development pada modul berikutnya.
+
+END MODULE 4
 # MODUL 7: ADVANCED HOOKS & PATTERNS
 
 ## Informasi Umum
