@@ -2136,6 +2136,661 @@ Membuat landing page sederhana untuk produk atau jasa fiktif dengan fitur intera
 - Optimasi performa
 
 ---
+# MODUL 3: REACT FUNDAMENTALS
+
+**Durasi**: 3 minggu  
+**Tujuan**: Menguasai konsep state, lifecycle, dan rendering di React
+
+## Daftar Isi
+1. [Pendahuluan](#pendahuluan)
+2. [React Hooks: useState dan useEffect](#react-hooks-usestate-dan-useeffect)
+3. [Conditional Rendering](#conditional-rendering)
+4. [Lists dan Keys](#lists-dan-keys)
+5. [Forms dan Controlled Components](#forms-dan-controlled-components)
+6. [Styling di React](#styling-di-react)
+7. [Component Lifecycle](#component-lifecycle)
+8. [Project: To-Do List Application](#project-to-do-list-application)
+
+## Pendahuluan
+
+React adalah library JavaScript yang dikembangkan oleh Facebook untuk membangun antarmuka pengguna (UI) yang interaktif. React menggunakan konsep "Component-Based Architecture" yang memungkinkan kita membangun UI kompleks dari komponen-komponen kecil yang dapat digunakan kembali.
+
+Pada modul ini, kita akan mempelajari konsep fundamental React yang akan membantu kita membangun aplikasi web dinamis dan responsif.
+
+## React Hooks: useState dan useEffect
+
+### useState Hook
+
+`useState` adalah hook paling dasar di React yang memungkinkan kita menambahkan state pada functional component.
+
+**Pengertian State**: State adalah data yang disimpan di dalam komponen dan dapat berubah seiring waktu, mempengaruhi tampilan UI.
+
+**Syntax dasar**:
+
+```jsx
+import React, { useState } from 'react';
+
+function Counter() {
+  // [variabelState, functionUntukUpdate] = useState(nilaiAwal)
+  const [count, setCount] = useState(0);
+  
+  return (
+    <div>
+      <p>Anda sudah klik sebanyak {count} kali</p>
+      <button onClick={() => setCount(count + 1)}>
+        Klik saya
+      </button>
+    </div>
+  );
+}
+```
+
+**Penjelasan**:
+- `useState(0)` menginisialisasi state dengan nilai awal 0
+- Fungsi ini mengembalikan array dengan 2 elemen:
+  1. Variabel state saat ini (`count`)
+  2. Fungsi untuk mengupdate state tersebut (`setCount`)
+- Setiap kali `setCount` dipanggil, komponen akan di-render ulang dengan nilai state yang baru
+
+### useEffect Hook
+
+`useEffect` memungkinkan kita melakukan "side effects" dalam functional component, seperti mengambil data dari API, berlangganan event, atau memanipulasi DOM secara langsung.
+
+**Syntax dasar**:
+
+```jsx
+import React, { useState, useEffect } from 'react';
+
+function Example() {
+  const [count, setCount] = useState(0);
+
+  // useEffect(fungsiEffect, [dependencyArray])
+  useEffect(() => {
+    // Kode yang dijalankan setelah render
+    document.title = `Anda klik ${count} kali`;
+    
+    // Cleanup function (opsional)
+    return () => {
+      // Kode untuk membersihkan efek
+      document.title = 'React App';
+    };
+  }, [count]); // Array dependencies
+  
+  return (
+    <div>
+      <p>Anda sudah klik sebanyak {count} kali</p>
+      <button onClick={() => setCount(count + 1)}>
+        Klik saya
+      </button>
+    </div>
+  );
+}
+```
+
+**Penjelasan**:
+- `useEffect` menerima 2 parameter:
+  1. Fungsi yang berisi efek yang ingin dijalankan
+  2. Array dependencies (opsional)
+- Array dependencies menentukan kapan effect akan dijalankan kembali:
+  - Jika kosong `[]`: effect hanya dijalankan sekali saat mounting (mirip `componentDidMount`)
+  - Jika berisi variabel `[count]`: effect dijalankan saat mounting dan saat nilai `count` berubah
+  - Jika tidak ada array: effect dijalankan setiap kali komponen di-render
+
+**Kasus penggunaan umum**:
+1. Mengambil data dari API
+2. Berlangganan pada event eksternal
+3. Manipulasi DOM secara langsung
+4. Logging dan analytics
+
+## Conditional Rendering
+
+Conditional rendering adalah teknik untuk menampilkan konten berbeda berdasarkan kondisi tertentu, mirip dengan pengkondisian pada JavaScript biasa.
+
+### Menggunakan operator ternary
+
+```jsx
+function Greeting({ isLoggedIn }) {
+  return (
+    <div>
+      {isLoggedIn 
+        ? <h1>Selamat datang kembali!</h1>
+        : <h1>Silakan login terlebih dahulu</h1>
+      }
+    </div>
+  );
+}
+```
+
+### Menggunakan operator &&
+
+```jsx
+function Notification({ messages }) {
+  return (
+    <div>
+      {messages.length > 0 && 
+        <p>Anda memiliki {messages.length} pesan baru</p>
+      }
+    </div>
+  );
+}
+```
+
+### Menggunakan if-else biasa dalam function
+
+```jsx
+function LoginStatus({ isLoggedIn }) {
+  if (isLoggedIn) {
+    return <p>Anda sudah login</p>;
+  }
+  return <p>Anda belum login</p>;
+}
+```
+
+**Tips conditional rendering**:
+- Gunakan operator ternary (`? :`) untuk kondisi sederhana
+- Gunakan operator `&&` untuk menampilkan atau menyembunyikan elemen
+- Gunakan if-else untuk logika yang lebih kompleks
+- Pertimbangkan untuk memisahkan komponen jika kondisi terlalu kompleks
+
+## Lists dan Keys
+
+React memudahkan rendering list data menggunakan metode array seperti `map()` untuk mengubah array data menjadi array elemen React.
+
+### Rendering List Sederhana
+
+```jsx
+function NumberList() {
+  const numbers = [1, 2, 3, 4, 5];
+  
+  return (
+    <ul>
+      {numbers.map(number => (
+        <li key={number}>{number}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+### Pentingnya Key
+
+Key adalah atribut string khusus yang perlu disertakan saat membuat list elemen. Key membantu React mengidentifikasi item mana yang berubah, ditambahkan, atau dihapus.
+
+**Aturan menggunakan key**:
+1. Key harus unik di antara saudara-saudaranya (sibling), tidak perlu unik secara global
+2. Gunakan ID dari data jika ada (seperti `id` dari database)
+3. Gunakan indeks array hanya sebagai pilihan terakhir, dan hanya jika list statis
+
+**Contoh dengan data yang lebih kompleks**:
+
+```jsx
+function BlogList({ posts }) {
+  return (
+    <div>
+      {posts.map(post => (
+        <div key={post.id}>
+          <h3>{post.title}</h3>
+          <p>{post.content}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+**Kenapa key penting?**:
+- Membantu React mengidentifikasi perubahan elemen
+- Meningkatkan performa saat melakukan re-rendering
+- Mencegah bug aneh saat state elemen list berubah
+
+## Forms dan Controlled Components
+
+Di React, ada dua cara menangani form input:
+1. **Controlled Components**: React mengontrol nilai input
+2. **Uncontrolled Components**: DOM mengontrol nilai input
+
+### Controlled Components
+
+Dalam controlled component, nilai elemen form ditentukan oleh state React.
+
+```jsx
+import React, { useState } from 'react';
+
+function SimpleForm() {
+  const [name, setName] = useState('');
+  
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    alert(`Nama yang dimasukkan: ${name}`);
+  };
+  
+  return (
+    <form onSubmit={handleSubmit}>
+      <label>
+        Nama:
+        <input 
+          type="text" 
+          value={name} 
+          onChange={(e) => setName(e.target.value)} 
+        />
+      </label>
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+```
+
+**Keuntungan Controlled Component**:
+- React menjadi "single source of truth" untuk nilai input
+- Memudahkan validasi langsung saat input
+- Memungkinkan manipulasi input secara dinamis
+
+### Form dengan Multiple Inputs
+
+```jsx
+import React, { useState } from 'react';
+
+function ContactForm() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+  
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+  
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log('Form data:', formData);
+  };
+  
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label htmlFor="name">Nama:</label>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          value={formData.name}
+          onChange={handleChange}
+        />
+      </div>
+      
+      <div>
+        <label htmlFor="email">Email:</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          value={formData.email}
+          onChange={handleChange}
+        />
+      </div>
+      
+      <div>
+        <label htmlFor="message">Pesan:</label>
+        <textarea
+          id="message"
+          name="message"
+          value={formData.message}
+          onChange={handleChange}
+        />
+      </div>
+      
+      <button type="submit">Kirim</button>
+    </form>
+  );
+}
+```
+
+**Menangani berbagai jenis input**:
+- Input text, textarea, dan select bekerja dengan cara serupa
+- Checkbox dan radio button menggunakan properti `checked` daripada `value`
+- Select multiple memerlukan penanganan khusus
+
+## Styling di React
+
+Ada beberapa cara untuk menerapkan styling pada komponen React:
+
+### 1. CSS biasa
+
+```jsx
+// Buat file CSS terpisah (App.css)
+import './App.css';
+
+function Button() {
+  return <button className="primary-button">Klik Saya</button>;
+}
+```
+
+### 2. Inline Styling
+
+```jsx
+function Button() {
+  const buttonStyle = {
+    backgroundColor: 'blue',
+    color: 'white',
+    padding: '10px 15px',
+    borderRadius: '4px',
+    border: 'none',
+    cursor: 'pointer'
+  };
+  
+  return <button style={buttonStyle}>Klik Saya</button>;
+}
+```
+
+### 3. CSS Modules
+
+CSS Modules membatasi scope CSS ke komponen tertentu.
+
+```jsx
+// Button.module.css
+.button {
+  background-color: blue;
+  color: white;
+  /* properti lainnya */
+}
+
+// Button.js
+import styles from './Button.module.css';
+
+function Button() {
+  return <button className={styles.button}>Klik Saya</button>;
+}
+```
+
+### 4. Styled Components (Librari pihak ketiga)
+
+```jsx
+import styled from 'styled-components';
+
+const StyledButton = styled.button`
+  background-color: ${props => props.primary ? 'blue' : 'gray'};
+  color: white;
+  padding: 10px 15px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+`;
+
+function Button({ primary }) {
+  return <StyledButton primary={primary}>Klik Saya</StyledButton>;
+}
+```
+
+**Perbandingan pendekatan styling**:
+- **CSS biasa**: Sederhana, tapi bisa menyebabkan konflik nama class
+- **Inline styling**: Cepat, tapi tidak mendukung pseudo-class dan media query
+- **CSS Modules**: Mengatasi masalah scope, terintegrasi dengan React
+- **Styled Components**: Komponen dan style jadi satu, dinamis berdasarkan props
+
+## Component Lifecycle
+
+Meskipun functional component dengan hooks tidak memiliki metode lifecycle seperti class component, kita masih bisa mengimplementasikan perilaku yang sama dengan useEffect.
+
+### Fase Lifecycle di React
+
+1. **Mounting**: Komponen ditambahkan ke DOM
+2. **Updating**: Komponen di-render ulang karena perubahan props atau state
+3. **Unmounting**: Komponen dihapus dari DOM
+
+### Implementasi Lifecycle dengan Hooks
+
+```jsx
+import React, { useState, useEffect } from 'react';
+
+function LifecycleDemo() {
+  const [count, setCount] = useState(0);
+  
+  // componentDidMount
+  useEffect(() => {
+    console.log('Komponen di-mount');
+    
+    // componentWillUnmount
+    return () => {
+      console.log('Komponen akan di-unmount');
+    };
+  }, []);
+  
+  // componentDidUpdate (ketika count berubah)
+  useEffect(() => {
+    console.log('Count berubah:', count);
+  }, [count]);
+  
+  // Dijalankan setiap render
+  useEffect(() => {
+    console.log('Komponen di-render');
+  });
+  
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>Tambah</button>
+    </div>
+  );
+}
+```
+
+**Memetakan class lifecycle ke hooks**:
+- `componentDidMount` → `useEffect(() => {}, [])`
+- `componentDidUpdate` → `useEffect(() => {}, [dependencies])`
+- `componentWillUnmount` → `useEffect(() => { return () => {} }, [])`
+- `shouldComponentUpdate` → `React.memo` + custom comparison
+
+## Project: To-Do List Application
+
+Untuk mengaplikasikan semua konsep yang telah dipelajari, kita akan membuat aplikasi To-Do List sederhana.
+
+### Fitur aplikasi:
+- Menambahkan tugas baru
+- Menandai tugas sebagai selesai
+- Menghapus tugas
+- Memfilter tugas (semua, selesai, belum selesai)
+
+### Struktur komponen:
+1. `App`: Komponen utama
+2. `TodoForm`: Form untuk menambahkan tugas baru
+3. `TodoList`: List semua tugas
+4. `TodoItem`: Item tugas individual
+5. `FilterButtons`: Tombol untuk memfilter tugas
+
+### Implementasi Dasar
+
+```jsx
+import React, { useState, useEffect } from 'react';
+import './App.css';
+
+// Component TodoForm
+function TodoForm({ addTodo }) {
+  const [text, setText] = useState('');
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!text.trim()) return;
+    addTodo(text);
+    setText('');
+  };
+  
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Tambahkan tugas baru..."
+      />
+      <button type="submit">Tambah</button>
+    </form>
+  );
+}
+
+// Component TodoItem
+function TodoItem({ todo, toggleComplete, deleteTodo }) {
+  return (
+    <div className={`todo-item ${todo.completed ? 'completed' : ''}`}>
+      <input
+        type="checkbox"
+        checked={todo.completed}
+        onChange={() => toggleComplete(todo.id)}
+      />
+      <span>{todo.text}</span>
+      <button onClick={() => deleteTodo(todo.id)}>Hapus</button>
+    </div>
+  );
+}
+
+// Component FilterButtons
+function FilterButtons({ filter, setFilter }) {
+  return (
+    <div className="filter-buttons">
+      <button 
+        className={filter === 'all' ? 'active' : ''}
+        onClick={() => setFilter('all')}
+      >
+        Semua
+      </button>
+      <button 
+        className={filter === 'active' ? 'active' : ''}
+        onClick={() => setFilter('active')}
+      >
+        Aktif
+      </button>
+      <button 
+        className={filter === 'completed' ? 'active' : ''}
+        onClick={() => setFilter('completed')}
+      >
+        Selesai
+      </button>
+    </div>
+  );
+}
+
+// Component utama App
+function App() {
+  const [todos, setTodos] = useState([]);
+  const [filter, setFilter] = useState('all');
+  
+  // Load todos dari localStorage saat aplikasi dimulai
+  useEffect(() => {
+    const savedTodos = JSON.parse(localStorage.getItem('todos') || '[]');
+    setTodos(savedTodos);
+  }, []);
+  
+  // Simpan todos ke localStorage saat berubah
+  useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(todos));
+  }, [todos]);
+  
+  // Fungsi untuk menambah todo
+  const addTodo = (text) => {
+    const newTodo = {
+      id: Date.now(),
+      text,
+      completed: false
+    };
+    setTodos([...todos, newTodo]);
+  };
+  
+  // Fungsi untuk toggle status completed
+  const toggleComplete = (id) => {
+    setTodos(
+      todos.map(todo =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  };
+  
+  // Fungsi untuk menghapus todo
+  const deleteTodo = (id) => {
+    setTodos(todos.filter(todo => todo.id !== id));
+  };
+  
+  // Filter todos sesuai status
+  const filteredTodos = todos.filter(todo => {
+    if (filter === 'all') return true;
+    if (filter === 'completed') return todo.completed;
+    if (filter === 'active') return !todo.completed;
+    return true;
+  });
+  
+  return (
+    <div className="todo-app">
+      <h1>To-Do List</h1>
+      <TodoForm addTodo={addTodo} />
+      <FilterButtons filter={filter} setFilter={setFilter} />
+      
+      <div className="todo-list">
+        {filteredTodos.length === 0 ? (
+          <p>Tidak ada tugas</p>
+        ) : (
+          filteredTodos.map(todo => (
+            <TodoItem
+              key={todo.id}
+              todo={todo}
+              toggleComplete={toggleComplete}
+              deleteTodo={deleteTodo}
+            />
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default App;
+```
+
+### Langkah-langkah Pengembangan:
+
+1. **Setup Project**:
+   - Buat project React baru dengan `create-react-app`
+   - Hapus file yang tidak perlu
+   - Buat struktur folder yang rapi
+
+2. **Implementasi Komponen Dasar**:
+   - Buat komponen `App` dengan state untuk todos
+   - Buat komponen `TodoForm` untuk input
+   - Buat komponen `TodoItem` untuk menampilkan setiap item
+
+3. **Tambahkan Fungsionalitas**:
+   - Implementasi fungsi untuk menambah todo
+   - Implementasi fungsi untuk menandai todo sebagai selesai
+   - Implementasi fungsi untuk menghapus todo
+
+4. **Tambahkan Filtering**:
+   - Buat komponen `FilterButtons`
+   - Implementasi logic untuk filtering
+
+5. **Tambahkan Persistensi Data**:
+   - Gunakan `localStorage` untuk menyimpan todos
+   - Load todos dari localStorage saat aplikasi dimulai
+
+6. **Styling**:
+   - Tambahkan CSS untuk membuat aplikasi lebih menarik
+
+7. **Testing dan Debugging**:
+   - Uji semua fitur
+   - Perbaiki bug yang ditemukan
+
+### Bonus Challenge:
+- Tambahkan fitur drag-and-drop untuk mengubah urutan todos
+- Implementasi kategori atau label untuk todos
+- Tambahkan fitur deadline atau reminder
+- Implementasi dark mode / light mode
+
+---
+
+Dengan menyelesaikan modul ini dan project To-Do List, Anda akan memiliki pemahaman yang kuat tentang konsep fundamental React seperti state, props, hooks, rendering, dan lifecycle. Kemampuan ini akan menjadi dasar yang solid untuk mempelajari topik React yang lebih lanjut seperti Context API, Redux, dan React Router.
+
+END MODULE 3
 
 Selamat belajar Web Development! Modul ini merupakan fondasi penting untuk melanjutkan ke tahap React Development pada modul berikutnya.
 # MODUL 7: ADVANCED HOOKS & PATTERNS
