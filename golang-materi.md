@@ -1,2019 +1,2407 @@
-# Materi Pembelajaran Golang: Dasar hingga Expert
+# Modul Pembelajaran Golang: Pemula hingga Expert
 
 ## Fase 1: Dasar-Dasar Golang (Hari 1-15)
 
-### Hari 1: Pengenalan Go dan Setup
-
-**1. Apa itu Go (Golang)?**
-- Golang adalah bahasa pemrograman open-source yang dikembangkan oleh Google
-- Dirancang untuk performa tinggi, konkurensi mudah, dan sintaks sederhana
-- Cocok untuk pengembangan backend, microservices, dan aplikasi sistem
-
-**2. Keunggulan Go:**
-- Kompilasi cepat dan hasil binary yang efisien
-- Garbage collection otomatis
-- Konkurensi bawaan (goroutines & channels)
-- Pustaka standar yang kaya
-- Static typing dengan sintaks yang sederhana
-
-**3. Instalasi Go:**
-```bash
-# Di Linux/macOS via homebrew
-brew install go
-
-# Di Windows via chocolatey
-choco install golang
-
-# Atau download dari golang.org
-```
-
-**4. Setup Workspace:**
-```bash
-# Buat direktori Go workspace
-mkdir -p ~/go/{bin,src,pkg}
-
-# Tambahkan ke path di .bashrc atau .zshrc
-export GOPATH=$HOME/go
-export PATH=$PATH:$GOPATH/bin
-```
-
-**5. Program Hello World:**
-```go
-package main
-
-import "fmt"
-
-func main() {
-    fmt.Println("Hello, Go!")
-}
-```
-
-**Latihan Hari 1:**
-1. Instal Go di komputer Anda
-2. Setup workspace Go
-3. Buat dan jalankan program Hello World
-4. Eksperimen dengan beberapa pesan berbeda
-
-### Hari 2: Variabel dan Tipe Data
-
-**1. Deklarasi Variabel:**
-```go
-// Deklarasi dengan tipe eksplisit
-var nama string = "Budi"
-
-// Deklarasi singkat dengan inferensi tipe
-umur := 25
-
-// Multiple declaration
-var x, y int = 10, 20
-```
-
-**2. Tipe Data Dasar:**
-```go
-// Integers
-var a int = 10
-var b int8 = 127  // -128 to 127
-var c uint = 100  // unsigned integer
-
-// Floating point
-var f float32 = 3.14
-var g float64 = 3.141592653589793
-
-// Boolean
-var benar bool = true
-var salah bool = false
-
-// String
-var pesan string = "Halo Golang"
-```
-
-**3. Konstanta:**
-```go
-const Pi = 3.14159
-const (
-    StatusOK = 200
-    StatusNotFound = 404
-)
-```
-
-**4. Type Conversions:**
-```go
-var i int = 42
-var f float64 = float64(i)
-var s string = strconv.Itoa(i)  // Int to String
-```
-
-**Latihan Hari 2:**
-1. Buat program yang mendeklarasikan dan menampilkan variabel berbagai tipe
-2. Lakukan konversi antar tipe data
-3. Gunakan konstanta dalam program
-
-### Hari 3: Operator dan Struktur Kendali
-
-**1. Operator:**
-```go
-// Aritmatika: +, -, *, /, %
-sum := 5 + 3  // 8
-div := 10 / 3  // 3 (integer division)
-
-// Perbandingan: ==, !=, <, >, <=, >=
-isEqual := (5 == 5)  // true
-
-// Logika: &&, ||, !
-result := (true && false)  // false
-```
-
-**2. If Statement:**
-```go
-if umur >= 17 {
-    fmt.Println("Boleh membuat SIM")
-} else if umur >= 13 {
-    fmt.Println("Boleh main sosial media")
-} else {
-    fmt.Println("Masih anak-anak")
-}
-
-// If dengan statement awal
-if nilai := getNilai(); nilai > 80 {
-    fmt.Println("Nilai A")
-}
-```
-
-**3. Switch Statement:**
-```go
-switch hari {
-case "Senin":
-    fmt.Println("Awal minggu")
-case "Jumat":
-    fmt.Println("Akhir minggu kerja")
-default:
-    fmt.Println("Hari biasa")
-}
-
-// Switch tanpa ekspresi
-switch {
-case nilai >= 80:
-    fmt.Println("Nilai A")
-case nilai >= 70:
-    fmt.Println("Nilai B")
-default:
-    fmt.Println("Nilai C")
-}
-```
-
-**4. Loops:**
-```go
-// For tradisional
-for i := 0; i < 5; i++ {
-    fmt.Println(i)
-}
-
-// For sebagai while
-i := 0
-for i < 5 {
-    fmt.Println(i)
-    i++
-}
-
-// For selamanya
-for {
-    fmt.Println("Infinite loop")
-    break  // Keluar dari loop
-}
-```
-
-**Latihan Hari 3:**
-1. Buat program kalkulator sederhana dengan operator aritmatika
-2. Buat program yang menggunakan if-else untuk menentukan kategori nilai
-3. Buat program yang menggunakan switch untuk menu pilihan
-4. Buat program yang mencetak pola menggunakan loop
-
-### Hari 4: Array, Slice, dan Map
-
-**1. Array:**
-```go
-// Deklarasi array
-var angka [5]int  // Array dengan 5 elemen integer
-angka[0] = 10
-angka[1] = 20
-
-// Inisialisasi langsung
-nama := [3]string{"Andi", "Budi", "Cici"}
-
-// Array dengan ukuran otomatis
-kota := [...]string{"Jakarta", "Bandung", "Surabaya"}
-```
-
-**2. Slice:**
-```go
-// Membuat slice dari array
-var s []int = angka[1:4]  // elemen 1, 2, 3
-
-// Membuat slice langsung
-buah := []string{"Apel", "Jeruk", "Mangga"}
-
-// Fungsi make untuk slice
-numbers := make([]int, 5)      // len=5, cap=5
-numbers = append(numbers, 6)   // menambah elemen
-```
-
-**3. Maps:**
-```go
-// Deklarasi map
-var userAge map[string]int
-userAge = make(map[string]int)
-
-// Inisialisasi langsung
-scores := map[string]int{
-    "Andi": 85,
-    "Budi": 92,
-    "Cici": 78,
-}
-
-// Operasi map
-scores["Dedi"] = 88        // Menambah/mengubah
-nilai, exists := scores["Andi"]  // Mengecek keberadaan key
-delete(scores, "Cici")     // Menghapus key
-```
-
-**Latihan Hari 4:**
-1. Buat program yang mengolah data array siswa
-2. Buat program yang menggunakan slice untuk daftar dinamis
-3. Buat kamus sederhana menggunakan map
-4. Implementasikan fungsi pencarian di slice
-
-### Hari 5: Structs dan Pointers
-
-**1. Structs:**
-```go
-// Mendefinisikan struct
-type Person struct {
-    Name string
-    Age  int
-    Address string
-}
-
-// Membuat instance struct
-var p1 Person
-p1.Name = "Budi"
-p1.Age = 25
-
-// Inisialisasi langsung
-p2 := Person{
-    Name: "Ani",
-    Age: 23,
-}
-
-// Struct anonim
-employee := struct {
-    ID   int
-    Role string
-}{
-    ID:   1001,
-    Role: "Developer",
-}
-```
-
-**2. Pointers:**
-```go
-// Deklarasi pointer
-var p *int
-x := 10
-p = &x  // p menyimpan alamat x
-
-// Dereference pointer
-fmt.Println(*p)  // Mengakses nilai yang ditunjuk p
-
-// Pointer ke struct
-var pPerson *Person
-pPerson = &p1
-pPerson.Name = "Budi Santoso"  // Mengubah nilai melalui pointer
-```
-
-**3. Struct Methods:**
-```go
-// Method pada struct
-type Rectangle struct {
-    Width, Height float64
-}
-
-// Method dengan receiver
-func (r Rectangle) Area() float64 {
-    return r.Width * r.Height
-}
-
-// Method dengan pointer receiver
-func (r *Rectangle) Scale(factor float64) {
-    r.Width *= factor
-    r.Height *= factor
-}
-```
-
-**Latihan Hari 5:**
-1. Buat struct untuk merepresentasikan produk dengan beberapa atribut
-2. Tambahkan method ke struct untuk menghitung diskon
-3. Buat fungsi yang memanipulasi struct melalui pointer
-4. Implementasikan sistem inventaris sederhana menggunakan struct dan slice
-
-### Hari 6: Functions dan Packages
-
-**1. Functions:**
-```go
-// Fungsi dasar
-func sayHello(name string) {
-    fmt.Println("Hello,", name)
-}
-
-// Fungsi dengan return value
-func add(a, b int) int {
-    return a + b
-}
-
-// Fungsi dengan multiple return values
-func divide(a, b float64) (float64, error) {
-    if b == 0 {
-        return 0, errors.New("pembagian dengan nol")
-    }
-    return a / b, nil
-}
-
-// Variadic functions
-func sum(nums ...int) int {
-    total := 0
-    for _, num := range nums {
-        total += num
-    }
-    return total
-}
-```
-
-**2. Packages:**
-```go
-// Membuat package baru (di file utils/math.go)
-package utils
-
-// Exported function (huruf kapital)
-func Add(a, b int) int {
-    return a + b
-}
-
-// Non-exported function (huruf kecil)
-func multiply(a, b int) int {
-    return a * b
-}
-
-// Menggunakan package (di main.go)
-package main
-
-import (
-    "fmt"
-    "myapp/utils"
-)
-
-func main() {
-    result := utils.Add(5, 3)
-    fmt.Println(result)
-}
-```
-
-**3. Anonymous Functions & Closures:**
-```go
-// Anonymous function
-func main() {
-    func() {
-        fmt.Println("Anonymous function")
-    }()
-    
-    // Function variable
-    add := func(a, b int) int {
-        return a + b
-    }
-    fmt.Println(add(3, 5))
-    
-    // Closure
-    counter := func() func() int {
-        count := 0
-        return func() int {
-            count++
-            return count
-        }
-    }()
-    
-    fmt.Println(counter())  // 1
-    fmt.Println(counter())  // 2
-}
-```
-
-**Latihan Hari 6:**
-1. Buat package utilities dengan beberapa fungsi helper
-2. Implementasikan fungsi-fungsi matematika dasar
-3. Buat fungsi yang mengembalikan multiple values
-4. Buat closure untuk counter atau generator
-
-### Hari 7: Error Handling
-
-**1. Error Basics:**
-```go
-// Mengembalikan error
-func divide(a, b float64) (float64, error) {
-    if b == 0 {
-        return 0, errors.New("pembagian dengan nol")
-    }
-    return a / b, nil
-}
-
-// Penanganan error
-result, err := divide(10, 0)
-if err != nil {
-    fmt.Println("Error:", err)
-} else {
-    fmt.Println("Result:", result)
-}
-```
-
-**2. Custom Errors:**
-```go
-// Membuat custom error type
-type ValidationError struct {
-    Field string
-    Message string
-}
-
-func (e *ValidationError) Error() string {
-    return fmt.Sprintf("validasi gagal pada field %s: %s", e.Field, e.Message)
-}
-
-// Menggunakan custom error
-func validateAge(age int) error {
-    if age < 0 {
-        return &ValidationError{
-            Field: "age",
-            Message: "tidak boleh negatif",
-        }
-    }
-    return nil
-}
-```
-
-**3. Panic dan Recover:**
-```go
-// Fungsi dengan panic
-func processCriticalData() {
-    data := getData()
-    if data == nil {
-        panic("data kritis tidak tersedia")
-    }
-    // proses data
-}
-
-// Recover dari panic
-func safeProcess() {
-    defer func() {
-        if r := recover(); r != nil {
-            fmt.Println("Recovered from panic:", r)
-        }
-    }()
-    
-    processCriticalData()
-}
-```
-
-**Latihan Hari 7:**
-1. Buat fungsi validasi dengan berbagai error cases
-2. Implementasikan custom error untuk aplikasi
-3. Buat program yang mendemonstrasikan panic dan recover
-4. Implementasikan logging untuk error handling
-
-### Hari 8: Testing
-
-**1. Unit Testing Dasar:**
-```go
-// File: math.go
-package math
-
-func Add(a, b int) int {
-    return a + b
-}
-
-// File: math_test.go
-package math
-
-import "testing"
-
-func TestAdd(t *testing.T) {
-    result := Add(3, 2)
-    expected := 5
-    
-    if result != expected {
-        t.Errorf("Add(3, 2) = %d; want %d", result, expected)
-    }
-}
-```
-
-**2. Test Cases:**
-```go
-func TestAdd(t *testing.T) {
-    tests := []struct {
-        name     string
-        a, b     int
-        expected int
-    }{
-        {"positive", 3, 2, 5},
-        {"negative", -1, -2, -3},
-        {"mixed", -5, 5, 0},
-    }
-    
-    for _, tc := range tests {
-        t.Run(tc.name, func(t *testing.T) {
-            result := Add(tc.a, tc.b)
-            if result != tc.expected {
-                t.Errorf("Add(%d, %d) = %d; want %d", 
-                         tc.a, tc.b, result, tc.expected)
-            }
-        })
-    }
-}
-```
-
-**3. Benchmarking:**
-```go
-func BenchmarkAdd(b *testing.B) {
-    for i := 0; i < b.N; i++ {
-        Add(3, 2)
-    }
-}
-```
-
-**4. Coverage Testing:**
-```bash
-go test -cover ./...
-```
-
-**Latihan Hari 8:**
-1. Buat test cases untuk fungsi yang dibuat sebelumnya
-2. Implementasikan table-driven tests
-3. Jalankan benchmark untuk fungsi kritis
-4. Gunakan test coverage untuk meningkatkan test quality
-
-### Hari 9: Concurrency Dasar - Goroutines
-
-**1. Goroutines Basics:**
-```go
-// Membuat goroutine
-func main() {
-    go sayHello("World")  // Berjalan secara asynchronous
-    
-    // Pastikan program tidak exit sebelum goroutine selesai
-    time.Sleep(100 * time.Millisecond)
-}
-
-func sayHello(name string) {
-    fmt.Println("Hello,", name)
-}
-```
-
-**2. WaitGroups:**
-```go
-func main() {
-    var wg sync.WaitGroup
-    
-    // Tambahkan counter
-    wg.Add(1)
-    
-    go func() {
-        defer wg.Done()  // Kurangi counter ketika selesai
-        fmt.Println("Goroutine working...")
-    }()
-    
-    // Tunggu sampai semua goroutines selesai
-    wg.Wait()
-    fmt.Println("All done!")
-}
-```
-
-**3. Multiple Goroutines:**
-```go
-func main() {
-    var wg sync.WaitGroup
-    
-    // Jalankan beberapa goroutines
-    for i := 1; i <= 5; i++ {
-        wg.Add(1)
-        go worker(i, &wg)
-    }
-    
-    wg.Wait()
-}
-
-func worker(id int, wg *sync.WaitGroup) {
-    defer wg.Done()
-    fmt.Printf("Worker %d starting\n", id)
-    time.Sleep(time.Second)
-    fmt.Printf("Worker %d done\n", id)
-}
-```
-
-**Latihan Hari 9:**
-1. Buat program yang menjalankan beberapa goroutines
-2. Implementasikan waitgroup untuk sinkronisasi
-3. Buat worker pool pattern
-4. Implementasikan counter bersama dengan mutex
-
-### Hari 10: Concurrency Lanjutan - Channels
-
-**1. Channel Basics:**
-```go
-// Membuat channel
-ch := make(chan int)
-
-// Mengirim data ke channel
-go func() {
-    ch <- 42  // Mengirim nilai ke channel
-}()
-
-// Menerima data dari channel
-value := <-ch  // Menerima nilai dari channel
-fmt.Println(value)
-
-// Buffered channel
-bufCh := make(chan string, 2)
-bufCh <- "hello"
-bufCh <- "world"
-```
-
-**2. Channel Direction:**
-```go
-// Channel hanya untuk kirim
-func send(ch chan<- int, value int) {
-    ch <- value
-}
-
-// Channel hanya untuk terima
-func receive(ch <-chan int) int {
-    return <-ch
-}
-```
-
-**3. Select Statement:**
-```go
-func main() {
-    ch1 := make(chan string)
-    ch2 := make(chan string)
-    
-    go func() {
-        time.Sleep(1 * time.Second)
-        ch1 <- "one"
-    }()
-    
-    go func() {
-        time.Sleep(2 * time.Second)
-        ch2 <- "two"
-    }()
-    
-    for i := 0; i < 2; i++ {
-        select {
-        case msg1 := <-ch1:
-            fmt.Println("Received", msg1)
-        case msg2 := <-ch2:
-            fmt.Println("Received", msg2)
-        case <-time.After(3 * time.Second):
-            fmt.Println("Timeout")
-        }
-    }
-}
-```
-
-**4. Closing Channels:**
-```go
-func main() {
-    jobs := make(chan int, 5)
-    done := make(chan bool)
-    
-    // Producer
-    go func() {
-        for i := 1; i <= 5; i++ {
-            jobs <- i
-        }
-        close(jobs)  // Tutup channel setelah selesai
-    }()
-    
-    // Consumer
-    go func() {
-        for {
-            j, more := <-jobs
-            if more {
-                fmt.Println("received job", j)
-            } else {
-                fmt.Println("all jobs received")
-                done <- true
-                return
-            }
-        }
-    }()
-    
-    <-done
-}
-```
-
-**Latihan Hari 10:**
-1. Buat program producer-consumer dengan channels
-2. Implementasikan fan-out/fan-in pattern
-3. Gunakan select untuk timeout handling
-4. Implementasikan pipeline pattern
-
-### Hari 11: Context dan Pattern Concurrency
-
-**1. Context:**
-```go
-func main() {
-    // Context dengan cancel
-    ctx, cancel := context.WithCancel(context.Background())
-    defer cancel()
-    
-    go doWork(ctx)
-    
-    time.Sleep(5 * time.Second)
-    cancel()  // Batalkan semua operasi
-    time.Sleep(1 * time.Second)
-}
-
-func doWork(ctx context.Context) {
-    for {
-        select {
-        case <-ctx.Done():
-            fmt.Println("Work cancelled")
-            return
-        default:
-            fmt.Println("Working...")
-        }
-        time.Sleep(1 * time.Second)
-    }
-}
-```
-
-**2. Timeout dan Deadline:**
-```go
-// Context dengan timeout
-ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-defer cancel()
-
-// Context dengan deadline
-deadline := time.Now().Add(10 * time.Second)
-ctx, cancel := context.WithDeadline(context.Background(), deadline)
-defer cancel()
-```
-
-**3. Fan-out, Fan-in Pattern:**
-```go
-func generator(nums ...int) <-chan int {
-    out := make(chan int)
-    go func() {
-        defer close(out)
-        for _, n := range nums {
-            out <- n
-        }
-    }()
-    return out
-}
-
-func square(in <-chan int) <-chan int {
-    out := make(chan int)
-    go func() {
-        defer close(out)
-        for n := range in {
-            out <- n * n
-        }
-    }()
-    return out
-}
-
-func merge(cs ...<-chan int) <-chan int {
-    var wg sync.WaitGroup
-    out := make(chan int)
-    
-    output := func(c <-chan int) {
-        defer wg.Done()
-        for n := range c {
-            out <- n
-        }
-    }
-    
-    wg.Add(len(cs))
-    for _, c := range cs {
-        go output(c)
-    }
-    
-    go func() {
-        wg.Wait()
-        close(out)
-    }()
-    
-    return out
-}
-
-func main() {
-    in := generator(1, 2, 3, 4, 5)
-    
-    // Fan-out - distribusikan pekerjaan ke 3 worker
-    c1 := square(in)
-    c2 := square(in)
-    c3 := square(in)
-    
-    // Fan-in - gabungkan hasil
-    for n := range merge(c1, c2, c3) {
-        fmt.Println(n)
-    }
-}
-```
-
-**Latihan Hari 11:**
-1. Implementasikan request handling dengan context
-2. Buat program dengan timeout handling
-3. Implementasikan fan-out/fan-in pattern untuk komputasi paralel
-4. Buat pipeline untuk pemrosesan data
-
-### Hari 12: Interfaces
-
-**1. Interface Basics:**
-```go
-// Mendefinisikan interface
-type Shape interface {
-    Area() float64
-    Perimeter() float64
-}
-
-// Struct yang mengimplementasikan interface
-type Rectangle struct {
-    Width, Height float64
-}
-
-func (r Rectangle) Area() float64 {
-    return r.Width * r.Height
-}
-
-func (r Rectangle) Perimeter() float64 {
-    return 2 * (r.Width + r.Height)
-}
-
-// Struct lain yang mengimplementasikan interface
-type Circle struct {
-    Radius float64
-}
-
-func (c Circle) Area() float64 {
-    return math.Pi * c.Radius * c.Radius
-}
-
-func (c Circle) Perimeter() float64 {
-    return 2 * math.Pi * c.Radius
-}
-
-// Fungsi yang menerima interface
-func printShapeInfo(s Shape) {
-    fmt.Printf("Area: %.2f\n", s.Area())
-    fmt.Printf("Perimeter: %.2f\n", s.Perimeter())
-}
-
-func main() {
-    r := Rectangle{Width: 5, Height: 3}
-    c := Circle{Radius: 2}
-    
-    printShapeInfo(r)
-    printShapeInfo(c)
-}
-```
-
-**2. Empty Interface:**
-```go
-// Empty interface dapat menampung nilai apapun
-func printAny(v interface{}) {
-    fmt.Printf("Tipe: %T, Nilai: %v\n", v, v)
-}
-
-func main() {
-    printAny(42)
-    printAny("hello")
-    printAny(true)
-}
-```
-
-**3. Type Assertions:**
-```go
-func main() {
-    var i interface{} = "hello"
-    
-    // Type assertion
-    s, ok := i.(string)
-    if ok {
-        fmt.Println(s)
-    }
-    
-    // Type switch
-    switch v := i.(type) {
-    case string:
-        fmt.Println("string:", v)
-    case int:
-        fmt.Println("int:", v)
-    default:
-        fmt.Printf("unknown type: %T\n", v)
-    }
-}
-```
-
-**Latihan Hari 12:**
-1. Buat interface untuk sistem pembayaran
-2. Implementasikan beberapa metode pembayaran
-3. Buat generic handler menggunakan empty interface
-4. Implementasikan type assertion untuk penanganan khusus
-
-### Hari 13: File I/O dan JSON
-
-**1. File Reading:**
-```go
-// Membaca seluruh file
-data, err := ioutil.ReadFile("file.txt")
-if err != nil {
-    log.Fatal(err)
-}
-fmt.Println(string(data))
-
-// Membaca file dengan bufio
-file, err := os.Open("file.txt")
-if err != nil {
-    log.Fatal(err)
-}
-defer file.Close()
-
-scanner := bufio.NewScanner(file)
-for scanner.Scan() {
-    fmt.Println(scanner.Text())
-}
-```
-
-**2. File Writing:**
-```go
-// Menulis ke file
-err := ioutil.WriteFile("output.txt", []byte("Hello Go"), 0644)
-if err != nil {
-    log.Fatal(err)
-}
-
-// Menulis dengan bufio
-file, err := os.Create("output.txt")
-if err != nil {
-    log.Fatal(err)
-}
-defer file.Close()
-
-writer := bufio.NewWriter(file)
-_, err = writer.WriteString("Hello Go\n")
-if err != nil {
-    log.Fatal(err)
-}
-writer.Flush()
-```
-
-**3. JSON Marshalling:**
-```go
-type Person struct {
-    Name  string `json:"name"`
-    Age   int    `json:"age"`
-    Email string `json:"email,omitempty"`
-}
-
-func main() {
-    p := Person{Name: "John", Age: 30}
-    
-    // Struct ke JSON
-    data, err := json.Marshal(p)
-    if err != nil {
-        log.Fatal(err)
-    }
-    fmt.Println(string(data))
-    
-    // Pretty print
-    data, err = json.MarshalIndent(p, "", "  ")
-    if err != nil {
-        log.Fatal(err)
-    }
-    fmt.Println(string(data))
-}
-```
-
-**4. JSON Unmarshalling:**
-```go
-jsonStr := `{"name":"John","age":30,"email":"john@example.com"}`
-
-var p Person
-err := json.Unmarshal([]byte(jsonStr), &p)
-if err != nil {
-    log.Fatal(err)
-}
-fmt.Printf("%+v\n", p)
-```
-
-**Latihan Hari 13:**
-1. Buat aplikasi yang membaca dan menulis file konfigurasi
-2. Implementasikan parser JSON untuk file konfigurasi
-3. Buat struct yang sesuai dengan format JSON tertentu
-4. Buat program untuk membaca dan menulis file log
-
-### Hari 14: Database Access
-
-**1. SQL Database Connection:**
-```go
-import (
-    "database/sql"
-    _ "github.com/go-sql-driver/mysql"
-)
-
-func main() {
-    // Format: username:password@protocol(address)/dbname
-    db, err := sql.Open("mysql", "user:password@tcp(127.0.0.1:3306)/testdb")
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer db.Close()
-    
-    // Cek koneksi
-    err = db.Ping()
-    if err != nil {
-        log.Fatal(err)
-    }
-    
-    fmt.Println("Connected to database!")
-}
-```
-
-**2. Query dan Scan:**
-```go
-// Query single row
-var name string
-var id int
-err = db.QueryRow("SELECT id, name FROM users WHERE id = ?", 1).Scan(&id, &name)
-if err != nil {
-    log.Fatal(err)
-}
-fmt.Printf("ID: %d, Name: %s\n", id, name)
-
-// Query multiple rows
-rows, err := db.Query("SELECT id, name FROM users")
-if err != nil {
-    log.Fatal(err)
-}
-defer rows.Close()
-
-for rows.Next() {
-    var id int
-    var name string
-    err = rows.Scan(&id, &name)
-    if err != nil {
-        log.Fatal(err)
-    }
-    fmt.Printf("ID: %d, Name: %s\n", id, name)
-}
-```
-
-**3. Prepared Statements:**
-```go
-// Prepared statement untuk insert
-stmt, err := db.Prepare("INSERT INTO users(name, email) VALUES(?, ?)")
-if err != nil {
-    log.Fatal(err)
-}
-defer stmt.Close()
-
-// Execute prepared statement
-res, err := stmt.Exec("John Doe", "john@example.com")
-if err != nil {
-    log.Fatal(err)
-}
-
-lastID, err := res.LastInsertId()
-if err != nil {
-    log.Fatal(err)
-}
-fmt.Printf("Inserted user with ID: %d\n", lastID)
-```
-
-**4. Transactions:**
-```go
-// Begin transaction
-tx, err := db.Begin()
-if err != nil {
-    log.Fatal(err)
-}
-
-// Execute statements within transaction
-_, err = tx.Exec("UPDATE accounts SET balance = balance - ? WHERE id = ?", 100, 1)
-if err != nil {
-    tx.Rollback()
-    log.Fatal(err)
-}
-
-_, err = tx.Exec("UPDATE accounts SET balance = balance + ? WHERE id = ?", 100, 2)
-if err != nil {
-    tx.Rollback()
-    log.Fatal(err)
-}
-
-// Commit transaction
-err = tx.Commit()
-if err != nil {
-    log.Fatal(err)
-}
-```
-
-**Latihan Hari 14:**
-1. Buat koneksi ke database MySQL atau PostgreSQL
-2. Implementasikan CRUD operations
-3. Buat program transfer dana dengan transactions
-4. Buat repository pattern untuk akses database
-
-### Hari 15: RESTful API Dasar
-
-**1. Simple HTTP Server:**
-```go
-package main
-
-import (
-    "fmt"
-    "log"
-    "net/http"
-)
-
-func helloHandler(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintf(w, "Hello, World!")
-}
-
-func main() {
-    http.HandleFunc("/hello", helloHandler)
-    
-    fmt.Println("Server started at :8080")
-    log.Fatal(http.ListenAndServe(":8080", nil))
-}
-```
-
-**2. Request Handling:**
-```go
-func userHandler(w http.ResponseWriter, r *http.Request) {
-    switch r.Method {
-    case "GET":
-        // Handle GET
-        fmt.Fprintf(w, "Get User")
-    case "POST":
-        // Handle POST
-        decoder := json.NewDecoder(r.Body)
-        var user User
-        err := decoder.Decode(&user)
-        if err != nil {
-            http.Error(w, err.Error(), http.StatusBadRequest)
-            return
-        }
-        fmt.Fprintf(w, "Created user: %s", user.Name)
-    default:
-        http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-    }
-}
-```
-
-**3. JSON Response:**
-```go
-type User struct {
-    ID   int    `json:"id"`
-    Name string `json:"name"`
-}
-
-func getUserHandler(w http.ResponseWriter, r *http.Request) {
-    user := User{ID: 1, Name: "John Doe"}
-    
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(user)
-}
-```
-
-**4. URL Parameters:**
-```go
-func main() {
-    http.HandleFunc("/users/", func(w http.ResponseWriter, r *http.Request) {
-        // Extract ID from URL like /users/123
-        id := strings.TrimPrefix(r.URL.Path, "/users/")
-        fmt.Fprintf(w, "User ID: %s", id)
-    })
-    
-    log.Fatal(http.ListenAndServe(":8080", nil))
-}
-```
-
-**Latihan Hari 15:**
-1. Buat REST API sederhana dengan endpoint GET dan POST
-2. Implementasikan handler untuk resource users dan products
-3. Buat response dalam format JSON
-4. Implementasikan routing dengan parameter
+### Modul 1: Pengenalan dan Setup (Hari 1-3)
+
+#### Materi 1.1: Pengenalan Golang
+- **Definisi**: Golang adalah bahasa pemrograman open source yang dibuat oleh Google, dirancang untuk efisiensi, kesederhanaan, dan keamanan.
+- **Kelebihan Golang**:
+  - Kompilasi cepat
+  - Concurrent programming bawaan (goroutines)
+  - Garbage collection otomatis
+  - Static typing dengan sintaks simpel
+  - Standar library yang kaya
+  - Cross-platform
+
+#### Materi 1.2: Instalasi dan Setup Workspace
+- **Instalasi**:
+  ```bash
+  # Download dari golang.org
+  # Verifikasi instalasi
+  go version
+  ```
+- **Go Modules**:
+  ```bash
+  # Buat proyek baru
+  mkdir myproject
+  cd myproject
+  go mod init github.com/username/myproject
+  ```
+- **Tools Development**:
+  - Visual Studio Code + Go extension
+  - GoLand
+  - Atom dengan go-plus
+
+#### Materi 1.3: Program Go Pertama
+- **Struktur dasar**:
+  ```go
+  package main
+  
+  import "fmt"
+  
+  func main() {
+      fmt.Println("Hello, Golang!")
+  }
+  ```
+- **Kompilasi dan Eksekusi**:
+  ```bash
+  # Mode langsung
+  go run hello.go
+  
+  # Mode kompilasi
+  go build hello.go
+  ./hello
+  ```
+
+### Modul 2: Dasar Pemrograman Go (Hari 4-6)
+
+#### Materi 2.1: Variabel dan Tipe Data
+- **Deklarasi Variabel**:
+  ```go
+  // Eksplisit
+  var nama string = "Budi"
+  
+  // Implisit
+  var umur = 25
+  
+  // Short declaration
+  kota := "Jakarta"
+  ```
+- **Tipe Data Dasar**:
+  - Boolean: `bool`
+  - String: `string`
+  - Numerik: `int`, `float64`, dll.
+  - Byte: `byte` (alias dari uint8)
+  - Rune: `rune` (alias dari int32)
+
+#### Materi 2.2: Operator dan Control Flow
+- **Operator**:
+  - Aritmatika: `+`, `-`, `*`, `/`, `%`
+  - Perbandingan: `==`, `!=`, `<`, `>`, `<=`, `>=`
+  - Logika: `&&`, `||`, `!`
+- **Struktur Kendali**:
+  ```go
+  // If-else
+  if nilai >= 60 {
+      fmt.Println("Lulus")
+  } else {
+      fmt.Println("Tidak Lulus")
+  }
+  
+  // Switch
+  switch hari {
+  case "Senin":
+      fmt.Println("Awal minggu")
+  case "Jumat":
+      fmt.Println("Akhir minggu kerja")
+  default:
+      fmt.Println("Hari biasa")
+  }
+  
+  // For loop (satu-satunya jenis loop di Go)
+  for i := 0; i < 5; i++ {
+      fmt.Println(i)
+  }
+  ```
+
+#### Materi 2.3: Array dan Slice
+- **Array** (ukuran tetap):
+  ```go
+  var numbers [5]int
+  primes := [5]int{2, 3, 5, 7, 11}
+  ```
+- **Slice** (ukuran dinamis):
+  ```go
+  fruits := []string{"apple", "banana", "orange"}
+  numbers := make([]int, 5, 10) // len 5, cap 10
+  
+  // Operasi slice
+  slice = append(slice, 10)
+  newSlice := slice[1:3]
+  ```
+
+### Modul 3: Konsep Dasar Lanjutan (Hari 7-9)
+
+#### Materi 3.1: Maps dan Structs
+- **Maps** (key-value pairs):
+  ```go
+  scores := map[string]int{
+      "Alice": 90,
+      "Bob":   85,
+  }
+  
+  // Operasi map
+  scores["Carol"] = 95
+  delete(scores, "Bob")
+  score, exists := scores["Alice"]
+  ```
+- **Structs** (custom types):
+  ```go
+  type Person struct {
+      Name     string
+      Age      int
+      Address  string
+  }
+  
+  // Instantiate
+  p := Person{Name: "Andi", Age: 30, Address: "Jakarta"}
+  fmt.Println(p.Name) // Access field
+  ```
+
+#### Materi 3.2: Pointers
+- **Pointer Basics**:
+  ```go
+  x := 10
+  var p *int = &x  // p menyimpan alamat memori x
+  fmt.Println(*p)  // Dereferencing: mengakses nilai dari alamat
+  *p = 20          // Mengubah nilai x melalui pointer
+  ```
+- **Pointer dengan Struct**:
+  ```go
+  func updatePerson(p *Person) {
+      p.Age = p.Age + 1  // Shorthand untuk (*p).Age
+  }
+  ```
+
+#### Materi 3.3: Functions dan Methods
+- **Function Basics**:
+  ```go
+  func add(a, b int) int {
+      return a + b
+  }
+  
+  // Multiple return values
+  func divide(a, b float64) (float64, error) {
+      if b == 0 {
+          return 0, errors.New("pembagian dengan nol")
+      }
+      return a / b, nil
+  }
+  ```
+- **Methods** (functions dengan receiver):
+  ```go
+  type Rectangle struct {
+      Width, Height float64
+  }
+  
+  // Method dengan receiver by value
+  func (r Rectangle) Area() float64 {
+      return r.Width * r.Height
+  }
+  
+  // Method dengan receiver by pointer
+  func (r *Rectangle) Scale(factor float64) {
+      r.Width *= factor
+      r.Height *= factor
+  }
+  ```
+
+### Modul 4: Error Handling dan Testing (Hari 10-12)
+
+#### Materi 4.1: Error Handling
+- **Error Basics**:
+  ```go
+  // Return error
+  if err != nil {
+      return nil, err
+  }
+  
+  // Creating errors
+  errors.New("error message")
+  fmt.Errorf("error: %v", value)
+  ```
+- **Custom Errors**:
+  ```go
+  type ValidationError struct {
+      Field   string
+      Message string
+  }
+  
+  func (e *ValidationError) Error() string {
+      return fmt.Sprintf("%s: %s", e.Field, e.Message)
+  }
+  ```
+
+#### Materi 4.2: Panic dan Recover
+- **Panic** (untuk error fatal):
+  ```go
+  if critical {
+      panic("aplikasi tidak dapat dilanjutkan")
+  }
+  ```
+- **Recover** (menangkap panic):
+  ```go
+  defer func() {
+      if r := recover(); r != nil {
+          fmt.Println("Recovered:", r)
+      }
+  }()
+  ```
+
+#### Materi 4.3: Testing
+- **Unit Testing**:
+  ```go
+  // math.go
+  func Add(a, b int) int {
+      return a + b
+  }
+  
+  // math_test.go
+  func TestAdd(t *testing.T) {
+      result := Add(2, 3)
+      if result != 5 {
+          t.Errorf("Add(2, 3) = %d; want 5", result)
+      }
+  }
+  ```
+- **Running Tests**:
+  ```bash
+  go test
+  go test -v  # Verbose
+  go test -cover  # Test coverage
+  ```
+
+### Modul 5: Concurrency Dasar (Hari 13-15)
+
+#### Materi 5.1: Goroutines
+- **Goroutine Basics**:
+  ```go
+  // Start a goroutine
+  go func() {
+      fmt.Println("Hello from goroutine!")
+  }()
+  
+  // Allow time for goroutine to execute
+  time.Sleep(time.Second)
+  ```
+
+#### Materi 5.2: Channels
+- **Channel Basics**:
+  ```go
+  // Membuat channel
+  ch := make(chan int)
+  
+  // Send value (dalam goroutine)
+  go func() {
+      ch <- 42  // Send value to channel
+  }()
+  
+  // Receive value
+  value := <-ch
+  fmt.Println(value)
+  
+  // Buffered channel
+  bufCh := make(chan int, 3)
+  ```
+
+#### Materi 5.3: Synchronization
+- **WaitGroups**:
+  ```go
+  var wg sync.WaitGroup
+  
+  for i := 0; i < 5; i++ {
+      wg.Add(1)  // Increment counter
+      go func(id int) {
+          defer wg.Done()  // Decrement counter
+          fmt.Printf("Worker %d done\n", id)
+      }(i)
+  }
+  
+  wg.Wait()  // Wait for all goroutines
+  ```
+- **Select Statement**:
+  ```go
+  select {
+  case msg := <-ch1:
+      fmt.Println("Received from ch1:", msg)
+  case msg := <-ch2:
+      fmt.Println("Received from ch2:", msg)
+  case <-time.After(time.Second):
+      fmt.Println("Timeout")
+  }
+  ```
 
 ## Fase 2: Web Development dengan Go (Hari 16-30)
 
-### Hari 16: Web Framework - Gin
-
-**1. Setup Gin:**
-```go
-package main
-
-import (
-    "github.com/gin-gonic/gin"
-    "net/http"
-)
-
-func main() {
-    r := gin.Default()
-    
-    r.GET("/ping", func(c *gin.Context) {
-        c.JSON(http.StatusOK, gin.H{
-            "message": "pong",
-        })
-    })
-    
-    r.Run(":8080") // listen and serve on 0.0.0.0:8080
-}
-```
-
-**2. Route Parameters:**
-```go
-r.GET("/users/:id", func(c *gin.Context) {
-    id := c.Param("id")
-    c.JSON(http.StatusOK, gin.H{
-        "user_id": id,
-    })
-})
-
-// Query parameters /search?name=john
-r.GET("/search", func(c *gin.Context) {
-    name := c.DefaultQuery("name", "Guest")
-    c.JSON(http.StatusOK, gin.H{
-        "name": name,
-    })
-})
-```
-
-**3. Request Binding:**
-```go
-type LoginForm struct {
-    Username string `json:"username" binding:"required"`
-    Password string `json:"password" binding:"required"`
-}
-
-r.POST("/login", func(c *gin.Context) {
-    var form LoginForm
-    if err := c.ShouldBindJSON(&form); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
-    }
-    
-    // Validasi berhasil
-    c.JSON(http.StatusOK, gin.H{
-        "status": "logged in",
-        "username": form.Username,
-    })
-})
-```
-
-**4. Middleware:**
-```go
-// Custom middleware
-func Logger() gin.HandlerFunc {
-    return func(c *gin.Context) {
-        t := time.Now()
-        
-        // Set example variable
-        c.Set("example", "12345")
-        
-        // before request
-        c.Next()
-        
-        // after request
-        latency := time.Since(t)
-        log.Print(latency)
-        
-        // access status we are sending
-        status := c.Writer.Status()
-        log.Println(status)
-    }
-}
-
-func main() {
-    r := gin.New()
-    r.Use(Logger())
-    
-    r.GET("/test", func(c *gin.Context) {
-        example := c.MustGet("example").(string)
-        
-        c.JSON(http.StatusOK, gin.H{
-            "example": example,
-        })
-    })
-    
-    r.Run(":8080")
-}
-```
-
-**Latihan Hari 16:**
-1. Buat REST API dengan Gin framework
-2. Implementasikan routing dengan parameter
-3. Buat validasi input dengan binding
-4. Implementasikan custom middleware untuk logging
-
-### Hari 17: Authentication dan Authorization
-
-**1. Password Hashing:**
-```go
-import "golang.org/x/crypto/bcrypt"
-
-// Hash password
-func HashPassword(password string) (string, error) {
-    bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-    return string(bytes), err
-}
-
-// Check password
-func CheckPasswordHash(password, hash string) bool {
-    err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-    return err == nil
-}
-```
-
-**2. JWT Authentication:**
-```go
-import "github.com/golang-jwt/jwt/v4"
-
-var jwtKey = []byte("secret_key")
-
-type Claims struct {
-    UserID uint
-    jwt.StandardClaims
-}
-
-// Generate token
-func GenerateToken(userID uint) (string, error) {
-    expirationTime := time.Now().Add(24 * time.Hour)
-    claims := &Claims{
-        UserID: userID,
-        StandardClaims: jwt.StandardClaims{
-            ExpiresAt: expirationTime.Unix(),
-        },
-    }
-    
-    token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-    tokenString, err := token.SignedString(jwtKey)
-    
-    return tokenString, err
-}
-
-// Validate token
-func ValidateToken(tokenString string) (*Claims, error) {
-    claims := &Claims{}
-    
-    token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-        return jwtKey, nil
-    })
-    
-    if err != nil {
-        return nil, err
-    }
-    
-    if !token.Valid {
-        return nil, errors.New("invalid token")
-    }
-    
-    return claims, nil
-}
-```
-
-**3. Middleware Auth dengan Gin:**
-```go
-func AuthMiddleware() gin.HandlerFunc {
-    return func(c *gin.Context) {
-        authHeader := c.GetHeader("Authorization")
-        if authHeader == "" {
-            c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "authorization header required"})
-            return
-        }
-        
-        // Ambil token dari header "Bearer <token>"
-        tokenString := strings.Replace(authHeader, "Bearer ", "", 1)
-        
-        claims, err := ValidateToken(tokenString)
-        if err != nil {
-            c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
-            return
-        }
-        
-        // Set user ID to context
-        c.Set("userID", claims.UserID)
-        c.Next()
-    }
-}
-
-// Menggunakan middleware
-func main() {
-    r := gin.Default()
-    
-    public := r.Group("/api")
-    {
-        public.POST("/login", LoginHandler)
-        public.POST("/register", RegisterHandler)
-    }
-    
-    // Protected routes
-    protected := r.Group("/api/protected")
-    protected.Use(AuthMiddleware())
-    {
-        protected.GET("/profile", ProfileHandler)
-    }
-    
-    r.Run(":8080")
-}
-```
-
-**4. RBAC (Role-Based Access Control):**
-```go
-type User struct {
-    ID    uint
-    Email string
-    Role  string // "admin", "user", etc.
-}
-
-func RoleMiddleware(roles ...string) gin.HandlerFunc {
-    return func(c *gin.Context) {
-        userID, exists := c.Get("userID")
-        if !exists {
-            c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-            return
-        }
-        
-        // Get user from database
-        var user User
-        if err := db.First(&user, userID).Error; err != nil {
-            c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "user not found"})
-            return
-        }
-        
-        // Check if user has required role
-        hasRole := false
-        for _, role := range roles {
-            if user.Role == role {
-                hasRole = true
-                break
-            }
-        }
-        
-        if !hasRole {
-            c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "permission denied"})
-            return
-        }
-        
-        c.Next()
-    }
-}
-
-// Penggunaan
-protected.GET("/admin", RoleMiddleware("admin"), AdminHandler)
-```
-
-**Latihan Hari 17:**
-1. Implementasikan sistem autentikasi dengan JWT
-2. Buat middleware untuk validasi token
-3. Implementasikan sistem RBAC sederhana
-4. Buat endpoint login dan register
-
-### Hari 18: Validasi Input
-
-**1. Validasi dengan Struct Tags:**
-```go
-import "github.com/go-playground/validator/v10"
-
-type RegisterRequest struct {
-    Username string `json:"username" binding:"required,min=3,max=20"`
-    Email    string `json:"email" binding:"required,email"`
-    Password string `json:"password" binding:"required,min=8"`
-    Age      int    `json:"age" binding:"required,gte=18"`
-}
-
-func RegisterHandler(c *gin.Context) {
-    var req RegisterRequest
-    if err := c.ShouldBindJSON(&req); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
-    }
-    
-    // Validasi berhasil
-    c.JSON(http.StatusOK, gin.H{"message": "registration success"})
-}
-```
-
-**2. Custom Validation:**
-```go
-type User struct {
-    FirstName string `json:"first_name" binding:"required"`
-    LastName  string `json:"last_name" binding:"required"`
-    Email     string `json:"email" binding:"required,email"`
-    Password  string `json:"password" binding:"required,min=8,validatePassword"`
-}
-
-// Custom validator
-func validatePassword(fl validator.FieldLevel) bool {
-    password := fl.Field().String()
-    
-    // Check for at least one uppercase letter
-    hasUpper := false
-    for _, c := range password {
-        if unicode.IsUpper(c) {
-            hasUpper = true
-            break
-        }
-    }
-    
-    // Check for at least one number
-    hasNumber := false
-    for _, c := range password {
-        if unicode.IsDigit(c) {
-            hasNumber = true
-            break
-        }
-    }
-    
-    return hasUpper && hasNumber
-}
-
-func main() {
-    r := gin.Default()
-    
-    validate := validator.New()
-    validate.RegisterValidation("validatePassword", validatePassword)
-    
-    // ...
-}
-```
-
-**3. Error Handling untuk Validasi:**
-```go
-func CustomErrorHandler() gin.HandlerFunc {
-    return func(c *gin.Context) {
-        c.Next()
-        
-        // Only handle validation errors
-        if len(c.Errors) > 0 {
-            for _, e := range c.Errors {
-                if errs, ok := e.Err.(validator.ValidationErrors); ok {
-                    var errorMessages []string
-                    for _, err := range errs {
-                        errorMessages = append(errorMessages, formatValidationError(err))
-                    }
-                    c.JSON(http.StatusBadRequest, gin.H{"errors": errorMessages})
-                    return
-                }
-            }
-        }
-    }
-}
-
-func formatValidationError(err validator.FieldError) string {
-    field := err.Field()
-    tag := err.Tag()
-    
-    switch tag {
-    case "required":
-        return fmt.Sprintf("%s is required", field)
-    case "email":
-        return fmt.Sprintf("%s must be a valid email", field)
-    case "min":
-        return fmt.Sprintf("%s must be at least %s characters", field, err.Param())
-    // more cases...
-    default:
-        return fmt.Sprintf("%s is invalid", field)
-    }
-}
-```
-
-**4. Sanitasi Input:**
-```go
-import "github.com/microcosm-cc/bluemonday"
-
-func SanitizeHandler(c *gin.Context) {
-    var req struct {
-        Content string `json:"content"`
-    }
-    
-    if err := c.ShouldBindJSON(&req); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
-    }
-    
-    // Sanitize HTML content
-    p := bluemonday.UGCPolicy()
-    sanitized := p.Sanitize(req.Content)
-    
-    c.JSON(http.StatusOK, gin.H{"sanitized": sanitized})
-}
-```
-
-**Latihan Hari 18:**
-1. Implementasikan validasi untuk form register dan login
-2. Buat custom validator untuk format nomor telepon
-3. Implementasikan error handling untuk validasi
-4. Buat sanitasi untuk input user-generated content
-
-### Hari 19: ORM dengan GORM
-
-**1. Setup GORM:**
-```go
-import (
-    "gorm.io/driver/mysql"
-    "gorm.io/gorm"
-)
-
-func main() {
-    dsn := "user:password@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
-    db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-    if err != nil {
-        panic("failed to connect database")
-    }
-    
-    // Auto migrate models
-    db.AutoMigrate(&User{}, &Product{})
-}
-```
-
-**2. Define Models:**
-```go
-type User struct {
-    gorm.Model
-    Name     string
-    Email    string `gorm:"uniqueIndex"`
-    Age      int
-    Password string `gorm:"-"` // Tidak disimpan ke database
-    Products []Product
-}
-
-type Product struct {
-    gorm.Model
-    Name        string
-    Price       float64
-    Description string
-    UserID      uint
-}
-```
-
-**3. CRUD Operations:**
-```go
-// Create
-user := User{Name: "John", Email: "john@example.com", Age: 30}
-result := db.Create(&user)
-if result.Error != nil {
-    // Handle error
-}
-fmt.Println(user.ID) // ID setelah diinsert
-
-// Read
-var user User
-db.First(&user, 1) // find user with id 1
-db.First(&user, "email = ?", "john@example.com") // find user with email
-
-// Update
-db.Model(&user).Updates(User{Name: "New Name", Age: 31})
-// OR update specific fields
-db.Model(&user).Updates(map[string]interface{}{"Name": "New Name", "Age": 31})
-
-// Delete
-db.Delete(&user, 1) // Soft delete user with id 1
-```
-
-**4. Associations dan Query:**
-```go
-// Preloading
-var users []User
-db.Preload("Products").Find(&users)
-
-// Joins
-db.Joins("JOIN products ON products.user_id = users.id").Find(&users)
-
-// Where conditions
-db.Where("age > ?", 20).Find(&users)
-db.Where("name LIKE ?", "%jin%").Find(&users)
-
-// Order & Limit
-db.Order("age desc").Limit(10).Find(&users)
-
-// Group & Having
-type Result struct {
-    Age   int
-    Count int
-}
-var results []Result
-db.Model(&User{}).Select("age, count(*) as count").Group("age").Having("count > ?", 1).Find(&results)
-```
-
-**Latihan Hari 19:**
-1. Setup database dengan GORM
-2. Implementasikan model dengan associations
-3. Buat CRUD operations untuk models
-4. Implementasikan query lanjutan dengan joins dan aggregations
-
-### Hari 20: File Upload dan Serving
-
-**1. File Upload dengan Gin:**
-```go
-func uploadHandler(c *gin.Context) {
-    // Single file
-    file, err := c.FormFile("file")
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
-    }
-    
-    // Set destination path
-    dst := fmt.Sprintf("uploads/%s", file.Filename)
-    
-    // Save file
-    if err := c.SaveUploadedFile(file, dst); err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-        return
-    }
-    
-    c.JSON(http.StatusOK, gin.H{"filepath": dst})
-}
-```
-
-**2. Multiple Files Upload:**
-```go
-func multiUploadHandler(c *gin.Context) {
-    form, err := c.MultipartForm()
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
-    }
-    
-    files := form.File["files"]
-    
-    var paths []string
-    for _, file := range files {
-        dst := fmt.Sprintf("uploads/%s", file.Filename)
-        if err := c.SaveUploadedFile(file, dst); err != nil {
-            c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-            return
-        }
-        paths = append(paths, dst)
-    }
-    
-    c.JSON(http.StatusOK, gin.H{"filepaths": paths})
-}
-```
-
-**3. Serving Static Files:**
-```go
-func main() {
-    r := gin.Default()
-    
-    // Serve files from ./uploads directory
-    r.Static("/files", "./uploads")
-    
-    // OR serve a single file
-    r.StaticFile("/favicon.ico", "./resources/favicon.ico")
-    
-    r.Run(":8080")
-}
-```
-
-**4. File Validation:**
-```go
-func uploadHandler(c *gin.Context) {
-    file, err := c.FormFile("file")
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
-    }
-    
-    // Validate file size
-    if file.Size > 10*1024*1024 { // 10MB
-        c.JSON(http.StatusBadRequest, gin.H{"error": "file too large"})
-        return
-    }
-    
-    // Validate file type
-    ext := filepath.Ext(file.Filename)
-    allowedExts := map[string]bool{".jpg": true, ".jpeg": true, ".png": true}
-    if !allowedExts[strings.ToLower(ext)] {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "invalid file type"})
-        return
-    }
-    
-    // Generate unique filename
-    filename := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
-    dst := filepath.Join("uploads", filename)
-    
-    if err := c.SaveUploadedFile(file, dst); err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-        return
-    }
-    
-    c.JSON(http.StatusOK, gin.H{"filepath": dst})
-}
-```
-
-**Latihan Hari 20:**
-1. Implementasikan endpoint untuk file upload
-2. Buat validasi untuk ukuran dan tipe file
-3. Implementasikan multiple files upload
-4. Buat sistem untuk serving static files
-
-### Hari 21: API Documentation dengan Swagger
-
-**1. Setup Swagger:**
-```go
-// main.go
-package main
-
-import (
-    "github.com/gin-gonic/gin"
-    swaggerFiles "github.com/swaggo/files"
-    ginSwagger "github.com/swaggo/gin-swagger"
-    _ "myapp/docs" // Import docs
-)
-
-// @title API Documentation
-// @version 1.0
-// @description This is a sample API server.
-// @host localhost:8080
-// @BasePath /api
-func main() {
-    r := gin.Default()
-    
-    // Swagger documentation
-    r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-    
-    // API routes
-    api := r.Group("/api")
-    {
-        api.GET("/users", getUsers)
-    }
-    
-    r.Run(":8080")
-}
-```
-
-**2. Document API Endpoints:**
-```go
-// @Summary Get all users
-// @Description Get a list of all users
-// @Tags users
-// @Accept json
-// @Produce json
-// @Success 200 {array} User
-// @Failure 500 {object} ErrorResponse
-// @Router /users [get]
-func getUsers(c *gin.Context) {
-    var users []User
-    if err := db.Find(&users).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-        return
-    }
-    
-    c.JSON(http.StatusOK, users)
-}
-```
-
-**3. Document Models:**
-```go
-// @Description User information
-type User struct {
-    ID        uint      `json:"id" gorm:"primaryKey"`
-    Name      string    `json:"name" binding:"required"`
-    Email     string    `json:"email" binding:"required,email"`
-    CreatedAt time.Time `json:"created_at"`
-}
-
-// @Description Error response
-type ErrorResponse struct {
-    Error string `json:"error"`
-}
-```
-
-**4. Document Authentication:**
-```go
-// @Summary Login user
-// @Description Authenticate a user and get token
-// @Tags auth
-// @Accept json
-// @Produce json
-// @Param loginInput body LoginRequest true "Login Information"
-// @Success 200 {object} TokenResponse
-// @Failure 400 {object} ErrorResponse
-// @Failure 401 {object} ErrorResponse
-// @Router /login [post]
-func login(c *gin.Context) {
-    // ...
-}
-
-// @Description Login request
-type LoginRequest struct {
-    Email    string `json:"email" binding:"required,email"`
-    Password string `json:"password" binding:"required"`
-}
-
-// @Description Token response
-type TokenResponse struct {
-    Token string `json:"token"`
-}
-```
-
-**Latihan Hari 21:**
-1. Setup Swagger untuk API documentation
-2. Document semua endpoints yang sudah dibuat
-3. Document models dan responses
-4. Jalankan dan test Swagger UI
-
-### Hari 22: Rate Limiting dan Caching
-
-**1. Rate Limiting dengan Redis:**
-```go
-import (
-    "github.com/gin-gonic/gin"
-    "github.com/go-redis/redis/v8"
-    "github.com/go-redis/redis_rate/v9"
-    "golang.org/x/net/context"
-)
-
-func RateLimiterMiddleware(rdb *redis.Client) gin.HandlerFunc {
-    limiter := redis_rate.NewLimiter(rdb)
-    
-    return func(c *gin.Context) {
-        // Get client IP
-        key := c.ClientIP()
-        
-        // Create context
-        ctx := context.Background()
-        
-        // Allow 10 requests per minute
-        res, err := limiter.Allow(ctx, key, redis_rate.PerMinute(10))
-        if err != nil {
-            c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-                "error": "rate limitter error",
-            })
-            return
-        }
-        
-        // Set RateLimit headers
-        c.Header("X-RateLimit-Limit", "10")
-        c.Header("X-RateLimit-Remaining", strconv.Itoa(res.Remaining))
-        
-        if res.Allowed == 0 {
-            c.AbortWithStatusJSON(http.StatusTooManyRequests, gin.H{
-                "error": "too many requests",
-            })
-            return
-        }
-        
-        c.Next()
-    }
-}
-```
-
-**2. In-Memory Caching dengan go-cache:**
-```go
-import (
-    "github.com/gin-gonic/gin"
-    "github.com/patrickmn/go-cache"
-    "time"
-)
-
-var memoryCache *cache.Cache
-
-func init() {
-    // Create a cache with 5 minute default expiration and 10 minute cleanup interval
-    memoryCache = cache.New(5*time.Minute, 10*time.Minute)
-}
-
-func CacheMiddleware() gin.HandlerFunc {
-    return func(c *gin.Context) {
-        // Skip cache for non-GET methods
-        if c.Request.Method != "GET" {
-            c.Next()
-            return
-        }
-        
-        // Generate cache key from full request URL
-        key := c.Request.URL.String()
-        
-        // Try to get cached response
-        if response, found := memoryCache.Get(key); found {
-            c.JSON(http.StatusOK, response)
-            c.Abort()
-            return
-        }
-        
-        // Store the response data
-        c.Writer = &cacheWriter{ResponseWriter: c.Writer, body: &bytes.Buffer{}}
-        
-        c.Next()
-        
-        // Cache the response
-        if c.Writer.Status
+### Modul 6: Dasar Web Development (Hari 16-18)
+
+#### Materi 6.1: HTTP Server Dasar
+- **Server Sederhana**:
+  ```go
+  package main
+  
+  import (
+      "fmt"
+      "net/http"
+  )
+  
+  func handler(w http.ResponseWriter, r *http.Request) {
+      fmt.Fprintf(w, "Hello, %s!", r.URL.Path[1:])
+  }
+  
+  func main() {
+      http.HandleFunc("/", handler)
+      http.ListenAndServe(":8080", nil)
+  }
+  ```
+- **HTTP Methods**:
+  ```go
+  func handler(w http.ResponseWriter, r *http.Request) {
+      if r.Method == "GET" {
+          // Handle GET
+      } else if r.Method == "POST" {
+          // Handle POST
+      }
+  }
+  ```
+
+#### Materi 6.2: Routing
+- **Basic Routing**:
+  ```go
+  http.HandleFunc("/", homeHandler)
+  http.HandleFunc("/about", aboutHandler)
+  http.HandleFunc("/contact", contactHandler)
+  ```
+- **URL Parameters**:
+  ```go
+  http.HandleFunc("/users/", func(w http.ResponseWriter, r *http.Request) {
+      id := strings.TrimPrefix(r.URL.Path, "/users/")
+      fmt.Fprintf(w, "User ID: %s", id)
+  })
+  ```
+
+#### Materi 6.3: Serving Static Files
+- **Static File Server**:
+  ```go
+  // Serve files from ./static directory
+  fs := http.FileServer(http.Dir("./static"))
+  http.Handle("/static/", http.StripPrefix("/static/", fs))
+  ```
+
+### Modul 7: REST API Development (Hari 19-21)
+
+#### Materi 7.1: JSON Handling
+- **JSON Marshalling/Unmarshalling**:
+  ```go
+  // Struct to JSON
+  type Person struct {
+      Name  string `json:"name"`
+      Age   int    `json:"age"`
+      Email string `json:"email,omitempty"`
+  }
+  
+  p := Person{Name: "John", Age: 30}
+  jsonData, err := json.Marshal(p)
+  
+  // JSON to Struct
+  var newPerson Person
+  err = json.Unmarshal(jsonData, &newPerson)
+  ```
+- **JSON Response**:
+  ```go
+  func userHandler(w http.ResponseWriter, r *http.Request) {
+      user := Person{Name: "John", Age: 30}
+      
+      w.Header().Set("Content-Type", "application/json")
+      json.NewEncoder(w).Encode(user)
+  }
+  ```
+
+#### Materi 7.2: Building REST API
+- **API Endpoints**:
+  ```go
+  // GET /users
+  http.HandleFunc("/users", func(w http.ResponseWriter, r *http.Request) {
+      if r.Method != "GET" {
+          http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+          return
+      }
+      
+      // Return user list
+      users := []Person{
+          {Name: "John", Age: 30},
+          {Name: "Jane", Age: 25},
+      }
+      
+      w.Header().Set("Content-Type", "application/json")
+      json.NewEncoder(w).Encode(users)
+  })
+  ```
+- **Request Parsing**:
+  ```go
+  // POST /users
+  http.HandleFunc("/users", func(w http.ResponseWriter, r *http.Request) {
+      if r.Method != "POST" {
+          http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+          return
+      }
+      
+      var newUser Person
+      err := json.NewDecoder(r.Body).Decode(&newUser)
+      if err != nil {
+          http.Error(w, err.Error(), http.StatusBadRequest)
+          return
+      }
+      
+      // Process newUser...
+      w.WriteHeader(http.StatusCreated)
+  })
+  ```
+
+#### Materi 7.3: HTTP Middleware
+- **Middleware Pattern**:
+  ```go
+  func loggingMiddleware(next http.Handler) http.Handler {
+      return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+          // Log before request
+          fmt.Printf("Request: %s %s\n", r.Method, r.URL.Path)
+          
+          // Call the next handler
+          next.ServeHTTP(w, r)
+          
+          // Log after request
+          fmt.Println("Request completed")
+      })
+  }
+  
+  // Usage
+  handler := http.HandlerFunc(myHandler)
+  http.Handle("/", loggingMiddleware(handler))
+  ```
+
+### Modul 8: Database Interaction (Hari 22-24)
+
+#### Materi 8.1: SQL Database Connection
+- **Connecting to Database**:
+  ```go
+  import (
+      "database/sql"
+      _ "github.com/go-sql-driver/mysql"
+  )
+  
+  func main() {
+      db, err := sql.Open("mysql", "user:password@tcp(127.0.0.1:3306)/dbname")
+      if err != nil {
+          log.Fatal(err)
+      }
+      defer db.Close()
+      
+      // Test connection
+      err = db.Ping()
+      if err != nil {
+          log.Fatal(err)
+      }
+  }
+  ```
+
+#### Materi 8.2: CRUD Operations
+- **Query dan Execute**:
+  ```go
+  // SELECT
+  rows, err := db.Query("SELECT id, name FROM users WHERE age > ?", 18)
+  if err != nil {
+      log.Fatal(err)
+  }
+  defer rows.Close()
+  
+  for rows.Next() {
+      var id int
+      var name string
+      err = rows.Scan(&id, &name)
+      // Process data...
+  }
+  
+  // INSERT
+  result, err := db.Exec("INSERT INTO users (name, age) VALUES (?, ?)", "John", 30)
+  if err != nil {
+      log.Fatal(err)
+  }
+  
+  id, err := result.LastInsertId()
+  ```
+- **Prepared Statements**:
+  ```go
+  stmt, err := db.Prepare("INSERT INTO users(name, age) VALUES(?, ?)")
+  if err != nil {
+      log.Fatal(err)
+  }
+  defer stmt.Close()
+  
+  for _, user := range users {
+      _, err := stmt.Exec(user.Name, user.Age)
+      // Handle error...
+  }
+  ```
+
+#### Materi 8.3: Database Migrations
+- **Migration Tool**: golang-migrate
+  ```bash
+  # Create migration
+  migrate create -ext sql -dir migrations -seq create_users_table
+  
+  # Run migrations
+  migrate -database "mysql://user:password@tcp(localhost:3306)/dbname" -path migrations up
+  ```
+- **Sample Migration**:
+  ```sql
+  -- migrations/000001_create_users_table.up.sql
+  CREATE TABLE users (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      age INT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+  
+  -- migrations/000001_create_users_table.down.sql
+  DROP TABLE users;
+  ```
+
+### Modul 9: Validasi dan Autentikasi (Hari 25-27)
+
+#### Materi 9.1: Input Validation
+- **Validasi Dasar**:
+  ```go
+  func validateUser(user User) error {
+      if user.Name == "" {
+          return errors.New("name cannot be empty")
+      }
+      if user.Age < 0 || user.Age > 150 {
+          return errors.New("invalid age")
+      }
+      return nil
+  }
+  ```
+- **Validasi dengan Library**: validator
+  ```go
+  import "github.com/go-playground/validator/v10"
+  
+  type User struct {
+      Name  string `validate:"required,min=3,max=50"`
+      Email string `validate:"required,email"`
+      Age   int    `validate:"gte=0,lte=130"`
+  }
+  
+  func validateUser(user User) error {
+      validate := validator.New()
+      return validate.Struct(user)
+  }
+  ```
+
+#### Materi 9.2: Password Hashing
+- **Bcrypt**:
+  ```go
+  import "golang.org/x/crypto/bcrypt"
+  
+  // Hash password
+  hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+  if err != nil {
+      return err
+  }
+  
+  // Verify password
+  err = bcrypt.CompareHashAndPassword(hashedPassword, []byte(inputPassword))
+  if err == nil {
+      // Password correct
+  } else {
+      // Password incorrect
+  }
+  ```
+
+#### Materi 9.3: JWT Authentication
+- **JWT Token Generation**:
+  ```go
+  import "github.com/golang-jwt/jwt/v4"
+  
+  // Create token
+  claims := jwt.MapClaims{
+      "user_id": 123,
+      "exp":     time.Now().Add(time.Hour * 24).Unix(),
+  }
+  token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+  tokenString, err := token.SignedString([]byte("your-secret-key"))
+  
+  // Verify token
+  token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+      return []byte("your-secret-key"), nil
+  })
+  
+  if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+      userId := claims["user_id"].(float64)
+      // Use userId...
+  }
+  ```
+- **JWT Middleware**:
+  ```go
+  func jwtMiddleware(next http.Handler) http.Handler {
+      return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+          tokenString := r.Header.Get("Authorization")
+          // Verify token...
+          
+          if !tokenValid {
+              http.Error(w, "Unauthorized", http.StatusUnauthorized)
+              return
+          }
+          
+          next.ServeHTTP(w, r)
+      })
+  }
+  ```
+
+### Modul 10: Frameworks dan Toolkits (Hari 28-30)
+
+#### Materi 10.1: Gin Framework
+- **Setup Dasar**:
+  ```go
+  import "github.com/gin-gonic/gin"
+  
+  func main() {
+      r := gin.Default() // Includes logger and recovery middleware
+      
+      r.GET("/ping", func(c *gin.Context) {
+          c.JSON(200, gin.H{
+              "message": "pong",
+          })
+      })
+      
+      r.Run(":8080")
+  }
+  ```
+- **Route Parameters**:
+  ```go
+  r.GET("/users/:id", func(c *gin.Context) {
+      id := c.Param("id")
+      c.JSON(200, gin.H{"id": id})
+  })
+  ```
+- **Query Parameters**:
+  ```go
+  r.GET("/users", func(c *gin.Context) {
+      name := c.DefaultQuery("name", "Guest")
+      c.String(200, "Hello %s", name)
+  })
+  ```
+
+#### Materi 10.2: Echo Framework
+- **Setup Dasar**:
+  ```go
+  import "github.com/labstack/echo/v4"
+  
+  func main() {
+      e := echo.New()
+      
+      e.GET("/", func(c echo.Context) error {
+          return c.String(http.StatusOK, "Hello, World!")
+      })
+      
+      e.Logger.Fatal(e.Start(":8080"))
+  }
+  ```
+- **Request Binding**:
+  ```go
+  type User struct {
+      Name  string `json:"name" form:"name"`
+      Email string `json:"email" form:"email"`
+  }
+  
+  e.POST("/users", func(c echo.Context) error {
+      u := new(User)
+      if err := c.Bind(u); err != nil {
+          return err
+      }
+      return c.JSON(http.StatusCreated, u)
+  })
+  ```
+
+#### Materi 10.3: Fiber Framework
+- **Setup Dasar**:
+  ```go
+  import "github.com/gofiber/fiber/v2"
+  
+  func main() {
+      app := fiber.New()
+      
+      app.Get("/", func(c *fiber.Ctx) error {
+          return c.SendString("Hello, World!")
+      })
+      
+      app.Listen(":8080")
+  }
+  ```
+- **Static Files**:
+  ```go
+  app.Static("/", "./public")
+  ```
+- **Grouping Routes**:
+  ```go
+  api := app.Group("/api")
+  
+  api.Get("/users", getUsers)
+  api.Post("/users", createUser)
+  ```
+
+## Fase 3: Backend Development Lanjutan (Hari 31-45)
+
+### Modul 11: Authentication Lanjutan (Hari 31-33)
+
+#### Materi 11.1: OAuth 2.0
+- **Implementasi OAuth Client**:
+  ```go
+  import "golang.org/x/oauth2"
+  
+  // Setup OAuth config
+  conf := &oauth2.Config{
+      ClientID:     "YOUR_CLIENT_ID",
+      ClientSecret: "YOUR_CLIENT_SECRET",
+      RedirectURL:  "http://localhost:8080/callback",
+      Scopes:       []string{"profile", "email"},
+      Endpoint: oauth2.Endpoint{
+          AuthURL:  "https://provider.com/o/oauth2/auth",
+          TokenURL: "https://provider.com/o/oauth2/token",
+      },
+  }
+  
+  // Generate auth URL
+  url := conf.AuthCodeURL("state", oauth2.AccessTypeOffline)
+  
+  // Exchange code for token
+  token, err := conf.Exchange(ctx, code)
+  ```
+
+#### Materi 11.2: Multi-Factor Authentication (MFA)
+- **TOTP Implementation** (Time-based One-Time Password):
+  ```go
+  import "github.com/pquerna/otp/totp"
+  
+  // Generate new TOTP key
+  key, err := totp.Generate(totp.GenerateOpts{
+      Issuer:      "YourApp",
+      AccountName: "user@example.com",
+  })
+  
+  // Get provisioning URI for QR code
+  uri := key.URL()
+  
+  // Validate TOTP
+  valid := totp.Validate(userInputCode, key.Secret())
+  if valid {
+      // Code is valid
+  }
+  ```
+
+#### Materi 11.3: Role-Based Access Control (RBAC)
+- **RBAC Model**:
+  ```go
+  type Role string
+  
+  const (
+      RoleAdmin  Role = "admin"
+      RoleEditor Role = "editor"
+      RoleViewer Role = "viewer"
+  )
+  
+  type User struct {
+      ID    int
+      Name  string
+      Roles []Role
+  }
+  
+  func hasRole(user User, role Role) bool {
+      for _, r := range user.Roles {
+          if r == role {
+              return true
+          }
+      }
+      return false
+  }
+  ```
+- **RBAC Middleware**:
+  ```go
+  func roleMiddleware(role Role) gin.HandlerFunc {
+      return func(c *gin.Context) {
+          // Get user from context after authentication
+          user := getUserFromContext(c)
+          
+          if !hasRole(user, role) {
+              c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+                  "error": "insufficient permissions",
+              })
+              return
+          }
+          
+          c.Next()
+      }
+  }
+  
+  // Usage
+  r.GET("/admin", authMiddleware(), roleMiddleware(RoleAdmin), adminHandler)
+  ```
+
+### Modul 12: Security Best Practices (Hari 34-36)
+
+#### Materi 12.1: Input Sanitization
+- **HTML Escaping**:
+  ```go
+  import "html/template"
+  
+  // Automatic escaping with html/template
+  t, err := template.New("webpage").Parse(`<div>{{.UserInput}}</div>`)
+  
+  // Manual escaping
+  safeInput := template.HTMLEscapeString(userInput)
+  ```
+- **SQL Injection Prevention**:
+  ```go
+  // JANGAN:
+  db.Exec("SELECT * FROM users WHERE username = '" + username + "'")
+  
+  // BENAR:
+  db.Exec("SELECT * FROM users WHERE username = ?", username)
+  ```
+
+#### Materi 12.2: CSRF Protection
+- **CSRF Token Generation**:
+  ```go
+  import "github.com/gorilla/csrf"
+  
+  // Setup CSRF protection middleware
+  csrfMiddleware := csrf.Protect(
+      []byte("32-byte-long-auth-key"),
+      csrf.Secure(true),
+      csrf.SameSite(csrf.SameSiteLaxMode),
+  )
+  
+  // In handler
+  token := csrf.Token(r)
+  // Include token in form or send with AJAX
+  ```
+- **Verifying CSRF Token**:
+  ```html
+  <form method="POST" action="/api/users">
+      <input type="hidden" name="gorilla.csrf.Token" value="{{.CSRFToken}}">
+      <!-- Form fields -->
+  </form>
+  ```
+
+#### Materi 12.3: Security Headers
+- **Secure Headers Middleware**:
+  ```go
+  func securityHeadersMiddleware(next http.Handler) http.Handler {
+      return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+          // Add security headers
+          w.Header().Set("X-XSS-Protection", "1; mode=block")
+          w.Header().Set("X-Content-Type-Options", "nosniff")
+          w.Header().Set("X-Frame-Options", "DENY")
+          w.Header().Set("Content-Security-Policy", "default-src 'self'")
+          w.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
+          w.Header().Set("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+          
+          next.ServeHTTP(w, r)
+      })
+  }
+  ```
+
+### Modul 13: Caching dan Performance (Hari 37-39)
+
+#### Materi 13.1: Redis Integration
+- **Setup Redis Client**:
+  ```go
+  import "github.com/go-redis/redis/v8"
+  
+  rdb := redis.NewClient(&redis.Options{
+      Addr:     "localhost:6379",
+      Password: "", // no password set
+      DB:       0,  // use default DB
+  })
+  
+  // Test connection
+  ctx := context.Background()
+  _, err := rdb.Ping(ctx).Result()
+  ```
+- **Basic Operations**:
+  ```go
+  // Set key with expiration
+  err := rdb.Set(ctx, "key", "value", 1*time.Hour).Err()
+  
+  // Get key
+  val, err := rdb.Get(ctx, "key").Result()
+  if err == redis.Nil {
+      // Key does not exist
+  } else if err != nil {
+      // Error
+  }
+  
+  // Delete key
+  err := rdb.Del(ctx, "key").Err()
+  ```
+
+#### Materi 13.2: Caching Strategies
+- **Cache-Aside Pattern**:
+  ```go
+  func getUser(id string) (User, error) {
+      // Try to get from cache first
+      cacheKey := "user:" + id
+      userData, err := rdb.Get(ctx, cacheKey).Result()
+      
+      if err == nil {
+          // Cache hit
+          var user User
+          err = json.Unmarshal([]byte(userData), &user)
+          return user, err
+      }
+      
+      // Cache miss, get from database
+      user, err := getUserFromDB(id)
+      if err != nil {
+          return User{}, err
+      }
+      
+      // Update cache
+      userJSON, _ := json.Marshal(user)
+      rdb.Set(ctx, cacheKey, userJSON, 10*time.Minute)
+      
+      return user, nil
+  }
+  ```
+- **Cache Invalidation**:
+  ```go
+  func updateUser(id string, userData User) error {
+      // Update in database
+      err := updateUserInDB(id, userData)
+      if err != nil {
+          return err
+      }
+      
+      // Invalidate cache
+      cacheKey := "user:" + id
+      rdb.Del(ctx, cacheKey)
+      
+      return nil
+  }
+  ```
+
+#### Materi 13.3: Performance Optimization
+- **Profiling**:
+  ```go
+  import _ "net/http/pprof"
+  
+  // Enable profiling endpoints
+  go func() {
+      log.Println(http.ListenAndServe("localhost:6060", nil))
+  }()
+  ```
+- **Connection Pooling**:
+  ```go
+  // Database connection pool
+  db, err := sql.Open("mysql", "user:password@tcp(127.0.0.1:3306)/dbname")
+  if err != nil {
+      log.Fatal(err)
+  }
+  
+  // Set connection pool parameters
+  db.SetMaxOpenConns(25)
+  db.SetMaxIdleConns(25)
+  db.SetConnMaxLifetime(5 * time.Minute)
+  ```
+- **Gzip Compression**:
+  ```go
+  import "github.com/gin-contrib/gzip"
+  
+  // In Gin
+  r := gin.Default()
+  r.Use(gzip.Gzip(gzip.DefaultCompression))
+  ```
+
+### Modul 14: Logging dan Monitoring (Hari 40-42)
+
+#### Materi 14.1: Structured Logging
+- **Zap Logger**:
+  ```go
+  import "go.uber.org/zap"
+  
+  // Create logger
+  logger, err := zap.NewProduction()
+  if err != nil {
+      // Handle error
+  }
+  defer logger.Sync()
+  
+  // Use logger
+  logger.Info("Request processed",
+      zap.String("method", "GET"),
+      zap.String("path", "/users"),
+      zap.Int("statusCode", 200),
+      zap.Duration("latency", time.Millisecond*53),
+  )
+  ```
+- **Zerolog**:
+  ```go
+  import "github.com/rs/zerolog"
+  import "github.com/rs/zerolog/log"
+  
+  // Configure global logger
+  zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+  log.Logger = log.With().Caller().Logger()
+  
+  // Logging
+  log.Info().
+      Str("method", "GET").
+      Str("path", "/users").
+      Int("statusCode", 200).
+      Dur("latency", time.Millisecond*53).
+      Msg("Request processed")
+  ```
+
+#### Materi 14.2: Log Management
+- **Log Rotation dengan lumberjack**:
+  ```go
+  import "gopkg.in/natefinch/lumberjack.v2"
+  
+  // Configure log rotation
+  logWriter := &lumberjack.Logger{
+      Filename:   "/var/log/myapp/app.log",
+      MaxSize:    100, // megabytes
+      MaxBackups: 3,
+      MaxAge:     28,   // days
+      Compress:   true, // compress rotated files
+  }
+  
+  // Use with zap
+  logger := zap.New(
+      zapcore.NewCore(
+          zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig()),
+          zapcore.AddSync(logWriter),
+          zap.InfoLevel,
+      ),
+  )
+  ```
+- **Centralized Logging**:
+  ```go
+  // Fluentd logging example
+  import "github.com/fluent/fluent-logger-golang/fluent"
+  
+  logger, err := fluent.New(fluent.Config{
+      FluentHost: "localhost",
+      FluentPort: 24224,
+      TagPrefix:  "myapp",
+  })
+  if err != nil {
+      // Handle error
+  }
+  
+  // Log message
+  logger.Post("access", map[string]interface{}{
+      "method":     "GET",
+      "path":       "/users",
+      "statusCode": 200,
+      "latency":    53, // milliseconds
+  })
+  ```
+
+#### Materi 14.3: Monitoring dengan Prometheus
+- **Setup Prometheus Metrics**:
+  ```go
+  import (
+      "github.com/prometheus/client_golang/prometheus"
+      "github.com/prometheus/client_golang/prometheus/promhttp"
+  )
+  
+  var (
+      httpRequestsTotal = prometheus.NewCounterVec(
+          prometheus.CounterOpts{
+              Name: "http_requests_total",
+              Help: "Total number of HTTP requests",
+          },
+          []string{"method", "endpoint", "status"},
+      )
+      
+      httpRequestDuration = prometheus.NewHistogramVec(
+          prometheus.HistogramOpts{
+              Name:    "http_request_duration_seconds",
+              Help:    "HTTP request duration in seconds",
+              Buckets: prometheus.DefBuckets,
+          },
+          []string{"method", "endpoint"},
+      )
+  )
+  
+  func init() {
+      // Register metrics
+      prometheus.MustRegister(httpRequestsTotal)
+      prometheus.MustRegister(httpRequestDuration)
+  }
+  
+  func main() {
+      // Expose metrics endpoint
+      http.Handle("/metrics", promhttp.Handler())
+      
+      // Start server
+      http.ListenAndServe(":8080", nil)
+  }
+  ```
+- **Middleware for Metrics**:
+  ```go
+  func metricsMiddleware(next http.Handler) http.Handler {
+      return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+          start := time.Now()
+          
+          // Wrap ResponseWriter to capture status code
+          ww := NewResponseWriter(w)
+          
+          // Call next handler
+          next.ServeHTTP(ww, r)
+          
+          // Record metrics after request is processed
+          duration := time.Since(start).Seconds()
+          httpRequestDuration.With(prometheus.Labels{
+              "method":   r.Method,
+              "endpoint": r.URL.Path,
+          }).Observe(duration)
+          
+          httpRequestsTotal.With(prometheus.Labels{
+              "method":   r.Method,
+              "endpoint": r.URL.Path,
+              "status":   fmt.Sprintf("%d", ww.Status()),
+          }).Inc()
+      })
+  }
+  ```
+
+### Modul 15: Testing Lanjutan (Hari 43-45)
+
+#### Materi 15.1: Integration Testing
+- **HTTP Server Testing**:
+  ```go
+  func TestUserAPI(t *testing.T) {
+      // Setup test server
+      router := setupRouter()
+      ts := httptest.NewServer(router)
+      defer ts.Close()
+      
+      // Create HTTP client
+      client := &http.Client{}
+      
+      // Test GET request
+      resp, err := client.Get(ts.URL + "/api/users")
+      if err != nil {
+          t.Fatal(err)
+      }
+      defer resp.Body.Close()
+      
+      // Check status code
+      if resp.StatusCode != http.StatusOK {
+          t.Errorf("Expected status OK; got %v", resp.Status)
+      }
+      
+      // Check response body
+      var users []User
+      if err := json.NewDecoder(resp.Body).Decode(&users); err != nil {
+          t.Fatal(err)
+      }
+      
+      if len(users) == 0 {
+          t.Error("Expected users, got empty array")
+      }
+  }
+  ```
+- **Database Testing**:
+  ```go
+  func TestUserRepository(t *testing.T) {
+      // Setup test database
+      db, err := setupTestDB()
+      if err != nil {
+          t.Fatal(err)
+      }
+      
+      // Create repository
+      repo := NewUserRepository(db)
+      
+      // Test user creation
+      user := User{Name: "Test User", Email: "test@example.com"}
+      id, err := repo.Create(user)
+      if err != nil {
+          t.Errorf("Failed to create user: %v", err)
+      }
+      
+      // Test user retrieval
+      retrieved, err := repo.GetByID(id)
+      if err != nil {
+          t.Errorf("Failed to get user: %v", err)
+      }
+      
+      if retrieved.Name != user.Name {
+          t.Errorf("Expected name %s, got %s", user.Name, retrieved.Name)
+      }
+  }
+  ```
+
+#### Materi 15.2: Mocking
+- **Mocking dengan Testify**:
+  ```go
+  import "github.com/stretchr/testify/mock"
+  
+  // Interface to mock
+  type UserService interface {
+      GetUser(id string) (User, error)
+      CreateUser(user User) error
+  }
+  
+  // Mock implementation
+  type MockUserService struct {
+      mock.Mock
+  }
+  
+  func (m *MockUserService) GetUser(id string) (User, error) {
+      args := m.Called(id)
+      return args.Get(0).(User), args.Error(1)
+  }
+  
+  func (m *MockUserService) CreateUser(user User) error {
+      args := m.Called(user)
+      return args.Error(0)
+  }
+  
+  // Test with mock
+  func TestUserHandler(t *testing.T) {
+      mockService := new(MockUserService)
+      
+      // Setup expectations
+      mockUser := User{ID: "123", Name: "Test User"}
+      mockService.On("GetUser", "123").Return(mockUser, nil)
+      
+      // Create handler with mock
+      handler := NewUserHandler(mockService)
+      
+      // Create test request
+      req, _ := http.NewRequest("GET", "/users/123", nil)
+      rr := httptest.NewRecorder()
+      
+      // Call handler
+      handler.ServeHTTP(rr, req)
+      
+      // Assert status code
+      if rr.Code != http.StatusOK {
+          t.Errorf("Expected status %d; got %d", http.StatusOK, rr.Code)
+      }
+      
+      // Verify mock was called as expected
+      mockService.AssertExpectations(t)
+  }
+  ```
+- **Mocking HTTP Responses** dengan httptest:
+  ```go
+  func TestFetchExternalAPI(t *testing.T) {
+      // Create mock server
+      server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+          // Check request
+          if r.URL.Path != "/api/data" {
+              t.Errorf("Expected request to '/api/data', got '%s'", r.URL.Path)
+          }
+          
+          // Return mock response
+          w.Header().Set("Content-Type", "application/json")
+          w.WriteHeader(http.StatusOK)
+          json.NewEncoder(w).Encode(map[string]string{"status": "success"})
+      }))
+      defer server.Close()
+      
+      // Use mock server URL in your client
+      client := NewAPIClient(server.URL)
+      
+      // Test your client
+      response, err := client.FetchData()
+      if err != nil {
+          t.Fatalf("Expected no error, got %v", err)
+      }
+      
+      if response.Status != "success" {
+          t.Errorf("Expected status 'success', got '%s'", response.Status)
+      }
+  }
+  ```
+
+#### Materi 15.3: Benchmark Testing
+- **Basic Benchmarking**:
+  ```go
+  func BenchmarkStringsJoin(b *testing.B) {
+      strs := []string{"apple", "banana", "cherry", "date", "elderberry"}
+      b.ResetTimer()
+      
+      for i := 0; i < b.N; i++ {
+          strings.Join(strs, ", ")
+      }
+  }
+  
+  func BenchmarkStringsConcatenation(b *testing.B) {
+      strs := []string{"apple", "banana", "cherry", "date", "elderberry"}
+      b.ResetTimer()
+      
+      for i := 0; i < b.N; i++ {
+          var result string
+          for j, s := range strs {
+              if j > 0 {
+                  result += ", "
+              }
+              result += s
+          }
+      }
+  }
+  ```
+- **Running Benchmarks**:
+  ```bash
+  go test -bench=. -benchmem
+  ```
+- **Sub-Benchmarks**:
+  ```go
+  func BenchmarkJSON(b *testing.B) {
+      data := getTestData()
+      
+      b.Run("Marshal", func(b *testing.B) {
+          for i := 0; i < b.N; i++ {
+              json.Marshal(data)
+          }
+      })
+      
+      bytes, _ := json.Marshal(data)
+      b.Run("Unmarshal", func(b *testing.B) {
+          for i := 0; i < b.N; i++ {
+              var result interface{}
+              json.Unmarshal(bytes, &result)
+          }
+      })
+  }
+  ```
+
+## Fase 4: Microservices dan Deployment (Hari 46-60)
+
+### Modul 16: Microservices Architecture (Hari 46-48)
+
+#### Materi 16.1: Microservices Basics
+- **Monolith vs Microservices**:
+  - Monolith: Aplikasi tunggal, tightly coupled
+  - Microservices: Layanan kecil, loosely coupled, masing-masing memiliki tanggung jawab tunggal
+
+- **Desain Microservice**:
+  ```
+  ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+  │   User API  │     │  Order API  │     │ Payment API │
+  │  Service    │────>│  Service    │────>│  Service    │
+  └─────────────┘     └─────────────┘     └─────────────┘
+         │                   │                   │
+         ▼                   ▼                   ▼
+  ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+  │  User DB    │     │  Order DB   │     │ Payment DB  │
+  └─────────────┘     └─────────────┘     └─────────────┘
+  ```
+
+#### Materi 16.2: Service Communication
+- **REST Communication**:
+  ```go
+  type OrderService struct {
+      paymentAPIURL string
+      httpClient    *http.Client
+  }
+  
+  func (s *OrderService) ProcessOrder(order Order) error {
+      // Create payment request
+      payment := PaymentRequest{
+          OrderID: order.ID,
+          Amount:  order.Total,
+      }
+      
+      paymentJSON, _ := json.Marshal(payment)
+      
+      // Call Payment API
+      resp, err := s.httpClient.Post(
+          s.paymentAPIURL+"/api/payments",
+          "application/json",
+          bytes.NewBuffer(paymentJSON),
+      )
+      
+      if err != nil {
+          return err
+      }
+      defer resp.Body.Close()
+      
+      // Check response
+      if resp.StatusCode != http.StatusCreated {
+          return fmt.Errorf("payment failed with status %d", resp.StatusCode)
+      }
+      
+      return nil
+  }
+  ```
+- **gRPC Communication**:
+  ```proto
+  // payment.proto
+  syntax = "proto3";
+  
+  package payment;
+  
+  service PaymentService {
+      rpc ProcessPayment(PaymentRequest) returns (PaymentResponse);
+  }
+  
+  message PaymentRequest {
+      string order_id = 1;
+      double amount = 2;
+  }
+  
+  message PaymentResponse {
+      string payment_id = 1;
+      string status = 2;
+  }
+  ```
+  
+  ```go
+  // Client implementation
+  import "google.golang.org/grpc"
+  
+  func processPayment(orderID string, amount float64) (*payment.PaymentResponse, error) {
+      // Setup connection
+      conn, err := grpc.Dial("payment-service:50051", grpc.WithInsecure())
+      if err != nil {
+          return nil, err
+      }
+      defer conn.Close()
+      
+      // Create client
+      client := payment.NewPaymentServiceClient(conn)
+      
+      // Make request
+      return client.ProcessPayment(context.Background(), &payment.PaymentRequest{
+          OrderId: orderID,
+          Amount:  amount,
+      })
+  }
+  ```
+
+#### Materi 16.3: API Gateway
+- **Basic API Gateway**:
+  ```go
+  import (
+      "github.com/gin-gonic/gin"
+      "net/http/httputil"
+      "net/url"
+  )
+  
+  func main() {
+      router := gin.Default()
+      
+      // User service proxy
+      userServiceURL, _ := url.Parse("http://user-service:8080")
+      userProxy := httputil.NewSingleHostReverseProxy(userServiceURL)
+      
+      // Order service proxy
+      orderServiceURL, _ := url.Parse("http://order-service:8080")
+      orderProxy := httputil.NewSingleHostReverseProxy(orderServiceURL)
+      
+      // Payment service proxy
+      paymentServiceURL, _ := url.Parse("http://payment-service:8080")
+      paymentProxy := httputil.NewSingleHostReverseProxy(paymentServiceURL)
+      
+      // Routes
+      router.Any("/api/users/*path", gin.WrapH(userProxy))
+      router.Any("/api/orders/*path", gin.WrapH(orderProxy))
+      router.Any("/api/payments/*path", gin.WrapH(paymentProxy))
+      
+      router.Run(":80")
+  }
+  ```
+- **Adding Authentication to Gateway**:
+  ```go
+  func authMiddleware() gin.HandlerFunc {
+      return func(c *gin.Context) {
+          token := c.GetHeader("Authorization")
+          
+          // Validate token
+          if !isValidToken(token) {
+              c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+                  "error": "invalid or missing token",
+              })
+              return
+          }
+          
+          // Add user info to headers for downstream services
+          userID := extractUserID(token)
+          c.Request.Header.Set("X-User-ID", userID)
+          
+          c.Next()
+      }
+  }
+  
+  // Apply middleware to routes
+  router.Any("/api/orders/*path", authMiddleware(), gin.WrapH(orderProxy))
+  ```
+
+### Modul 17: Message Queues dan Event-Driven Architecture (Hari 49-51)
+
+#### Materi 17.1: RabbitMQ Integration
+- **RabbitMQ Producer**:
+  ```go
+  import "github.com/streadway/amqp"
+  
+  func publishOrderCreated(order Order) error {
+      // Connect to RabbitMQ
+      conn, err := amqp.Dial("amqp://guest:guest@rabbitmq:5672/")
+      if err != nil {
+          return err
+      }
+      defer conn.Close()
+      
+      // Create channel
+      ch, err := conn.Channel()
+      if err != nil {
+          return err
+      }
+      defer ch.Close()
+      
+      // Declare queue
+      q, err := ch.QueueDeclare(
+          "orders", // name
+          true,     // durable
+          false,    // delete when unused
+          false,    // exclusive
+          false,    // no-wait
+          nil,      // arguments
+      )
+      if err != nil {
+          return err
+      }
+      
+      // Marshal order to JSON
+      body, err := json.Marshal(order)
+      if err != nil {
+          return err
+      }
+      
+      // Publish message
+      return ch.Publish(
+          "",     // exchange
+          q.Name, // routing key
+          false,  // mandatory
+          false,  // immediate
+          amqp.Publishing{
+              ContentType: "application/json",
+              Body:        body,
+          },
+      )
+  }
+  ```
+- **RabbitMQ Consumer**:
+  ```go
+  func startOrderConsumer() {
+      // Connect to RabbitMQ
+      conn, err := amqp.Dial("amqp://guest:guest@rabbitmq:5672/")
+      failOnError(err, "Failed to connect to RabbitMQ")
+      defer conn.Close()
+      
+      // Create channel
+      ch, err := conn.Channel()
+      failOnError(err, "Failed to open a channel")
+      defer ch.Close()
+      
+      // Declare queue
+      q, err := ch.QueueDeclare(
+          "orders", // name
+          true,     // durable
+          false,    // delete when unused
+          false,    // exclusive
+          false,    // no-wait
+          nil,      // arguments
+      )
+      failOnError(err, "Failed to declare a queue")
+      
+      // Set QoS (prefetch count)
+      err = ch.Qos(
+          1,     // prefetch count
+          0,     // prefetch size
+          false, // global
+      )
+      failOnError(err, "Failed to set QoS")
+      
+      // Consume messages
+      msgs, err := ch.Consume(
+          q.Name, // queue
+          "",     // consumer
+          false,  // auto-ack
+          false,  // exclusive
+          false,  // no-local
+          false,  // no-wait
+          nil,    // args
+      )
+      failOnError(err, "Failed to register a consumer")
+      
+      // Process messages
+      forever := make(chan bool)
+      go func() {
+          for d := range msgs {
+              var order Order
+              err := json.Unmarshal(d.Body, &order)
+              
+              if err != nil {
+                  log.Printf("Error parsing order: %v", err)
+                  d.Nack(false, true) // Negative acknowledgment, requeue
+                  continue
+              }
+              
+              // Process order
+              err = processOrder(order)
+              
+              if err != nil {
+                  log.Printf("Error processing order: %v", err)
+                  d.Nack(false, true) // Negative acknowledgment, requeue
+              } else {
+                  d.Ack(false) // Acknowledgment
+              }
+          }
+      }()
+      
+      log.Printf("Order consumer started")
+      <-forever
+  }
+  ```
+
+#### Materi 17.2: Kafka Integration
+- **Kafka Producer**:
+  ```go
+  import "github.com/segmentio/kafka-go"
+  
+  func publishEvent(topic string, key string, value []byte) error {
+      // Create writer
+      w := kafka.NewWriter(kafka.WriterConfig{
+          Brokers:  []string{"kafka-1:9092", "kafka-2:9092"},
+          Topic:    topic,
+          Balancer: &kafka.LeastBytes{},
+      })
+      defer w.Close()
+      
+      // Write message
+      err := w.WriteMessages(context.Background(),
+          kafka.Message{
+              Key:   []byte(key),
+              Value: value,
+          },
+      )
+      
+      return err
+  }
+  
+  func publishOrderCreated(order Order) error {
+      orderJSON, err := json.Marshal(order)
+      if err != nil {
+          return err
+      }
+      
+      return publishEvent("orders", order.ID, orderJSON)
+  }
+  ```
+- **Kafka Consumer**:
+  ```go
+  func startOrderConsumer() {
+      // Create reader
+      r := kafka.NewReader(kafka.ReaderConfig{
+          Brokers:   []string{"kafka-1:9092", "kafka-2:9092"},
+          Topic:     "orders",
+          GroupID:   "order-processing-service",
+          MinBytes:  10e3, // 10KB
+          MaxBytes:  10e6, // 10MB
+          Partition: 0,
+      })
+      defer r.Close()
+      
+      // Process messages
+      for {
+          m, err := r.ReadMessage(context.Background())
+          if err != nil {
+              log.Printf("Error reading message: %v", err)
+              continue
+          }
+          
+          var order Order
+          err = json.Unmarshal(m.Value, &order)
+          if err != nil {
+              log.Printf("Error parsing order: %v", err)
+              continue
+          }
+          
+          // Process order
+          err = processOrder(order)
+          if err != nil {
+              log.Printf("Error processing order: %v", err)
+          }
+      }
+  }
+  ```
+
+#### Materi 17.3: Event-Driven Design Patterns
+- **CQRS (Command Query Responsibility Segregation)**:
+  ```go
+  // Command (Write) Model
+  type OrderCommand struct {
+      ID        string
+      UserID    string
+      Products  []OrderProduct
+      CreatedAt time.Time
+  }
+  
+  // Query (Read) Model
+  type OrderSummary struct {
+      ID           string
+      UserID       string
+      TotalAmount  float64
+      ProductCount int
+      Status       string
+      CreatedAt    time.Time
+  }
+  
+  // Command Handler
+  func CreateOrderHandler(cmd OrderCommand) error {
+      // Validate command
+      if err := validateOrder(cmd); err != nil {
+          return err
+      }
+      
+      // Store in write database
+      if err := storeOrder(cmd); err != nil {
+          return err
+      }
+      
+      // Publish event
+      event := OrderCreatedEvent{
+          ID:        cmd.ID,
+          UserID:    cmd.UserID,
+          Products:  cmd.Products,
+          CreatedAt: cmd.CreatedAt,
+      }
+      
+      return publishEvent("order-created", cmd.ID, event)
+  }
+  
+  // Event Handler (updates read model)
+  func OrderCreatedEventHandler(event OrderCreatedEvent) error {
+      // Calculate summary data
+      totalAmount := 0.0
+      for _, p := range event.Products {
+          totalAmount += p.Price * float64(p.Quantity)
+      }
+      
+      // Create read model
+      summary := OrderSummary{
+          ID:           event.ID,
+          UserID:       event.UserID,
+          TotalAmount:  totalAmount,
+          ProductCount: len(event.Products),
+          Status:       "created",
+          CreatedAt:    event.CreatedAt,
+      }
+      
+      // Store in read database
+      return storeOrderSummary(summary)
+  }
+  ```
+- **Event Sourcing**:
+  ```go
+  // Event store
+  type EventStore interface {
+      SaveEvents(streamID string, events []Event, expectedVersion int) error
+      GetEvents(streamID string) ([]Event, error)
+  }
+  
+  // Event
+  type Event interface {
+      GetType() string
+      GetData() []byte
+      GetStreamID() string
+      GetVersion() int
+  }
+  
+  // Order aggregate
+  type Order struct {
+      ID       string
+      UserID   string
+      Products []OrderProduct
+      Status   string
+      Version  int
+  }
+  
+  // Reconstruct aggregate from events
+  func LoadOrder(eventStore EventStore, orderID string) (Order, error) {
+      var order Order
+      order.ID = orderID
+      
+      events, err := eventStore.GetEvents(orderID)
+      if err != nil {
+          return order, err
+      }
+      
+      for _, event := range events {
+          order.ApplyEvent(event)
+          order.Version = event.GetVersion()
+      }
+      
+      return order, nil
+  }
+  
+  // Apply changes and generate events
+  func (o *Order) AddProduct(product OrderProduct) OrderProductAddedEvent {
+      // Create event
+      event := OrderProductAddedEvent{
+          OrderID:    o.ID,
+          Product:    product,
+          Version:    o.Version + 1,
+      }
+      
+      // Apply event to order
+      o.Products = append(o.Products, product)
+      o.Version++
+      
+      return event
+  }
+  ```
+
+### Modul 18: Docker dan Containerization (Hari 52-54)
+
+#### Materi 18.1: Dockerfile untuk Go Applications
+- **Basic Dockerfile**:
+  ```dockerfile
+  FROM golang:1.17-alpine AS builder
+  
+  WORKDIR /app
+  
+  # Copy go.mod and go.sum
+  COPY go.mod go.sum ./
+  
+  # Download dependencies
+  RUN go mod download
+  
+  # Copy source code
+  COPY . .
+  
+  # Build the application
+  RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+  
+  # Use a small alpine image
+  FROM alpine:latest
+  
+  WORKDIR /root/
+  
+  # Copy the binary from builder
+  COPY --from=builder /app/main .
+  
+  # Expose port
+  EXPOSE 8080
+  
+  # Run the binary
+  CMD ["./main"]
+  ```
+- **Multi-Stage Build for Smaller Images**:
+  ```dockerfile
+  # Build stage
+  FROM golang:1.17-alpine AS builder
+  
+  WORKDIR /app
+  
+  COPY go.mod go.sum ./
+  RUN go mod download
+  
+  COPY . .
+  
+  # Build with optimization
+  RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /go/bin/app
+  
+  # Final stage
+  FROM scratch
+  
+  # Copy certificates for HTTPS connections
+  COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+  
+  # Copy binary
+  COPY --from=builder /go/bin/app /app
+  
+  # Expose port
+  EXPOSE 8080
+  
+  # Run
+  ENTRYPOINT ["/app"]
+  ```
+
+#### Materi 18.2: Docker Compose
+- **Docker Compose untuk Development**:
+  ```yaml
+  # docker-compose.yml
+  version: '3'
+  
+  services:
+    api:
+      build:
+        context: .
+        dockerfile: Dockerfile
+      ports:
+        - "8080:8080"
+      environment:
+        - DB_HOST=db
+        - DB_USER=postgres
+        - DB_PASSWORD=password
+        - DB_NAME=appdb
+        - REDIS_HOST=redis:6379
+      depends_on:
+        - db
+        - redis
+      volumes:
+        - ./:/app
+      restart: on-failure
+  
+    db:
+      image: postgres:13
+      ports:
+        - "5432:5432"
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=password
+        - POSTGRES_DB=appdb
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+  
+    redis:
+      image: redis:6-alpine
+      ports:
+        - "6379:6379"
+      volumes:
+        - redis_data:/data
+  
+  volumes:
+    postgres_data:
+    redis_data:
+  ```
+- **Database Migration dengan Docker Compose**:
+  ```yaml
+  services:
+    # Add to existing docker-compose.yml
+    migration:
+      build:
+        context: .
+        dockerfile: Dockerfile.migration
+      environment:
+        - DB_HOST=db
+        - DB_USER=postgres
+        - DB_PASSWORD=password
+        - DB_NAME=appdb
+      depends_on:
+        - db
+      command: ["./wait-for-it.sh", "db:5432", "--", "./migrate"]
+  ```
+  
+  ```dockerfile
+  # Dockerfile.migration
+  FROM golang:1.17-alpine
+  
+  WORKDIR /app
+  
+  COPY go.mod go.sum ./
+  RUN go mod download
+  
+  COPY . .
+  
+  RUN go build -o migrate ./cmd/migrate
+  
+  # Add wait-for-it script
+COPY scripts/wait-for-it.sh /app/wait-for-it.sh
+RUN chmod +x /app/wait-for-it.sh
+
+CMD ["./migrate"]
+  ```
+
+#### Materi 18.3: Docker Network dan Best Practices
+- **Docker Network**:
+  ```yaml
+  # docker-compose.yml dengan custom network
+  version: '3'
+  
+  services:
+    api:
+      # ... (konfigurasi seperti sebelumnya)
+      networks:
+        - backend
+        - frontend
+  
+    db:
+      # ... (konfigurasi seperti sebelumnya)
+      networks:
+        - backend
+  
+    redis:
+      # ... (konfigurasi seperti sebelumnya)
+      networks:
+        - backend
+  
+  networks:
+    backend:
+      driver: bridge
+    frontend:
+      driver: bridge
+  ```
+- **Docker Security Best Practices**:
+  - Gunakan image minimal (alpine atau scratch)
+  - Jangan jalankan container sebagai root
+  - Scan image untuk vulnerabilities dengan tools seperti Trivy
+  - Gunakan multi-stage build untuk mengurangi attack surface
+  - Buat non-root user di Dockerfile:
+  
+  ```dockerfile
+  # Buat user dengan id non-privileged
+  RUN adduser -D -u 10001 appuser
+  
+  # Switch ke user non-root
+  USER appuser
+  
+  # Jalankan aplikasi
+  CMD ["./app"]
+  ```
+
+- **Environment Variables dan Secrets**:
+  - Gunakan .env file untuk development
+  - Gunakan Docker Secrets untuk production
+  - Jangan hardcode credentials di image
+
+### Modul 19: Kubernetes dan Deployment (Hari 55-57)
+
+#### Materi 19.1: Kubernetes Basics
+- **Pod Definition**:
+  ```yaml
+  # pod.yaml
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: api-pod
+    labels:
+      app: api
+  spec:
+    containers:
+    - name: api
+      image: myapp/api:latest
+      ports:
+      - containerPort: 8080
+      env:
+      - name: DB_HOST
+        value: "postgres-service"
+      - name: REDIS_HOST
+        value: "redis-service:6379"
+  ```
+- **Deployment**:
+  ```yaml
+  # deployment.yaml
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: api-deployment
+  spec:
+    replicas: 3
+    selector:
+      matchLabels:
+        app: api
+    template:
+      metadata:
+        labels:
+          app: api
+      spec:
+        containers:
+        - name: api
+          image: myapp/api:latest
+          ports:
+          - containerPort: 8080
+          env:
+          - name: DB_HOST
+            value: "postgres-service"
+          - name: REDIS_HOST
+            value: "redis-service:6379"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 3
+  ```
+- **Service**:
+  ```yaml
+  # service.yaml
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: api-service
+  spec:
+    selector:
+      app: api
+    ports:
+    - port: 80
+      targetPort: 8080
+    type: ClusterIP
+  ```
+
+#### Materi 19.2: ConfigMap dan Secrets
+- **ConfigMap**:
+  ```yaml
+  # configmap.yaml
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: api-config
+  data:
+    APP_ENV: "production"
+    LOG_LEVEL: "info"
+    METRICS_ENABLED: "true"
+  ```
+- **Secret**:
+  ```yaml
+  # secret.yaml
+  apiVersion: v1
+  kind: Secret
+  metadata:
+    name: api-secrets
+  type: Opaque
+  data:
+    # Values must be base64 encoded
+    DB_PASSWORD: cGFzc3dvcmQ=  # "password" in base64
+    API_KEY: c2VjcmV0LWtleQ==  # "secret-key" in base64
+  ```
+- **Menggunakan ConfigMap dan Secret**:
+  ```yaml
+  # deployment dengan config
+  spec:
+    containers:
+    - name: api
+      image: myapp/api:latest
+      ports:
+      - containerPort: 8080
+      env:
+      # Dari ConfigMap
+      - name: APP_ENV
+        valueFrom:
+          configMapKeyRef:
+            name: api-config
+            key: APP_ENV
+      # Dari Secret
+      - name: DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: api-secrets
+            key: DB_PASSWORD
+      # Semua nilai dari ConfigMap
+      envFrom:
+      - configMapRef:
+          name: api-config
+  ```
+
+#### Materi 19.3: Kubernetes Deployment Strategies
+- **Rolling Update**:
+  ```yaml
+  # deployment dengan rolling update
+  spec:
+    replicas: 3
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxSurge: 1        # Max pods yang bisa dibuat melebihi replicas
+        maxUnavailable: 0  # Max pods yang boleh unavailable selama update
+  ```
+- **Blue-Green Deployment**:
+  ```yaml
+  # blue deployment
+  metadata:
+    name: api-blue
+    labels:
+      app: api
+      version: blue
+  
+  # green deployment
+  metadata:
+    name: api-green
+    labels:
+      app: api
+      version: green
+  
+  # service (awalnya mengarah ke blue)
+  spec:
+    selector:
+      app: api
+      version: blue  # Untuk switch, ubah selector ke green
+  ```
+- **Canary Deployment**:
+  ```yaml
+  # Main deployment (90% traffic)
+  spec:
+    replicas: 9
+    template:
+      metadata:
+        labels:
+          app: api
+          version: stable
+  
+  # Canary deployment (10% traffic)
+  spec:
+    replicas: 1
+    template:
+      metadata:
+        labels:
+          app: api
+          version: canary
+  
+  # Service (mengarah ke keduanya)
+  spec:
+    selector:
+      app: api  # Tanpa version, akan memilih semua pod dengan label app: api
+  ```
+
+### Modul 20: Proyek Capstone dan Portfolio (Hari 58-60)
+
+#### Materi 20.1: Desain Sistem End-to-End
+- **Arsitektur Microservices**:
+  ```
+  ┌────────────┐      ┌────────────┐
+  │   API      │      │   Web UI   │
+  │  Gateway   │◄────►│            │
+  └────────────┘      └────────────┘
+         │
+         ├────────────┬─────────────┬─────────────┐
+         ▼            ▼             ▼             ▼
+  ┌────────────┐ ┌─────────────┐ ┌─────────┐ ┌────────────┐
+  │    User    │ │    Order    │ │ Payment │ │ Inventory  │
+  │  Service   │ │   Service   │ │ Service │ │  Service   │
+  └────────────┘ └─────────────┘ └─────────┘ └────────────┘
+         │             │             │             │
+         ▼             ▼             ▼             ▼
+  ┌────────────┐ ┌─────────────┐ ┌─────────┐ ┌────────────┐
+  │  User DB   │ │  Order DB   │ │Payment DB│ │Inventory DB│
+  └────────────┘ └─────────────┘ └─────────┘ └────────────┘
+                        │
+                        ▼
+                  ┌─────────────┐
+                  │  Message    │
+                  │   Queue     │
+                  └─────────────┘
+                        │
+                        ▼
+                  ┌─────────────┐
+                  │ Notification│
+                  │   Service   │
+                  └─────────────┘
+  ```
+
+- **Komponen Proyek**:
+  1. **API Gateway**: Menggunakan Gin, menangani routing, autentikasi, dan rate limiting
+  2. **User Service**: Mengelola user, autentikasi, dan otorisasi
+  3. **Order Service**: Mengelola pemesanan dan status
+  4. **Payment Service**: Mengelola transaksi pembayaran
+  5. **Inventory Service**: Mengelola stok produk
+  6. **Notification Service**: Mengirim email/SMS notifikasi
+  7. **Message Queue**: RabbitMQ atau Kafka untuk komunikasi asinkron
+
+#### Materi 20.2: Implementasi Proyek
+- **User Service**:
+  - Registrasi dan login
+  - JWT authentication
+  - Profile management
+  - RBAC (Role-Based Access Control)
+
+- **Order Service**:
+  - CRUD operasi untuk order
+  - Order status management
+  - Integration dengan Payment dan Inventory
+  - Event publishing untuk order events
+
+- **Komunikasi antar Service**:
+  - REST API untuk synchronous communication
+  - Message Queue untuk asynchronous communication
+  - gRPC untuk high-performance communication
+
+- **Deployment**:
+  - Docker Compose untuk development
+  - Kubernetes manifests untuk production
+  - CI/CD pipeline
+
+#### Materi 20.3: Dokumentasi dan Portfolio
+- **API Documentation**:
+  - Swagger/OpenAPI specification
+  - Contoh kode dan penggunaan
+  - Penjelasan error codes
+
+- **Project Documentation**:
+  - Architecture diagrams
+  - Setup dan deployment instructions
+  - Development workflow
+
+- **README yang Komprehensif**:
+  ```markdown
+  # E-Commerce Microservices
+
+  Sistem e-commerce berbasis microservices yang diimplementasikan dengan Go.
+
+  ## Architecture
+
+  [Diagram Arsitektur]
+
+  ## Services
+
+  * **API Gateway**: Entry point untuk semua requests
+  * **User Service**: Mengelola user dan authentication
+  * **Order Service**: Mengelola pemesanan
+  * **Payment Service**: Menangani pembayaran
+  * **Inventory Service**: Mengelola stok produk
+  * **Notification Service**: Mengirim notifikasi
+
+  ## Technologies
+
+  * Go 1.17
+  * PostgreSQL
+  * Redis
+  * RabbitMQ
+  * Docker & Kubernetes
+  * JWT Authentication
+  * Prometheus & Grafana monitoring
+
+  ## Setup & Deployment
+
+  ### Local Development
+
+  ```bash
+  # Clone repository
+  git clone https://github.com/username/ecommerce-microservices.git
+
+  # Start with Docker Compose
+  docker-compose up
+  ```
+
+  ### Production Deployment
+
+  ```bash
+  # Deploy to Kubernetes
+  kubectl apply -f kubernetes/
+  ```
+
+  ## API Documentation
+
+  API documentation tersedia di `/swagger` endpoint setelah menjalankan service,
+  atau lihat [docs/api.md](docs/api.md).
+
+  ## Performance
+
+  Benchmark results dan capacity planning tersedia di [docs/performance.md](docs/performance.md).
+  ```
+
+- **Portfolio GitHub**:
+  1. Struktur repository yang rapi
+  2. Dokumentasi yang jelas
+  3. Code examples dan demo
+  4. Test coverage yang baik
+  5. Setup instructions yang lengkap
+
+## Rangkuman
+
+Selamat! Anda telah mempelajari materi Golang dari dasar hingga expert. Kurikulum ini telah mencakup:
+
+1. **Dasar-Dasar Golang**: Sintaks, tipe data, struktur kontrol, fungsi, dll.
+2. **Web Development**: REST API, database interaction, autentikasi, middleware
+3. **Backend Development Lanjutan**: Security, caching, logging, monitoring
+4. **Microservices & Deployment**: Docker, Kubernetes, message queues, event-driven architecture
+
+Dengan menguasai materi-materi ini, Anda telah siap untuk bekerja sebagai Golang developer di industri. Teruslah belajar dan mengembangkan diri dengan mengikuti perkembangan terbaru di ekosistem Go!
