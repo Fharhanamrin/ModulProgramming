@@ -168,3004 +168,681 @@
 - **Project**: Full-stack application dengan fitur modern React
 
 ---
+# MODUL 1: PENGENALAN WEB DEVELOPMENT
 
-## DETAIL MODUL
+## Informasi Umum
+- **Durasi**: 1 minggu
+- **Tujuan**: Memahami fondasi web development dan JavaScript modern yang diperlukan untuk React
+- **Project Akhir**: Landing page sederhana dengan JavaScript interaktif
 
-### MODUL 1: PENGENALAN WEB DEVELOPMENT
+## Daftar Isi
+1. [HTML5 dan Semantic Elements](#html5-dan-semantic-elements)
+2. [CSS3, Flexbox dan Grid](#css3-flexbox-dan-grid)
+3. [JavaScript Fundamentals dan ES6+](#javascript-fundamentals-dan-es6)
+4. [DOM Manipulation](#dom-manipulation)
+5. [Browser Developer Tools](#browser-developer-tools)
+6. [Project Akhir](#project-akhir)
 
-#### Topik 1.1: HTML5 dan Semantic Elements
-**Durasi**: 1 hari  
-**Materi**:
-- Struktur dokumen HTML5
-- Semantic elements: `<header>`, `<footer>`, `<section>`, `<article>`, `<nav>`, `<aside>`
-- Atribut data- dan role
-- Aksesibilitas dasar (ARIA)
+---
 
-**Hands-on Practice**:
-- Membuat struktur halaman web yang semantik
-- Mengimplementasikan form dengan validasi HTML5
+## HTML5 dan Semantic Elements
 
-#### Topik 1.2: CSS3, Flexbox dan Grid
-**Durasi**: 1 hari  
-**Materi**:
-- CSS Selectors dan specificity
-- Box model dan layout
-- Flexbox untuk one-dimensional layout
-- CSS Grid untuk two-dimensional layout
-- Responsive design dengan media queries
+### Apa itu HTML?
+HTML (HyperText Markup Language) adalah bahasa markup standar yang digunakan untuk membuat struktur sebuah halaman web. HTML terdiri dari serangkaian elemen yang memberitahu browser cara menampilkan konten.
 
-**Hands-on Practice**:
-- Membuat layout responsive dengan Flexbox
-- Mengimplementasikan grid layout kompleks
-
-#### Topik 1.3: JavaScript Fundamentals
-**Durasi**: 2 hari  
-**Materi**:
-- Tipe data, variabel, dan scope
-- Functions dan closures
-- Objects dan arrays
-- Prototype inheritance
-- Error handling
-
-**Hands-on Practice**:
-- Mengimplementasikan algoritma dasar
-- Membuat fungsi-fungsi utility
-
-#### Topik 1.4: Modern JavaScript (ES6+)
-**Durasi**: 2 hari  
-**Materi**:
-- Arrow functions
-- Template literals
-- Destructuring assignment
-- Spread/rest operators
-- Default parameters
-- Classes
-- Modules (import/export)
-- Promises dan async/await
-
-**Hands-on Practice**:
-- Refactoring kode ES5 ke ES6+
-- Implementasi asynchronous operations
-
-**Project Modul 1**:  
-Membuat landing page responsive dengan fitur:
-- Navigasi sticky
-- Hero section dengan animasi
-- Gallery dengan grid layout
-- Form validasi dengan JavaScript
-- Dark/light mode toggle
-
-### MODUL 2: PENGENALAN REACT
-
-#### Topik 2.1: Pengenalan dan Setup
-**Durasi**: 1 hari  
-**Materi**:
-- Apa itu React dan mengapa menggunakannya
-- Virtual DOM dan diffing algorithm
-- Single Page Application
-- Setting up environment dengan Create React App
-- React Developer Tools
-
-**Hands-on Practice**:
-- Membuat project pertama dengan Create React App
-- Eksplorasi struktur project
-- Menggunakan React Developer Tools
-
-#### Topik 2.2: JSX dan Elements
-**Durasi**: 1 hari  
-**Materi**:
-- Sintaks JSX
-- Expressions di JSX
-- Atribut di JSX
-- Children elements
-- Fragments
-- Perbedaan JSX dengan HTML
-
-**Hands-on Practice**:
-- Menulis berbagai expressions di JSX
-- Mengkonversi HTML ke JSX
-
-#### Topik 2.3: Function dan Class Components
-**Durasi**: 2 hari  
-**Materi**:
-- Function Components dasar
-- Class Components dasar
-- Perbedaan Function dan Class Components
-- Props dan PropTypes
-- Default Props
-- Children prop
-
-**Hands-on Practice**:
-```jsx
-// Function Component
-function Greeting({ name = "Guest", role }) {
-  return (
-    <div className="greeting">
-      <h2>Hello, {name}!</h2>
-      {role && <p>Your role: {role}</p>}
-    </div>
-  );
-}
-
-#### Topik 7.2: Custom Hooks Development
-**Durasi**: 1 hari  
-**Materi**:
-- Creating custom hooks
-- Composing multiple hooks
-- Rules of hooks
-- Testing custom hooks
-- Custom hooks best practices
-- Reusable logic patterns
-
-**Hands-on Practice**:
-```jsx
-// useLocalStorage hook
-function useLocalStorage(key, initialValue) {
-  // State to store our value
-  const [storedValue, setStoredValue] = useState(() => {
-    try {
-      // Get from local storage by key
-      const item = window.localStorage.getItem(key);
-      // Parse stored json or if none return initialValue
-      return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
-      console.error(error);
-      return initialValue;
-    }
-  });
-
-  // Return a wrapped version of useState's setter function that
-  // persists the new value to localStorage
-  const setValue = (value) => {
-    try {
-      // Allow value to be a function
-      const valueToStore =
-        value instanceof Function ? value(storedValue) : value;
-      // Save state
-      setStoredValue(valueToStore);
-      // Save to local storage
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  return [storedValue, setValue];
-}
-
-// useMediaQuery hook
-function useMediaQuery(query) {
-  const [matches, setMatches] = useState(() => window.matchMedia(query).matches);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia(query);
-    const handler = (event) => setMatches(event.matches);
-    
-    // Set up event listener
-    mediaQuery.addEventListener('change', handler);
-    
-    // Initial check
-    setMatches(mediaQuery.matches);
-    
-    // Clean up
-    return () => mediaQuery.removeEventListener('change', handler);
-  }, [query]);
-
-  return matches;
-}
-
-// useDebounce hook
-function useDebounce(value, delay) {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-  
-  useEffect(() => {
-    // Set debouncedValue to value after the specified delay
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-    
-    // Cancel the timeout if value changes or unmounts
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-  
-  return debouncedValue;
-}
-
-// Using the custom hooks
-function ThemeToggler() {
-  // Use our custom localStorage hook
-  const [theme, setTheme] = useLocalStorage('theme', 'light');
-  
-  // Use our custom media query hook
-  const prefersDark = useMediaQuery('(prefers-color-scheme: dark)');
-  
-  useEffect(() => {
-    // Set theme based on user's system preference on initial load
-    if (prefersDark && theme === 'light') {
-      setTheme('dark');
-    }
-  }, [prefersDark, setTheme, theme]);
-  
-  const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
-  };
-  
-  return (
-    <button onClick={toggleTheme}>
-      Current theme: {theme}
-    </button>
-  );
-}
-
-function SearchComponent() {
-  const [searchTerm, setSearchTerm] = useState('');
-  // Use our debounce hook to delay API calls
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
-  
-  useEffect(() => {
-    if (debouncedSearchTerm) {
-      setLoading(true);
-      // Make API call with debounced value
-      fetchSearchResults(debouncedSearchTerm)
-        .then(data => {
-          setResults(data);
-          setLoading(false);
-        });
-    } else {
-      setResults([]);
-    }
-  }, [debouncedSearchTerm]);
-  
-  return (
-    <div>
-      <input
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Search..."
-      />
-      {loading && <p>Loading...</p>}
-      <ul>
-        {results.map(result => (
-          <li key={result.id}>{result.name}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
+### Struktur Dasar HTML5
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Judul Halaman</title>
+</head>
+<body>
+    <!-- Konten halaman web di sini -->
+</body>
+</html>
 ```
 
-#### Topik 7.3: Advanced Component Patterns
-**Durasi**: 2 hari  
-**Materi**:
-- Higher-Order Components (HOC)
-- Render Props
-- Compound Components
-- Controlled vs Uncontrolled Components
-- State Initializers
-- Prop Collections and Getters
-
-**Hands-on Practice**:
-```jsx
-// Higher-Order Component
-function withLogger(Component) {
-  const displayName = Component.displayName || Component.name || 'Component';
-  
-  function WithLogger(props) {
-    useEffect(() => {
-      console.log(`${displayName} mounted`);
-      return () => {
-        console.log(`${displayName} unmounted`);
-      };
-    }, []);
-    
-    console.log(`${displayName} rendered with props:`, props);
-    
-    return <Component {...props} />;
-  }
-  
-  WithLogger.displayName = `withLogger(${displayName})`;
-  
-  return WithLogger;
-}
-
-// Usage of HOC
-const EnhancedButton = withLogger(Button);
-
-// Render Props pattern
-function Toggle({ children }) {
-  const [on, setOn] = useState(false);
-  
-  const toggle = () => setOn(!on);
-  
-  return children({
-    on,
-    toggle
-  });
-}
-
-// Usage of Render Props
-function App() {
-  return (
-    <Toggle>
-      {({ on, toggle }) => (
-        <div>
-          <button onClick={toggle}>
-            {on ? 'Turn off' : 'Turn on'}
-          </button>
-          <div>{on ? 'The switch is on' : 'The switch is off'}</div>
-        </div>
-      )}
-    </Toggle>
-  );
-}
-
-// Compound Components pattern
-const TabContext = createContext();
-
-function Tabs({ children, defaultIndex = 0 }) {
-  const [activeIndex, setActiveIndex] = useState(defaultIndex);
-  
-  const value = {
-    activeIndex,
-    setActiveIndex
-  };
-  
-  return (
-    <TabContext.Provider value={value}>
-      <div className="tabs">{children}</div>
-    </TabContext.Provider>
-  );
-}
-
-function TabList({ children }) {
-  return <div className="tab-list">{children}</div>;
-}
-
-function Tab({ children, index }) {
-  const { activeIndex, setActiveIndex } = useContext(TabContext);
-  
-  return (
-    <button
-      className={`tab ${activeIndex === index ? 'active' : ''}`}
-      onClick={() => setActiveIndex(index)}
-    >
-      {children}
-    </button>
-  );
-}
-
-function TabPanels({ children }) {
-  return <div className="tab-panels">{children}</div>;
-}
-
-function TabPanel({ children, index }) {
-  const { activeIndex } = useContext(TabContext);
-  
-  return activeIndex === index ? (
-    <div className="tab-panel">{children}</div>
-  ) : null;
-}
-
-// Attach components as properties
-Tabs.TabList = TabList;
-Tabs.Tab = Tab;
-Tabs.TabPanels = TabPanels;
-Tabs.TabPanel = TabPanel;
-
-// Usage of Compound Components
-function App() {
-  return (
-    <Tabs defaultIndex={1}>
-      <Tabs.TabList>
-        <Tabs.Tab index={0}>Tab 1</Tabs.Tab>
-        <Tabs.Tab index={1}>Tab 2</Tabs.Tab>
-        <Tabs.Tab index={2}>Tab 3</Tabs.Tab>
-      </Tabs.TabList>
-      
-      <Tabs.TabPanels>
-        <Tabs.TabPanel index={0}>
-          <h2>Panel 1</h2>
-          <p>Content for Panel 1</p>
-        </Tabs.TabPanel>
-        <Tabs.TabPanel index={1}>
-          <h2>Panel 2</h2>
-          <p>Content for Panel 2</p>
-        </Tabs.TabPanel>
-        <Tabs.TabPanel index={2}>
-          <h2>Panel 3</h2>
-          <p>Content for Panel 3</p>
-        </Tabs.TabPanel>
-      </Tabs.TabPanels>
-    </Tabs>
-  );
-}
-
-// Prop Getters pattern
-function useToggle() {
-  const [on, setOn] = useState(false);
-  
-  const toggle = () => setOn(!on);
-  
-  // Function to get props for the toggle button
-  const getTogglerProps = ({ onClick, ...props } = {}) => ({
-    'aria-pressed': on,
-    onClick: (event) => {
-      // Call provided onClick if it exists
-      onClick?.(event);
-      // Call our toggle function
-      toggle();
-    },
-    ...props
-  });
-  
-  return {
-    on,
-    toggle,
-    getTogglerProps
-  };
-}
-
-// Usage of Prop Getters
-function App() {
-  const { on, getTogglerProps } = useToggle();
-  
-  return (
-    <div>
-      <button
-        {...getTogglerProps({
-          'aria-label': 'Toggle feature',
-          onClick: () => console.log('Button clicked'),
-          className: on ? 'active' : ''
-        })}
-      >
-        {on ? 'ON' : 'OFF'}
-      </button>
-      <div>{on ? 'Feature enabled' : 'Feature disabled'}</div>
-    </div>
-  );
-}
-```
-
-#### Topik 7.4: State Management Patterns
-**Durasi**: 2 hari  
-**Materi**:
-- Context + useReducer pattern
-- State machines
-- Finite state management
-- Custom store implementations
-- Observer pattern
-- Atomic state management
-
-**Hands-on Practice**:
-```jsx
-// Context + useReducer pattern
-const TodoContext = createContext();
-
-const initialState = {
-  todos: [],
-  filter: 'all',
-  loading: false,
-  error: null
-};
-
-function todoReducer(state, action) {
-  switch (action.type) {
-    case 'FETCH_START':
-      return { ...state, loading: true, error: null };
-    case 'FETCH_SUCCESS':
-      return { ...state, loading: false, todos: action.payload };
-    case 'FETCH_ERROR':
-      return { ...state, loading: false, error: action.payload };
-    case 'ADD_TODO':
-      return { ...state, todos: [...state.todos, action.payload] };
-    case 'TOGGLE_TODO':
-      return {
-        ...state,
-        todos: state.todos.map(todo =>
-          todo.id === action.payload
-            ? { ...todo, completed: !todo.completed }
-            : todo
-        )
-      };
-    case 'DELETE_TODO':
-      return {
-        ...state,
-        todos: state.todos.filter(todo => todo.id !== action.payload)
-      };
-    case 'SET_FILTER':
-      return { ...state, filter: action.payload };
-    default:
-      return state;
-  }
-}
-
-function TodoProvider({ children }) {
-  const [state, dispatch] = useReducer(todoReducer, initialState);
-  
-  // Memoize the context value to prevent unnecessary re-renders
-  const value = useMemo(() => [state, dispatch], [state]);
-  
-  return (
-    <TodoContext.Provider value={value}>
-      {children}
-    </TodoContext.Provider>
-  );
-}
-
-// Custom hook to use the todo context
-function useTodo() {
-  const context = useContext(TodoContext);
-  if (!context) {
-    throw new Error('useTodo must be used within a TodoProvider');
-  }
-  return context;
-}
-
-// Simple state machine implementation
-function createMachine(initialState, transitions) {
-  return {
-    value: initialState,
-    transition(currentState, event) {
-      const nextState = transitions[currentState]?.[event];
-      return nextState !== undefined ? nextState : currentState;
-    }
-  };
-}
-
-function useMachine(machine) {
-  const [state, setState] = useState(machine.value);
-  
-  const send = useCallback((event) => {
-    setState(s => machine.transition(s, event));
-  }, [machine]);
-  
-  return [state, send];
-}
-
-// Usage of state machine
-const trafficLightMachine = createMachine('red', {
-  red: { NEXT: 'green' },
-  green: { NEXT: 'yellow' },
-  yellow: { NEXT: 'red' }
-});
-
-function TrafficLight() {
-  const [state, send] = useMachine(trafficLightMachine);
-  
-  return (
-    <div className="traffic-light">
-      <div className={`light red ${state === 'red' ? 'active' : ''}`} />
-      <div className={`light yellow ${state === 'yellow' ? 'active' : ''}`} />
-      <div className={`light green ${state === 'green' ? 'active' : ''}`} />
-      
-      <button onClick={() => send('NEXT')}>
-        Change to next light
-      </button>
-    </div>
-  );
-}
-
-// Custom observable store implementation
-function createStore(initialState) {
-  let state = initialState;
-  const listeners = new Set();
-  
-  const getState = () => state;
-  
-  const setState = (newState) => {
-    state = typeof newState === 'function' ? newState(state) : newState;
-    listeners.forEach(listener => listener(state));
-  };
-  
-  const subscribe = (listener) => {
-    listeners.add(listener);
-    return () => listeners.delete(listener);
-  };
-  
-  return { getState, setState, subscribe };
-}
-
-// React hook to use the custom store
-function useStore(store) {
-  const [state, setState] = useState(store.getState());
-  
-  useEffect(() => {
-    const unsubscribe = store.subscribe(setState);
-    return unsubscribe;
-  }, [store]);
-  
-  return [state, store.setState];
-}
-
-// Usage of custom store
-const counterStore = createStore({ count: 0 });
-
-function Counter() {
-  const [state, setState] = useStore(counterStore);
-  
-  const increment = () => {
-    setState(s => ({ count: s.count + 1 }));
-  };
-  
-  const decrement = () => {
-    setState(s => ({ count: s.count - 1 }));
-  };
-  
-  return (
-    <div>
-      <p>Count: {state.count}</p>
-      <button onClick={decrement}>-</button>
-      <button onClick={increment}>+</button>
-    </div>
-  );
-}
-```
-
-**Project Modul 7**:  
-Membuat Library of reusable React components:
-- Component library dengan storybook
-- Compound components untuk kompleksitas UI
-- Hook libraries untuk reusable logic
-- Custom form components dengan validation
-- Themeable components dengan styled-components
-- Accessible component design
-- Component API dokumentasi
-
-### MODUL 8: PERFORMANCE OPTIMIZATION
-
-#### Topik 8.1: Measuring Performance
-**Durasi**: 1 hari  
-**Materi**:
-- React DevTools Profiler
-- Chrome DevTools Performance tab
-- Lighthouse audit
-- Performance metrics (FCP, LCP, TTI, CLS)
-- Performance budgets
-- Identifying bottlenecks
-
-**Hands-on Practice**:
-```jsx
-// Example of using React Profiler programmatically
-import { Profiler } from 'react';
-
-function onRenderCallback(
-  id, // the "id" prop of the Profiler tree that just committed
-  phase, // either "mount" (if the tree just mounted) or "update" (if it re-rendered)
-  actualDuration, // time spent rendering the committed update
-  baseDuration, // estimated time to render the entire subtree without memoization
-  startTime, // when React began rendering this update
-  commitTime, // when React committed this update
-  interactions // the Set of interactions belonging to this update
-) {
-  // Log performance data
-  console.log({
-    id,
-    phase,
-    actualDuration,
-    baseDuration,
-    startTime,
-    commitTime
-  });
-}
-
-function App() {
-  return (
-    <Profiler id="main-app" onRender={onRenderCallback}>
-      <MainComponent />
-    </Profiler>
-  );
-}
-
-// Custom hook to track component renders
-function useRenderCount() {
-  const count = useRef(1);
-  
-  useEffect(() => {
-    count.current += 1;
-  });
-  
-  return count.current;
-}
-
-function ExpensiveComponent({ data }) {
-  const renderCount = useRenderCount();
-  
-  console.log(`ExpensiveComponent rendered ${renderCount} times`);
-  
-  // Simulate expensive calculation
-  const processedData = useMemo(() => {
-    console.time('processData');
-    const result = expensiveCalculation(data);
-    console.timeEnd('processData');
-    return result;
-  }, [data]);
-  
-  return (
-    <div>
-      <p>Render count: {renderCount}</p>
-      <ul>
-        {processedData.map(item => (
-          <li key={item.id}>{item.name}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-```
-
-#### Topik 8.2: Component Optimization
-**Durasi**: 1 hari  
-**Materi**:
-- React.memo
-- shouldComponentUpdate
-- PureComponent
-- Using keys properly
-- Avoiding props spreading
-- Avoiding anonymous functions
-- Avoiding inline objects
-
-**Hands-on Practice**:
-```jsx
-// Before optimization
-function ItemList({ items, onItemClick }) {
-  console.log('ItemList rendering');
-  
-  return (
-    <ul>
-      {items.map(item => (
-        <li 
-          key={item.id}
-          onClick={() => onItemClick(item.id)}
-          style={{ margin: '10px', padding: '10px' }}
-        >
-          {item.name}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-// After optimization with React.memo
-const MemoizedItem = React.memo(function Item({ item, onClick }) {
-  console.log(`Item ${item.id} rendering`);
-  
-  // Extract inline function to component level
-  const handleClick = () => {
-    onClick(item.id);
-  };
-  
-  // Extract inline styles
-  const itemStyle = { margin: '10px', padding: '10px' };
-  
-  return (
-    <li 
-      onClick={handleClick}
-      style={itemStyle}
-    >
-      {item.name}
-    </li>
-  );
-});
-
-const MemoizedItemList = React.memo(function ItemList({ items, onItemClick }) {
-  console.log('ItemList rendering');
-  
-  return (
-    <ul>
-      {items.map(item => (
-        <MemoizedItem 
-          key={item.id}
-          item={item}
-          onClick={onItemClick}
-        />
-      ))}
-    </ul>
-  );
-});
-
-// Using useCallback to prevent function recreation
-function ParentComponent() {
-  const [items, setItems] = useState([/* items data */]);
-  
-  // Memoize the click handler
-  const handleItemClick = useCallback((id) => {
-    console.log(`Item ${id} clicked`);
-    // Other logic...
-  }, []);
-  
-  return (
-    <MemoizedItemList 
-      items={items}
-      onItemClick={handleItemClick}
-    />
-  );
-}
-
-// Class component optimization with PureComponent
-class PureList extends React.PureComponent {
-  render() {
-    const { items, onItemClick } = this.props;
-    
-    return (
-      <ul>
-        {items.map(item => (
-          <li 
-            key={item.id}
-            onClick={() => onItemClick(item.id)}
-          >
-            {item.name}
-          </li>
-        ))}
-      </ul>
-    );
-  }
-}
-
-// Manual shouldComponentUpdate implementation
-class ManualOptimizedList extends React.Component {
-  shouldComponentUpdate(nextProps) {
-    // Only re-render if items array reference changed
-    return this.props.items !== nextProps.items;
-  }
-  
-  render() {
-    const { items, onItemClick } = this.props;
-    
-    return (
-      <ul>
-        {items.map(item => (
-          <li 
-            key={item.id}
-            onClick={() => onItemClick(item.id)}
-          >
-            {item.name}
-          </li>
-        ))}
-      </ul>
-    );
-  }
-}
-```
-
-#### Topik 8.3: Code Splitting & Lazy Loading
-**Durasi**: 1 hari  
-**Materi**:
-- Dynamic imports
-- React.lazy
-- Suspense
-- Route-based code splitting
-- Component-based code splitting
-- Preloading strategies
-- Loading states
-
-**Hands-on Practice**:
-```jsx
-import React, { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import ErrorBoundary from './ErrorBoundary';
-
-// Regular import
-import Home from './pages/Home';
-import Loading from './components/Loading';
-
-// Lazy imports
-const About = lazy(() => import('./pages/About'));
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const Profile = lazy(() => import('./pages/Profile'));
-
-// Prefetch component when mouse hovers over link
-function prefetchAbout() {
-  import('./pages/About');
-}
-
-function App() {
-  return (
-    <Router>
-      <nav>
-        <a href="/">Home</a>
-        <a href="/about" onMouseEnter={prefetchAbout}>About</a>
-        <a href="/dashboard">Dashboard</a>
-        <a href="/profile">Profile</a>
-      </nav>
-      
-      <ErrorBoundary fallback={<p>Something went wrong</p>}>
-        <Suspense fallback={<Loading />}>
-          <Switch>
-            <Route exact path="/" component={Home} />
-            <Route path="/about" component={About} />
-            <Route path="/dashboard" component={Dashboard} />
-            <Route path="/profile" component={Profile} />
-          </Switch>
-        </Suspense>
-      </ErrorBoundary>
-    </Router>
-  );
-}
-
-// Component-level code splitting
-function MyImageGallery() {
-  const [showGallery, setShowGallery] = useState(false);
-  
-  // Lazy load the heavy gallery component
-  const Gallery = lazy(() => import('./components/Gallery'));
-  
-  return (
-    <div>
-      <button onClick={() => setShowGallery(true)}>
-        Show Gallery
-      </button>
-      
-      {showGallery && (
-        <Suspense fallback={<p>Loading gallery...</p>}>
-          <Gallery />
-        </Suspense>
-      )}
-    </div>
-  );
-}
-```
-
-#### Topik 8.4: Virtualization & Windowing
-**Durasi**: 1 hari  
-**Materi**:
-- Virtual scrolling concepts
-- react-window
-- react-virtualized
-- IntersectionObserver
-- Lazy loading images
-- Infinite scroll implementation
-- Load-on-demand strategies
-
-**Hands-on Practice**:
-```jsx
-import { FixedSizeList } from 'react-window';
-import { useState, useRef, useCallback } from 'react';
-
-// Basic react-window implementation
-function VirtualizedList({ items }) {
-  // Row renderer
-  const Row = ({ index, style }) => (
-    <div style={style} className="list-item">
-      {items[index].name}
-    </div>
-  );
-  
-  return (
-    <FixedSizeList
-      height={400}
-      width="100%"
-      itemCount={items.length}
-      itemSize={50}
-    >
-      {Row}
-    </FixedSizeList>
-  );
-}
-
-// Infinite scroll with IntersectionObserver
-function InfiniteScrollList() {
-  const [items, setItems] = useState([]);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  
-  const observer = useRef();
-  
-  const lastItemRef = useCallback(node => {
-    if (loading) return;
-    
-    if (observer.current) {
-      observer.current.disconnect();
-    }
-    
-    observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
-        loadMoreItems();
-      }
-    });
-    
-    if (node) {
-      observer.current.observe(node);
-    }
-  }, [loading, hasMore]);
-  
-  const loadMoreItems = async () => {
-    setLoading(true);
-    try {
-      const newItems = await fetchItems(page);
-      if (newItems.length === 0) {
-        setHasMore(false);
-      } else {
-        setItems(prev => [...prev, ...newItems]);
-        setPage(prev => prev + 1);
-      }
-    } catch (error) {
-      console.error('Error loading more items:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  return (
-    <div className="infinite-scroll-list">
-      {items.map((item, index) => (
-        <div
-          key={item.id}
-          ref={index === items.length - 1 ? lastItemRef : null}
-          className="list-item"
-        >
-          {item.name}
-        </div>
-      ))}
-      {loading && <div className="loading">Loading...</div>}
-      {!hasMore && <div>No more items</div>}
-    </div>
-  );
-}
-
-// Lazy loading images with IntersectionObserver
-function LazyImage({ src, alt, placeholder }) {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const imgRef = useRef();
-  
-  useEffect(() => {
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const img = entry.target;
-          const realSrc = img.dataset.src;
-          img.src = realSrc;
-          img.addEventListener('load', () => {
-            setIsLoaded(true);
-            observer.unobserve(img);
-          });
-        }
-      });
-    });
-    
-    if (imgRef.current) {
-      observer.observe(imgRef.current);
-    }
-    
-    return () => {
-      if (imgRef.current) {
-        observer.unobserve(imgRef.current);
-      }
-    };
-  }, []);
-  
-  return (
-    <div className={`lazy-image ${isLoaded ? 'loaded' : ''}`}>
-      <img
-        ref={imgRef}
-        data-src={src}
-        src={placeholder}
-        alt={alt}
-      />
-      {!isLoaded && <div className="placeholder" />}
-    </div>
-  );
-}
-```
-
-#### Topik 8.5: Bundle Optimization
-**Durasi**: 1 hari  
-**Materi**:
-- Webpack configuration
-- Tree shaking
-- Bundle analyzer
-- Reducing bundle size
-- Code splitting strategies
-- Dynamic imports
-- Compression techniques
-
-**Hands-on Practice**:
-```javascript
-// webpack.config.js example
-const path = require('path');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const CompressionPlugin = require('compression-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
-
-module.exports = {
-  entry: './src/index.js',
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: '[name].[contenthash].js',
-    chunkFilename: '[name].[contenthash].chunk.js',
-  },
-  optimization: {
-    minimizer: [new TerserPlugin()],
-    splitChunks: {
-      chunks: 'all',
-      cacheGroups: {
-        vendors: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
-          chunks: 'all',
-          priority: -10,
-        },
-        common: {
-          name: 'common',
-          minChunks: 2,
-          priority: -20,
-          reuseExistingChunk: true,
-        }
-      }
-    },
-  },
-  plugins: [
-    new BundleAnalyzerPlugin({
-      analyzerMode: 'static',
-      reportFilename: 'bundle-report.html',
-    }),
-    new CompressionPlugin({
-      algorithm: 'gzip',
-      test: /\.(js|css|html|svg)$/,
-      threshold: 10240, // Only compress files > 10kb
-      minRatio: 0.8,
-    }),
-  ],
-};
-
-// React code examples for optimizing imports
-// Bad - imports the entire lodash library
-import _ from 'lodash';
-
-// Good - only imports the specific methods needed
-import map from 'lodash/map';
-import filter from 'lodash/filter';
-
-// Using dynamic imports for code splitting
-const importExpensiveModule = () => import('./ExpensiveModule');
-
-function MyComponent() {
-  const [module, setModule] = useState(null);
-  
-  const loadModule = async () => {
-    try {
-      const { default: ExpensiveModule } = await importExpensiveModule();
-      setModule(ExpensiveModule);
-    } catch (error) {
-      console.error('Failed to load module:', error);
-    }
-  };
-  
-  return (
-    <div>
-      <button onClick={loadModule}>Load Module</button>
-      {module && <module.Component />}
-    </div>
-  );
-}
-```
-
-**Project Modul 8**:  
-Optimizing an existing React application:
-- Performance audit with Lighthouse
-- Memoization dan component optimizations
-- Implementing lazy loading dan code splitting
-- Virtual scroll
-
-// Class Component
-class Counter extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { count: 0 };
-    this.increment = this.increment.bind(this);
-  }
-  
-  increment() {
-    this.setState({ count: this.state.count + 1 });
-  }
-  
-  render() {
-    return (
-      <div>
-        <p>Count: {this.state.count}</p>
-        <button onClick={this.increment}>Increment</button>
-      </div>
-    );
-  }
-}
-```
-
-#### Topik 2.4: Event Handling
-**Durasi**: 1 hari  
-**Materi**:
-- Event handling di React
-- SyntheticEvent
-- Binding event handlers
-- Event pooling
-- Passing arguments ke event handlers
-
-**Hands-on Practice**:
-```jsx
-function ToggleButton() {
-  const [isOn, setIsOn] = React.useState(false);
-  
-  // Event handler dengan parameter
-  const handleClick = (event, newState) => {
-    console.log(event.type); // "click"
-    setIsOn(newState);
-  };
-  
-  return (
-    <button 
-      className={isOn ? "btn-on" : "btn-off"}
-      onClick={(e) => handleClick(e, !isOn)}
-    >
-      {isOn ? "ON" : "OFF"}
-    </button>
-  );
-}
-```
-
-#### Topik 2.5: Component Composition
-**Durasi**: 1 hari  
-**Materi**:
-- Containment
-- Specialization
-- Props.children
-- Composition vs Inheritance
-- Extracting Components
-
-**Hands-on Practice**:
-```jsx
-// Component composition
-function Card({ title, children }) {
-  return (
-    <div className="card">
-      <div className="card-header">{title}</div>
-      <div className="card-body">{children}</div>
-    </div>
-  );
-}
-
-function App() {
-  return (
-    <Card title="Welcome">
-      <p>This is a reusable card component.</p>
-      <button>Click me</button>
-    </Card>
-  );
-}
-```
-
-**Project Modul 2**:  
-Konversi landing page dari Modul 1 ke React:
-- Memecah UI menjadi component hierarchy
-- Mengimplementasikan navigation sebagai component
-- Membuat reusable UI components (Button, Card, etc.)
-- Menerapkan props untuk konfigurasi components
-- Menerapkan event handling untuk interaksi
-
-### MODUL 3: REACT FUNDAMENTALS
-
-#### Topik 3.1: State dan Hooks Dasar
-**Durasi**: 2 hari  
-**Materi**:
-- State concept
-- useState hook
-- Multiple state variables
-- State updates
-- State lifting
-- Lazy initial state
-
-**Hands-on Practice**:
-```jsx
-function Counter() {
-  // Basic state
-  const [count, setCount] = useState(0);
-  
-  // Object state
-  const [user, setUser] = useState({
-    name: 'Guest',
-    isLoggedIn: false
-  });
-  
-  // Update object state properly
-  const login = () => {
-    setUser(prevUser => ({
-      ...prevUser,
-      name: 'John',
-      isLoggedIn: true
-    }));
-  };
-  
-  return (
-    <div>
-      <p>Count: {count}</p>
-      <button onClick={() => setCount(count + 1)}>Increment</button>
-      <button onClick={() => setCount(0)}>Reset</button>
-      
-      <hr />
-      
-      <p>
-        {user.isLoggedIn ? `Welcome, ${user.name}!` : 'Please log in'}
-      </p>
-      <button onClick={login} disabled={user.isLoggedIn}>
-        Log in
-      </button>
-    </div>
-  );
-}
-```
-
-#### Topik 3.2: Effects dan Lifecycle
-**Durasi**: 2 hari  
-**Materi**:
-- useEffect hook
-- Dependency array
-- Cleanup function
-- Component lifecycle dengan hooks
-- Common useEffect patterns
-- API calls dengan useEffect
-
-**Hands-on Practice**:
-```jsx
-function UserProfile({ userId }) {
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
-  useEffect(() => {
-    // Reset state when userId changes
-    setLoading(true);
-    setError(null);
-    
-    let isMounted = true;
-    
-    async function fetchProfile() {
-      try {
-        const response = await fetch(`/api/users/${userId}`);
-        if (!response.ok) throw new Error('Failed to fetch');
-        
-        const data = await response.json();
-        
-        // Only update state if component is still mounted
-        if (isMounted) {
-          setProfile(data);
-          setLoading(false);
-        }
-      } catch (err) {
-        if (isMounted) {
-          setError(err.message);
-          setLoading(false);
-        }
-      }
-    }
-    
-    fetchProfile();
-    
-    // Cleanup function
-    return () => {
-      isMounted = false;
-    };
-  }, [userId]); // Re-run when userId changes
-  
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
-  if (!profile) return null;
-  
-  return (
-    <div className="profile">
-      <h2>{profile.name}</h2>
-      <p>Email: {profile.email}</p>
-    </div>
-  );
-}
-```
-
-#### Topik 3.3: Conditional Rendering
-**Durasi**: 1 hari  
-**Materi**:
-- If statements
-- Inline conditions with && operator
-- Conditional (ternary) operator
-- Preventing component rendering
-- Switch statement patterns
-
-**Hands-on Practice**:
-```jsx
-function StatusMessage({ status }) {
-  // Pattern 1: If statement
-  if (status === 'loading') {
-    return <Spinner />;
-  }
-  
-  // Pattern 2: Immediate return for error
-  if (status === 'error') {
-    return <ErrorMessage />;
-  }
-  
-  // Pattern 3: Ternary operator
-  return (
-    <div>
-      {status === 'success' 
-        ? <SuccessMessage /> 
-        : <p>Unknown status: {status}</p>}
-      
-      {/* Pattern 4: && operator */}
-      {status === 'warning' && <WarningBanner />}
-    </div>
-  );
-}
-```
-
-#### Topik 3.4: Lists dan Keys
-**Durasi**: 1 hari  
-**Materi**:
-- Rendering multiple components
-- Keys dan pentingnya
-- Extracting components dengan keys
-- Keys harus unik di antara siblings
-- Best practices untuk keys
-
-**Hands-on Practice**:
-```jsx
-function TodoList({ todos, onToggle, onDelete }) {
-  return (
-    <ul className="todo-list">
-      {todos.map(todo => (
-        <TodoItem
-          key={todo.id}
-          todo={todo}
-          onToggle={onToggle}
-          onDelete={onDelete}
-        />
-      ))}
-    </ul>
-  );
-}
-
-function TodoItem({ todo, onToggle, onDelete }) {
-  return (
-    <li className={todo.completed ? 'completed' : ''}>
-      <input
-        type="checkbox"
-        checked={todo.completed}
-        onChange={() => onToggle(todo.id)}
-      />
-      <span>{todo.text}</span>
-      <button onClick={() => onDelete(todo.id)}>Delete</button>
-    </li>
-  );
-}
-```
-
-#### Topik 3.5: Forms dan Controlled Components
-**Durasi**: 2 hari  
-**Materi**:
-- Controlled components
-- Handling multiple inputs
-- Uncontrolled components
-- Form validation
-- React Hook Form
-
-**Hands-on Practice**:
-```jsx
-function ContactForm() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
-  });
-  const [errors, setErrors] = useState({});
-  
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    
-    // Clear error when user types
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: null
-      }));
-    }
-  };
-  
-  const validate = () => {
-    const newErrors = {};
-    
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
-    }
-    
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
-    }
-    
-    if (!formData.message.trim()) {
-      newErrors.message = 'Message is required';
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-  
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    if (validate()) {
-      // Submit form data
-      console.log('Form submitted:', formData);
-      // Reset form
-      setFormData({ name: '', email: '', message: '' });
-    }
-  };
-  
-  return (
-    <form onSubmit={handleSubmit} className="contact-form">
-      <div className="form-group">
-        <label htmlFor="name">Name</label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          className={errors.name ? 'error' : ''}
-        />
-        {errors.name && <p className="error-text">{errors.name}</p>}
-      </div>
-      
-      <div className="form-group">
-        <label htmlFor="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          className={errors.email ? 'error' : ''}
-        />
-        {errors.email && <p className="error-text">{errors.email}</p>}
-      </div>
-      
-      <div className="form-group">
-        <label htmlFor="message">Message</label>
-        <textarea
-          id="message"
-          name="message"
-          value={formData.message}
-          onChange={handleChange}
-          className={errors.message ? 'error' : ''}
-        />
-        {errors.message && <p className="error-text">{errors.message}</p>}
-      </div>
-      
-      <button type="submit" className="submit-btn">Send Message</button>
-    </form>
-  );
-}
-```
-
-#### Topik 3.6: Styling di React
-**Durasi**: 1 hari  
-**Materi**:
-- Inline styles
-- CSS classes
-- CSS Modules
-- Styled Components
-- CSS-in-JS libraries
-- Tailwind CSS dengan React
-
-**Hands-on Practice**:
-```jsx
-// CSS Modules example
-import styles from './Button.module.css';
-
-function Button({ variant = 'primary', children, ...props }) {
-  return (
-    <button
-      className={`${styles.button} ${styles[variant]}`}
-      {...props}
-    >
-      {children}
-    </button>
-  );
-}
-
-// Styled Components example
-import styled from 'styled-components';
-
-const StyledButton = styled.button`
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-weight: 600;
-  cursor: pointer;
-  
-  ${props => props.variant === 'primary' && `
-    background-color: #0070f3;
-    color: white;
-    border: none;
-  `}
-  
-  ${props => props.variant === 'outline' && `
-    background-color: transparent;
-    color: #0070f3;
-    border: 1px solid #0070f3;
-  `}
-`;
-
-function Button({ variant = 'primary', children, ...props }) {
-  return (
-    <StyledButton variant={variant} {...props}>
-      {children}
-    </StyledButton>
-  );
-}
-```
-
-**Project Modul 3**:  
-Membuat To-Do List Application:
-- Fitur CRUD (Create, Read, Update, Delete)
-- Form validasi untuk input task
-- Filtering dan sorting tasks
-- Persistent storage dengan localStorage
-- Responsive design dengan multiple layout options
-- Drag and drop untuk reordering tasks
-
-### MODUL 4: REACT ECOSYSTEM & ROUTING
-
-#### Topik 4.1: Introduction to React Router
-**Durasi**: 1 hari  
-**Materi**:
-- React Router concepts
-- BrowserRouter vs HashRouter
-- Basic routing dengan Route
-- Navigation dengan Link dan NavLink
-- History API integration
-
-**Hands-on Practice**:
-```jsx
-import { BrowserRouter, Routes, Route, Link, NavLink } from 'react-router-dom';
-
-function App() {
-  return (
-    <BrowserRouter>
-      <nav>
-        <NavLink to="/" end className={({ isActive }) => 
-          isActive ? 'active-link' : 'link'
-        }>
-          Home
-        </NavLink>
-        <NavLink to="/about" className={({ isActive }) => 
-          isActive ? 'active-link' : 'link'
-        }>
-          About
-        </NavLink>
-        <NavLink to="/contact" className={({ isActive }) => 
-          isActive ? 'active-link' : 'link'
-        }>
-          Contact
-        </NavLink>
-      </nav>
-      
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
-  );
-}
-```
-
-#### Topik 4.2: Advanced Routing
-**Durasi**: 2 hari  
-**Materi**:
-- URL parameters
-- Query parameters
-- Nested routes
-- Index routes
-- Layout routes
-- Outlet component
-
-**Hands-on Practice**:
-```jsx
-function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<Home />} />
-          <Route path="about" element={<About />} />
-          <Route path="products" element={<ProductsLayout />}>
-            <Route index element={<ProductsList />} />
-            <Route path=":productId" element={<ProductDetail />} />
-          </Route>
-          <Route path="contact" element={<Contact />} />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  );
-}
-
-function MainLayout() {
-  return (
-    <div className="main-layout">
-      <header>
-        <nav>
-          <NavLink to="/">Home</NavLink>
-          <NavLink to="/about">About</NavLink>
-          <NavLink to="/products">Products</NavLink>
-          <NavLink to="/contact">Contact</NavLink>
-        </nav>
-      </header>
-      
-      <main>
-        <Outlet /> {/* Child routes render here */}
-      </main>
-      
-      <footer>© 2025 My Company</footer>
-    </div>
-  );
-}
-
-function ProductsLayout() {
-  return (
-    <div className="products-layout">
-      <h1>Products</h1>
-      <Outlet /> {/* Nested product routes render here */}
-    </div>
-  );
-}
-
-function ProductDetail() {
-  const { productId } = useParams();
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
-  
-  useEffect(() => {
-    // Fetch product data based on productId
-    fetchProduct(productId).then(data => {
-      setProduct(data);
-      setLoading(false);
-    });
-  }, [productId]);
-  
-  if (loading) return <p>Loading...</p>;
-  if (!product) return <p>Product not found</p>;
-  
-  return (
-    <div className="product-detail">
-      <h2>{product.name}</h2>
-      <p>{product.description}</p>
-      <p className="price">${product.price}</p>
-    </div>
-  );
-}
-```
-
-#### Topik 4.3: Protected Routes & Authentication
-**Durasi**: 1 hari  
-**Materi**:
-- Authentication flow di React
-- Private routes
-- Redirect non-authenticated users
-- Persisting authentication state
-- Role-based authorization
-
-**Hands-on Practice**:
-```jsx
-const AuthContext = createContext(null);
-
-function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  
-  // Check for saved auth on initial load
-  useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-  }, []);
-  
-  const login = async (credentials) => {
-    // Call to auth API
-    const response = await authService.login(credentials);
-    const userData = response.data;
-    
-    // Save user in state and localStorage
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
-    return userData;
-  };
-  
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
-  };
-  
-  const value = {
-    user,
-    isAuthenticated: !!user,
-    login,
-    logout
-  };
-  
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
-
-function useAuth() {
-  return useContext(AuthContext);
-}
-
-function ProtectedRoute({ children }) {
-  const { isAuthenticated } = useAuth();
-  const location = useLocation();
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
-  
-  return children;
-}
-
-function App() {
-  return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<MainLayout />}>
-            <Route index element={<Home />} />
-            <Route path="login" element={<Login />} />
-            <Route path="dashboard" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="profile" element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            } />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
-  );
-}
-```
-
-#### Topik 4.4: Code Splitting & Lazy Loading
-**Durasi**: 1 hari  
-**Materi**:
-- Bundling concepts
-- React.lazy
-- Suspense component
-- Route-based code splitting
-- Preloading chunks
-- Error boundaries
-
-**Hands-on Practice**:
-```jsx
-import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import LoadingFallback from './LoadingFallback';
-import ErrorBoundary from './ErrorBoundary';
-
-// Lazy load components
-const Home = lazy(() => import('./pages/Home'));
-const About = lazy(() => import('./pages/About'));
-const Products = lazy(() => import('./pages/Products'));
-const ProductDetail = lazy(() => import('./pages/ProductDetail'));
-const Contact = lazy(() => import('./pages/Contact'));
-const NotFound = lazy(() => import('./pages/NotFound'));
-
-function App() {
-  return (
-    <BrowserRouter>
-      <ErrorBoundary>
-        <Suspense fallback={<LoadingFallback />}>
-          <Routes>
-            <Route path="/" element={<MainLayout />}>
-              <Route index element={<Home />} />
-              <Route path="about" element={<About />} />
-              <Route path="products" element={<Products />} />
-              <Route path="products/:id" element={<ProductDetail />} />
-              <Route path="contact" element={<Contact />} />
-              <Route path="*" element={<NotFound />} />
-            </Route>
-          </Routes>
-        </Suspense>
-      </ErrorBoundary>
-    </BrowserRouter>
-  );
-}
-```
-
-**Project Modul 4**:  
-Membuat Multi-page Application dengan React Router:
-- Implementasi routing untuk multiple pages
-- Login/registration pages dengan authentication
-- Dashboard dengan protected routes
-- Dynamic routes dengan parameter
-- Lazy loading untuk semua pages
-- Custom 404 page
-- Breadcrumb navigation
-
-### MODUL 5: STATE MANAGEMENT
-
-#### Topik 5.1: React Context API
-**Durasi**: 2 hari  
-**Materi**:
-- Context API basics
-- createContext dan useContext
-- Context Provider pattern
-- Multiple contexts
-- Context vs prop drilling
-- Performance considerations
-
-**Hands-on Practice**:
-```jsx
-// ThemeContext.js
-import { createContext, useContext, useState } from 'react';
-
-const ThemeContext = createContext();
-
-export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState('light');
-  
-  const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
-  };
-  
-  const value = {
-    theme,
-    toggleTheme
-  };
-  
-  return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
-  );
-}
-
-export function useTheme() {
-  const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
-}
-
-// App.js
-function App() {
-  return (
-    <ThemeProvider>
-      <MainApp />
-    </ThemeProvider>
-  );
-}
-
-// ThemedButton.js
-function ThemedButton({ children, ...props }) {
-  const { theme, toggleTheme } = useTheme();
-  
-  return (
-    <button
-      className={`btn btn-${theme}`}
-      onClick={toggleTheme}
-      {...props}
-    >
-      {children}
-    </button>
-  );
-}
-```
-
-#### Topik 5.2: Introduction to Redux
-**Durasi**: 2 hari  
-**Materi**:
-- Redux principles
-- Actions, reducers, dan store
-- connect HOC
-- mapStateToProps dan mapDispatchToProps
-- Redux DevTools
-- Redux middleware
-
-**Hands-on Practice**:
-```jsx
-// actions.js
-export const ADD_TODO = 'ADD_TODO';
-export const TOGGLE_TODO = 'TOGGLE_TODO';
-export const REMOVE_TODO = 'REMOVE_TODO';
-
-export const addTodo = (text) => ({
-  type: ADD_TODO,
-  payload: {
-    id: Date.now(),
-    text,
-    completed: false
-  }
-});
-
-export const toggleTodo = (id) => ({
-  type: TOGGLE_TODO,
-  payload: { id }
-});
-
-export const removeTodo = (id) => ({
-  type: REMOVE_TODO,
-  payload: { id }
-});
-
-// reducers.js
-const initialState = {
-  todos: []
-};
-
-export function todoReducer(state = initialState, action) {
-  switch (action.type) {
-    case ADD_TODO:
-      return {
-        ...state,
-        todos: [...state.todos, action.payload]
-      };
-      
-    case TOGGLE_TODO:
-      return {
-        ...state,
-        todos: state.todos.map(todo =>
-          todo.id === action.payload.id
-            ? { ...todo, completed: !todo.completed }
-            : todo
-        )
-      };
-      
-    case REMOVE_TODO:
-      return {
-        ...state,
-        todos: state.todos.filter(todo => todo.id !== action.payload.id)
-      };
-      
-    default:
-      return state;
-  }
-}
-
-// store.js
-import { createStore } from 'redux';
-import { todoReducer } from './reducers';
-
-const store = createStore(
-  todoReducer,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-);
-
-export default store;
-
-// TodoList.js (with connect)
-import { connect } from 'react-redux';
-import { toggleTodo, removeTodo } from './actions';
-
-function TodoList({ todos, toggleTodo, removeTodo }) {
-  return (
-    <ul className="todo-list">
-      {todos.map(todo => (
-        <li key={todo.id} className={todo.completed ? 'completed' : ''}>
-          <input
-            type="checkbox"
-            checked={todo.completed}
-            onChange={() => toggleTodo(todo.id)}
-          />
-          <span>{todo.text}</span>
-          <button onClick={() => removeTodo(todo.id)}>Delete</button>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-const mapStateToProps = (state) => ({
-  todos: state.todos
-});
-
-const mapDispatchToProps = {
-  toggleTodo,
-  removeTodo
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(TodoList);
-```
-
-#### Topik 5.3: Modern Redux dengan Hooks
-**Durasi**: 2 hari  
-**Materi**:
-- useSelector dan useDispatch
-- Redux hooks vs connect
-- Selecting data efficiently
-- Memoization dan performance
-- Redux best practices
-
-**Hands-on Practice**:
-```jsx
-// TodoList.js (with hooks)
-import { useSelector, useDispatch } from 'react-redux';
-import { toggleTodo, removeTodo } from './actions';
-
-function TodoList() {
-  const todos = useSelector(state => state.todos);
-  const dispatch = useDispatch();
-  
-  return (
-    <ul className="todo-list">
-      {todos.map(todo => (
-        <li key={todo.id} className={todo.completed ? 'completed' : ''}>
-          <input
-            type="checkbox"
-            checked={todo.completed}
-            onChange={() => dispatch(toggleTodo(todo.id))}
-          />
-          <span>{todo.text}</span>
-          <button onClick={() => dispatch(removeTodo(todo.id))}>
-            Delete
-          </button>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-// AddTodo.js
-function AddTodo() {
-  const [text, setText] = useState('');
-  const dispatch = useDispatch();
-  
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!text.trim()) return;
-    
-    dispatch(addTodo(text));
-    setText('');
-  };
-  
-  return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Add new todo"
-      />
-      <button type="submit">Add</button>
-    </form>
-  );
-}
-```
-
-#### Topik 5.4: Redux Toolkit
-**Durasi**: 2 hari  
-**Materi**:
-- configureStore
-- createSlice
-- createAsyncThunk
-- Redux DevTools integration
-- Immutability dengan Immer
-- createEntityAdapter
-
-**Hands-on Practice**:
-```jsx
-// todosSlice.js
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import todoApi from '../api/todoApi';
-
-export const fetchTodos = createAsyncThunk(
-  'todos/fetchTodos',
-  async () => {
-    const response = await todoApi.getTodos();
-    return response.data;
-  }
-);
-
-export const addNewTodo = createAsyncThunk(
-  'todos/addNewTodo',
-  async (text) => {
-    const response = await todoApi.addTodo({ text, completed: false });
-    return response.data;
-  }
-);
-
-const todosSlice = createSlice({
-  name: 'todos',
-  initialState: {
-    items: [],
-    status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
-    error: null
-  },
-  reducers: {
-    // Immer lets us write "mutating" logic
-    toggleTodo: (state, action) => {
-      const todo = state.items.find(todo => todo.id === action.payload);
-      if (todo) {
-        todo.completed = !todo.completed;
-      }
-    },
-    removeTodo: (state, action) => {
-      state.items = state.items.filter(todo => todo.id !== action.payload);
-    }
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchTodos.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(fetchTodos.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.items = action.payload;
-      })
-      .addCase(fetchTodos.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
-      })
-      .addCase(addNewTodo.fulfilled, (state, action) => {
-        state.items.push(action.payload);
-      });
-  }
-});
-
-export const { toggleTodo, removeTodo } = todosSlice.actions;
-export default todosSlice.reducer;
-
-// store.js
-import { configureStore } from '@reduxjs/toolkit';
-import todosReducer from './todosSlice';
-
-export const store = configureStore({
-  reducer: {
-    todos: todosReducer
-  }
-});
-
-// TodoList.js
-function TodoList() {
-  const dispatch = useDispatch();
-  const { items, status, error } = useSelector(state => state.todos);
-  
-  useEffect(() => {
-    if (status === 'idle') {
-      dispatch(fetchTodos());
-    }
-  }, [status, dispatch]);
-  
-  if (status === 'loading') {
-    return <div>Loading...</div>;
-  }
-  
-  if (status === 'failed') {
-    return <div>Error: {error}</div>;
-  }
-  
-  return (
-    <ul className="todo-list">
-      {items.map(todo => (
-        <li key={todo.id} className={todo.completed ? 'completed' : ''}>
-          <input
-            type="checkbox"
-            checked={todo.completed}
-            onChange={() => dispatch(toggleTodo(todo.id))}
-          />
-          <span>{todo.text}</span>
-          <button onClick={() => dispatch(removeTodo(todo.id))}>
-            Delete
-          </button>
-        </li>
-      ))}
-    </ul>
-  );
-}
-```
-
-#### Topik 5.5: Asynchronous Redux
-**Durasi**: 2 hari  
-**Materi**:
-- Redux middleware concepts
-- Thunks vs Sagas
-- Redux Thunk middleware
-- Error handling in async actions
-- Loading states
-- Optimistic updates
-
-**Hands-on Practice**:
-```jsx
-// With Redux Thunk (without toolkit)
-export const fetchTodos = () => async (dispatch) => {
-  dispatch({ type: 'FETCH_TODOS_START' });
-  
-  try {
-    const response = await fetch('/api/todos');
-    const data = await response.json();
-    
-    dispatch({
-      type: 'FETCH_TODOS_SUCCESS',
-      payload: data
-    });
-  } catch (error) {
-    dispatch({
-      type: 'FETCH_TODOS_FAILURE',
-      payload: error.message
-    });
-  }
-};
-
-// Optimistic update example
-export const toggleTodoOptimistic = (id) => async (dispatch, getState) => {
-  const todo = getState().todos.items.find(todo => todo.id === id);
-  
-  // Optimistically update UI
-  dispatch({
-    type: 'TOGGLE_TODO',
-    payload: { id }
-  });
-  
-  try {
-    // API call to persist the change
-    await fetch(`/api/todos/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ completed: !todo.completed })
-    });
-  } catch (error) {
-    // Revert on failure
-    dispatch({
-      type: 'TOGGLE_TODO',
-      payload: { id }
-    });
-    
-    dispatch({
-      type: 'API_ERROR',
-      payload: error.message
-    });
-  }
-};
-```
-
-**Project Modul 5**:  
-Membuat E-Commerce App dengan state management kompleks:
-- Cart functionality dengan Redux
-- Product listing dengan filtering dan sorting
-- User authentication state management
-- Wishlists dan saved items
-- Order processing flow
-- Product reviews dan ratings
-
-### MODUL 6: DATA FETCHING & API INTEGRATION
-
-#### Topik 6.1: Fetching Data in React
-**Durasi**: 1 hari  
-**Materi**:
-- Fetch API
-- Axios library
-- Error handling
-- Loading states
-- AbortController untuk cancellation
-- Handling race conditions
-
-**Hands-on Practice**:
-```jsx
-function UserProfile({ userId }) {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
-  useEffect(() => {
-    let isMounted = true;
-    const controller = new AbortController();
-    const signal = controller.signal;
-    
-    async function fetchData() {
-      setLoading(true);
-      
-      try {
-        const response = await fetch(`/api/users/${userId}`, { signal });
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        
-        if (isMounted) {
-          setData(result);
-          setError(null);
-        }
-      } catch (error) {
-        if (error.name !== 'AbortError' && isMounted) {
-          setError(error.message);
-          setData(null);
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    }
-    
-    fetchData();
-    
-    // Cleanup function
-    return () => {
-      isMounted = false;
-      controller.abort();
-    };
-  }, [userId]);
-  
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
-  if (!data) return null;
-  
-  return (
-    <div>
-      <h1>{data.name}</h1>
-      <p>Email: {data.email}</p>
-      {/* Other user info */}
-    </div>
-  );
-}
-```
-
-#### Topik 6.2: Custom Hooks untuk Data Fetching
-**Durasi**: 2 hari  
-**Materi**:
-- Creating reusable fetch hooks
-- Separation of concerns
-- Parameterized fetch hooks
-- Caching results
-- Polling dan refresh strategies
-- Sequential vs parallel data fetching
-
-**Hands-on Practice**:
-```jsx
-// useFetch.js - Basic fetch hook
-function useFetch(url) {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
-  useEffect(() => {
-    let isMounted = true;
-    const controller = new AbortController();
-    
-    async function fetchData() {
-      setLoading(true);
-      
-      try {
-        const response = await fetch(url, { signal: controller.signal });
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        
-        if (isMounted) {
-          setData(result);
-          setError(null);
-        }
-      } catch (error) {
-        if (error.name !== 'AbortError' && isMounted) {
-          setError(error.message);
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    }
-    
-    fetchData();
-    
-    return () => {
-      isMounted = false;
-      controller.abort();
-    };
-  }, [url]);
-  
-  return { data, loading, error };
-}
-
-// useResource.js - More advanced hook
-function useResource(resourceType, id) {
-  const [resource, setResource] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
-  useEffect(() => {
-    let isMounted = true;
-    const controller = new AbortController();
-    
-    async function fetchResource() {
-      if (!id) return;
-      
-      setLoading(true);
-      
-      try {
-        const response = await fetch(`/api/${resourceType}/${id}`, {
-          signal: controller.signal
-        });
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        if (isMounted) {
-          setResource(data);
-          setError(null);
-        }
-      } catch (error) {
-        if (error.name !== 'AbortError' && isMounted) {
-          setError(error.message);
-          setResource(null);
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    }
-    
-    fetchResource();
-    
-    return () => {
-      isMounted = false;
-      controller.abort();
-    };
-  }, [resourceType, id]);
-  
-  return {
-    data: resource,
-    loading,
-    error,
-    refetch: () => {
-      setLoading(true);
-      // Re-run the effect by updating a ref
-    }
-  };
-}
-
-// Usage
-function UserProfile({ userId }) {
-  const { data: user, loading, error } = useResource('users', userId);
-  
-  // Dependent query - fetch user's posts once we have the user
-  const { data: posts } = useResource('posts', user ? user.id : null);
-  
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
-  if (!user) return null;
-  
-  return (
-    <div>
-      <h1>{user.name}</h1>
-      <p>Email: {user.email}</p>
-      
-      <h2>Posts</h2>
-      {posts ? (
+### Semantic Elements
+Semantic elements adalah elemen HTML yang memiliki arti atau makna yang jelas tentang konten yang dikandungnya. Ini membantu browser, developer, dan teknologi assistive untuk memahami struktur halaman web.
+
+#### Keuntungan Semantic Elements:
+- Meningkatkan SEO (Search Engine Optimization)
+- Membuat kode lebih mudah dibaca dan dipelihara
+- Meningkatkan aksesibilitas
+
+#### Contoh Semantic Elements:
+- `<header>` - Menandai bagian header halaman
+- `<nav>` - Berisi menu navigasi utama
+- `<main>` - Berisi konten utama halaman
+- `<section>` - Mengelompokkan konten berdasarkan tema
+- `<article>` - Konten yang berdiri sendiri
+- `<aside>` - Konten yang berhubungan dengan konten utama
+- `<footer>` - Menandai bagian footer halaman
+
+### Contoh Penggunaan Semantic Elements
+```html
+<header>
+    <h1>Judul Website</h1>
+    <nav>
         <ul>
-          {posts.map(post => (
-            <li key={post.id}>{post.title}</li>
-          ))}
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#contact">Contact</a></li>
         </ul>
-      ) : (
-        <p>Loading posts...</p>
-      )}
-    </div>
-  );
+    </nav>
+</header>
+
+<main>
+    <section id="about">
+        <h2>About Us</h2>
+        <p>Informasi tentang perusahaan kami...</p>
+    </section>
+    
+    <section id="services">
+        <h2>Our Services</h2>
+        <article>
+            <h3>Web Development</h3>
+            <p>Deskripsi layanan web development...</p>
+        </article>
+        <article>
+            <h3>Mobile Development</h3>
+            <p>Deskripsi layanan mobile development...</p>
+        </article>
+    </section>
+    
+    <aside>
+        <h3>Related Information</h3>
+        <p>Informasi tambahan yang relevan...</p>
+    </aside>
+</main>
+
+<footer>
+    <p>&copy; 2025 Company Name. All rights reserved.</p>
+</footer>
+```
+
+### Latihan:
+1. Buatlah struktur HTML dasar untuk halaman profil pribadi
+2. Gunakan minimal 5 semantic elements berbeda
+3. Tambahkan konten seperti judul, paragraf, gambar, dan link
+
+---
+
+## CSS3, Flexbox dan Grid
+
+### Apa itu CSS?
+CSS (Cascading Style Sheets) adalah bahasa yang digunakan untuk mengatur tampilan dan format elemen HTML. CSS memisahkan konten (HTML) dari presentasi (CSS).
+
+### Cara Menambahkan CSS ke HTML
+1. **Inline CSS** - Menggunakan atribut `style` pada elemen HTML
+   ```html
+   <p style="color: blue; font-size: 16px;">Ini adalah paragraf berwarna biru.</p>
+   ```
+
+2. **Internal CSS** - Menggunakan tag `<style>` di dalam `<head>`
+   ```html
+   <head>
+       <style>
+           p {
+               color: blue;
+               font-size: 16px;
+           }
+       </style>
+   </head>
+   ```
+
+3. **External CSS** (Direkomendasikan) - Membuat file CSS terpisah
+   ```html
+   <head>
+       <link rel="stylesheet" href="styles.css">
+   </head>
+   ```
+
+### CSS Selectors
+CSS Selectors digunakan untuk memilih elemen HTML yang ingin kita styling.
+
+```css
+/* Element selector */
+p {
+    color: blue;
+}
+
+/* Class selector */
+.highlight {
+    background-color: yellow;
+}
+
+/* ID selector */
+#header {
+    font-size: 24px;
+}
+
+/* Descendant selector */
+nav a {
+    text-decoration: none;
+}
+
+/* Pseudo-class */
+a:hover {
+    color: red;
 }
 ```
 
-#### Topik 6.3: React Query
-**Durasi**: 2 hari  
-**Materi**:
-- React Query basics
-- Queries vs Mutations
-- Caching dan stale data
-- Refetching strategies
-- Pagination dan infinite scroll
-- Optimistic updates
-- Dependent queries
+### Flexbox
+Flexbox adalah model layout CSS yang memudahkan pengaturan elemen dalam satu dimensi (baris atau kolom). Flexbox sangat berguna untuk membuat layout yang responsif.
 
-**Hands-on Practice**:
-```jsx
-// React Query setup
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-  useMutation,
-  useQueryClient
-} from 'react-query';
+#### Properti Utama Flexbox:
+- `display: flex` - Mengaktifkan flexbox
+- `flex-direction` - Menentukan arah (row, column)
+- `justify-content` - Mengatur perataan horizontal
+- `align-items` - Mengatur perataan vertikal
+- `flex-wrap` - Mengatur apakah items bisa wrap ke baris berikutnya
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      cacheTime: 1000 * 60 * 30, // 30 minutes
-      retry: 2,
-      refetchOnWindowFocus: true
-    }
-  }
+#### Contoh Flexbox:
+```css
+.container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.item {
+    flex: 1;
+    margin: 10px;
+}
+```
+
+### CSS Grid
+CSS Grid adalah sistem layout dua dimensi yang memungkinkan pengaturan elemen dalam baris dan kolom secara bersamaan. Grid sangat powerful untuk layout kompleks.
+
+#### Properti Utama Grid:
+- `display: grid` - Mengaktifkan grid
+- `grid-template-columns` - Mendefinisikan kolom
+- `grid-template-rows` - Mendefinisikan baris
+- `grid-gap` - Jarak antar sel grid
+- `grid-template-areas` - Layout visual untuk grid
+
+#### Contoh Grid:
+```css
+.container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto;
+    grid-gap: 20px;
+}
+
+.header {
+    grid-column: 1 / -1;  /* Dari kolom pertama sampai terakhir */
+}
+```
+
+### Latihan:
+1. Buatlah layout dengan flexbox untuk menu navigasi horizontal
+2. Buatlah layout grid dengan 3 kolom untuk bagian galeri foto
+3. Buat layout responsif yang berubah dari 3 kolom ke 1 kolom pada layar kecil
+
+---
+
+## JavaScript Fundamentals dan ES6+
+
+### Apa itu JavaScript?
+JavaScript adalah bahasa pemrograman yang memungkinkan website menjadi interaktif. JavaScript dapat memanipulasi konten HTML, merespon interaksi user, mengambil data dari server, dan banyak lagi.
+
+### Cara Menambahkan JavaScript ke HTML
+```html
+<!-- Internal JavaScript -->
+<script>
+    console.log("Hello World!");
+</script>
+
+<!-- External JavaScript (Direkomendasikan) -->
+<script src="script.js"></script>
+```
+
+### Variabel dan Tipe Data
+```javascript
+// var (hindari penggunaan var, gunakan let dan const)
+var nama = "John";
+
+// let - untuk variabel yang nilainya bisa berubah
+let umur = 25;
+umur = 26; // OK
+
+// const - untuk variabel yang nilainya tetap
+const PI = 3.14;
+// PI = 3.15; // Error!
+
+// Tipe data
+let nama = "John";               // String
+let umur = 25;                   // Number
+let isActive = true;             // Boolean
+let hobbies = ["Coding", "Reading"];  // Array
+let person = {                   // Object
+    name: "John",
+    age: 25
+};
+let nothing = null;              // Null
+let notDefined;                  // Undefined
+```
+
+### Operator
+```javascript
+// Arithmetic operators
+let a = 10 + 5;  // 15 (addition)
+let b = 10 - 5;  // 5 (subtraction)
+let c = 10 * 5;  // 50 (multiplication)
+let d = 10 / 5;  // 2 (division)
+let e = 10 % 3;  // 1 (modulus - remainder)
+
+// Comparison operators
+let f = (10 > 5);   // true
+let g = (10 < 5);   // false
+let h = (10 >= 10); // true
+let i = (10 == 10); // true
+let j = (10 === "10"); // false (strict equality - checks type)
+
+// Logical operators
+let k = (true && false); // false (AND)
+let l = (true || false); // true (OR)
+let m = !true;           // false (NOT)
+```
+
+### Conditional Statements
+```javascript
+// if statement
+let age = 18;
+
+if (age >= 18) {
+    console.log("Anda dewasa");
+} else if (age >= 13) {
+    console.log("Anda remaja");
+} else {
+    console.log("Anda anak-anak");
+}
+
+// Ternary operator
+let status = age >= 18 ? "dewasa" : "belum dewasa";
+
+// Switch statement
+let day = 1;
+switch (day) {
+    case 1:
+        console.log("Senin");
+        break;
+    case 2:
+        console.log("Selasa");
+        break;
+    default:
+        console.log("Hari lain");
+}
+```
+
+### Loops
+```javascript
+// For loop
+for (let i = 0; i < 5; i++) {
+    console.log(i); // 0, 1, 2, 3, 4
+}
+
+// While loop
+let i = 0;
+while (i < 5) {
+    console.log(i); // 0, 1, 2, 3, 4
+    i++;
+}
+
+// For...of (untuk Array)
+const fruits = ["Apple", "Banana", "Orange"];
+for (const fruit of fruits) {
+    console.log(fruit);
+}
+
+// For...in (untuk Object)
+const person = {name: "John", age: 25};
+for (const key in person) {
+    console.log(key + ": " + person[key]);
+}
+```
+
+### Functions
+```javascript
+// Function declaration
+function greet(name) {
+    return "Hello, " + name + "!";
+}
+
+// Function expression
+const greet = function(name) {
+    return "Hello, " + name + "!";
+};
+
+// Arrow function (ES6+)
+const greet = (name) => {
+    return "Hello, " + name + "!";
+};
+
+// Simplified arrow function (single return)
+const greet = name => "Hello, " + name + "!";
+
+// Calling a function
+console.log(greet("John")); // "Hello, John!"
+```
+
+### ES6+ Features
+
+#### 1. Template Literals
+```javascript
+const name = "John";
+const greeting = `Hello, ${name}!`; // "Hello, John!"
+```
+
+#### 2. Destructuring
+```javascript
+// Array destructuring
+const [first, second] = [1, 2];
+console.log(first); // 1
+
+// Object destructuring
+const person = { name: "John", age: 25 };
+const { name, age } = person;
+console.log(name); // "John"
+```
+
+#### 3. Spread Operator
+```javascript
+// Spread pada array
+const arr1 = [1, 2, 3];
+const arr2 = [...arr1, 4, 5]; // [1, 2, 3, 4, 5]
+
+// Spread pada object
+const obj1 = { a: 1, b: 2 };
+const obj2 = { ...obj1, c: 3 }; // { a: 1, b: 2, c: 3 }
+```
+
+#### 4. Default Parameters
+```javascript
+function greet(name = "Guest") {
+    return `Hello, ${name}!`;
+}
+
+console.log(greet()); // "Hello, Guest!"
+```
+
+#### 5. Array Methods
+```javascript
+const numbers = [1, 2, 3, 4, 5];
+
+// map - membuat array baru dengan transformasi
+const doubled = numbers.map(num => num * 2); // [2, 4, 6, 8, 10]
+
+// filter - membuat array baru dengan filter
+const evens = numbers.filter(num => num % 2 === 0); // [2, 4]
+
+// reduce - mereduksi array menjadi satu nilai
+const sum = numbers.reduce((total, num) => total + num, 0); // 15
+```
+
+### Latihan:
+1. Buat fungsi untuk menghitung faktorial
+2. Buat program untuk memfilter array angka menjadi array angka genap saja
+3. Buat program untuk menampilkan daftar nama dari array objek pengguna
+
+---
+
+## DOM Manipulation
+
+### Apa itu DOM?
+DOM (Document Object Model) adalah representasi struktur dari dokumen HTML dalam bentuk objek yang dapat dimanipulasi dengan JavaScript. DOM memungkinkan JavaScript untuk mengubah konten, struktur, dan style halaman web secara dinamis.
+
+### Mengakses Elemen DOM
+```javascript
+// Mengakses elemen berdasarkan ID
+const header = document.getElementById("header");
+
+// Mengakses elemen berdasarkan nama tag
+const paragraphs = document.getElementsByTagName("p");
+
+// Mengakses elemen berdasarkan nama class
+const highlights = document.getElementsByClassName("highlight");
+
+// Mengakses elemen menggunakan CSS selector (lebih modern)
+const firstParagraph = document.querySelector("p");
+const allButtons = document.querySelectorAll("button");
+```
+
+### Memanipulasi Konten DOM
+```javascript
+// Mengubah text content
+element.textContent = "Teks baru";
+
+// Mengubah HTML content
+element.innerHTML = "<strong>Teks tebal</strong>";
+
+// Mengubah atribut
+element.setAttribute("href", "https://example.com");
+element.id = "newId";
+
+// Mengubah style
+element.style.color = "blue";
+element.style.fontSize = "16px";
+```
+
+### Memanipulasi Class
+```javascript
+// Tambah class
+element.classList.add("active");
+
+// Hapus class
+element.classList.remove("disabled");
+
+// Toggle class (tambah jika tidak ada, hapus jika ada)
+element.classList.toggle("highlight");
+
+// Cek apakah elemen memiliki class tertentu
+const hasClass = element.classList.contains("active");
+```
+
+### Membuat dan Menghapus Elemen
+```javascript
+// Membuat elemen baru
+const newParagraph = document.createElement("p");
+newParagraph.textContent = "Ini adalah paragraf baru";
+
+// Menambahkan elemen ke DOM
+parentElement.appendChild(newParagraph);
+
+// Menambahkan elemen sebelum elemen lain
+parentElement.insertBefore(newParagraph, referenceElement);
+
+// Menghapus elemen
+element.remove();
+// atau
+parentElement.removeChild(element);
+```
+
+### Event Handling
+```javascript
+// Metode addEventListener
+const button = document.querySelector("button");
+button.addEventListener("click", function() {
+    alert("Button diklik!");
 });
 
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <TodoApp />
-    </QueryClientProvider>
-  );
+// Menggunakan arrow function
+button.addEventListener("click", () => {
+    alert("Button diklik!");
+});
+
+// Menambahkan event dengan atribut HTML
+// <button onclick="handleClick()">Klik Saya</button>
+function handleClick() {
+    alert("Button diklik!");
 }
 
-// API functions
-const fetchTodos = async () => {
-  const response = await fetch('/api/todos');
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return response.json();
-};
-
-const addTodo = async (newTodo) => {
-  const response = await fetch('/api/todos', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(newTodo)
-  });
-  if (!response.ok) {
-    throw new Error('Failed to add todo');
-  }
-  return response.json();
-};
-
-const updateTodo = async (todo) => {
-  const response = await fetch(`/api/todos/${todo.id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(todo)
-  });
-  if (!response.ok) {
-    throw new Error('Failed to update todo');
-  }
-  return response.json();
-};
-
-// Components
-function TodoApp() {
-  const queryClient = useQueryClient();
-  
-  // Query - fetching data
-  const {
-    data: todos,
-    isLoading,
-    isError,
-    error,
-    refetch
-  } = useQuery('todos', fetchTodos);
-  
-  // Mutation - adding a todo
-  const addMutation = useMutation(addTodo, {
-    // When mutate is called:
-    onMutate: async (newTodo) => {
-      // Cancel any outgoing refetches
-      await queryClient.cancelQueries('todos');
-      
-      // Snapshot the previous value
-      const previousTodos = queryClient.getQueryData('todos');
-      
-      // Optimistically update to the new value
-      queryClient.setQueryData('todos', old => [
-        ...old,
-        { id: Date.now(), ...newTodo }
-      ]);
-      
-      // Return context with the snapshotted value
-      return { previousTodos };
-    },
-    // If the mutation fails, use the context returned from onMutate to roll back
-    onError: (err, newTodo, context) => {
-      queryClient.setQueryData('todos', context.previousTodos);
-    },
-    // Always refetch after error or success:
-    onSettled: () => {
-      queryClient.invalidateQueries('todos');
-    },
-  });
-  
-  // Mutation - toggling a todo
-  const updateMutation = useMutation(updateTodo, {
-    onMutate: async (updatedTodo) => {
-      await queryClient.cancelQueries('todos');
-      const previousTodos = queryClient.getQueryData('todos');
-      
-      queryClient.setQueryData('todos', old =>
-        old.map(todo =>
-          todo.id === updatedTodo.id ? updatedTodo : todo
-        )
-      );
-      
-      return { previousTodos };
-    },
-    onError: (err, updatedTodo, context) => {
-      queryClient.setQueryData('todos', context.previousTodos);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries('todos');
-    },
-  });
-  
-  const handleAddTodo = (text) => {
-    addMutation.mutate({ text, completed: false });
-  };
-  
-  const handleToggle = (todo) => {
-    updateMutation.mutate({
-      ...todo,
-      completed: !todo.completed
-    });
-  };
-  
-  if (isLoading) return <p>Loading...</p>;
-  if (isError) return <p>Error: {error.message}</p>;
-  
-  return (
-    <div>
-      <button onClick={() => refetch()}>Refresh</button>
-      
-      <AddTodoForm onAdd={handleAddTodo} />
-      
-      <ul>
-        {todos.map(todo => (
-          <li
-            key={todo.id}
-            style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}
-            onClick={() => handleToggle(todo)}
-          >
-            {todo.text}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
+// Event object
+button.addEventListener("click", function(event) {
+    console.log(event.target); // Elemen yang memicu event
+    event.preventDefault(); // Mencegah default action
+});
 ```
 
-#### Topik 6.4: Authentication
-**Durasi**: 2 hari  
-**Materi**:
-- JWT Authentication
-- OAuth flows
-- Authentication state management
-- Protected routes
-- Refresh tokens
-- Persistent login
-- Security considerations
+### Common DOM Events
+- `click` - Ketika elemen diklik
+- `dblclick` - Ketika elemen diklik dua kali
+- `mouseenter` - Ketika mouse masuk ke area elemen
+- `mouseleave` - Ketika mouse keluar dari area elemen
+- `keydown` - Ketika keyboard key ditekan
+- `keyup` - Ketika keyboard key dilepas
+- `submit` - Ketika form di-submit
+- `load` - Ketika halaman selesai dimuat
+- `resize` - Ketika window diubah ukurannya
+- `scroll` - Ketika user melakukan scroll
 
-**Hands-on Practice**:
-```jsx
-import { createContext, useContext, useState, useEffect } from 'react';
+### Latihan:
+1. Buat form dengan validasi JavaScript sederhana
+2. Buat toggle button yang mengubah tema halaman (light/dark)
+3. Buat to-do list sederhana yang bisa menambah dan menghapus item
 
-// Create auth context
-const AuthContext = createContext(null);
+---
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  
-  // Check if user is already logged in
-  useEffect(() => {
-    async function loadUserFromToken() {
-      const token = localStorage.getItem('token');
-      
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-      
-      try {
-        // Validate token and get user info
-        const response = await fetch('/api/auth/me', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error('Invalid token');
-        }
-        
-        const userData = await response.json();
-        setUser(userData);
-      } catch (error) {
-        console.error('Failed to load user', error);
-        localStorage.removeItem('token');
-      } finally {
-        setLoading(false);
-      }
-    }
-    
-    loadUserFromToken();
-  }, []);
-  
-  // Login function
-  const login = async (credentials) => {
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(credentials)
-    });
-    
-    if (!response.ok) {
-      throw new Error('Login failed');
-    }
-    
-    const { token, user: userData } = await response.json();
-    
-    // Store token in localStorage
-    localStorage.setItem('token', token);
-    
-    // Set user state
-    setUser(userData);
-    
-    return userData;
-  };
-  
-  // Logout function
-  const logout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
-  };
-  
-  // Registration function
-  const register = async (userData) => {
-    const response = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(userData)
-    });
-    
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Registration failed');
-    }
-    
-    const { token, user: newUser } = await response.json();
-    
-    localStorage.setItem('token', token);
-    setUser(newUser);
-    
-    return newUser;
-  };
-  
-  const value = {
-    user,
-    loading,
-    login,
-    logout,
-    register,
-    isAuthenticated: !!user
-  };
-  
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
+## Browser Developer Tools
 
-// Custom hook to use the auth context
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-}
+### Apa itu Browser Developer Tools?
+Browser Developer Tools adalah sekumpulan alat pengembangan yang sudah terintegrasi di dalam browser modern. Tools ini sangat membantu developer untuk melakukan debugging, testing, dan optimization website.
 
-// Login form component
-function LoginForm() {
-  const { login } = useAuth();
-  const [credentials, setCredentials] = useState({
-    email: '',
-    password: ''
-  });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setCredentials(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-  
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-    
-    try {
-      await login(credentials);
-      navigate('/dashboard');
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  return (
-    <form onSubmit={handleSubmit}>
-      {error && <p className="error">{error}</p>}
-      
-      <div>
-        <label htmlFor="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value={credentials.email}
-          onChange={handleChange}
-          required
-        />
-      </div>
-      
-      <div>
-        <label htmlFor="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          value={credentials.password}
-          onChange={handleChange}
-          required
-        />
-      </div>
-      
-      <button type="submit" disabled={loading}>
-        {loading ? 'Logging in...' : 'Log In'}
-      </button>
-    </form>
-  );
-}
+### Cara Membuka Developer Tools
+- **Chrome/Edge**: Tekan F12 atau Ctrl+Shift+I (Windows/Linux) atau Cmd+Option+I (Mac)
+- **Firefox**: Tekan F12 atau Ctrl+Shift+I (Windows/Linux) atau Cmd+Option+I (Mac)
+- **Safari**: Aktifkan Developer Menu dari Preferences > Advanced, lalu pilih Show Develop menu in menu bar. Kemudian tekan Cmd+Option+I
+
+### Komponen Utama Developer Tools
+
+#### 1. Elements/Inspector Panel
+- Melihat dan memanipulasi DOM
+- Melihat dan mengubah CSS
+- Menguji perubahan secara langsung
+- Melihat box model
+
+#### 2. Console Panel
+- Menjalankan JavaScript secara langsung
+- Melihat error dan warning
+- Output dari console.log()
+- Debugging interaktif
+
+#### 3. Network Panel
+- Memantau request dan response
+- Melihat HTTP headers
+- Menganalisis waktu loading
+- Melihat size resources
+
+#### 4. Sources/Debugger Panel
+- Melihat source code website
+- Debugging JavaScript dengan breakpoints
+- Melacak perubahan variabel
+- Testing kode secara langsung
+
+#### 5. Performance Panel
+- Menganalisis performa website
+- Melihat CPU usage
+- Melihat rendering performance
+- Mencari bottleneck
+
+#### 6. Application/Storage Panel
+- Melihat dan mengelola cookies
+- Melihat dan mengelola localStorage dan sessionStorage
+- Mengelola cache
+- Melihat service workers
+
+### Debugging dengan Developer Tools
+1. **Cek HTML**: Gunakan Elements panel untuk memeriksa struktur HTML
+2. **Cek CSS**: Gunakan Elements > Styles untuk memeriksa dan memodifikasi CSS
+3. **Cek JavaScript**: Gunakan Console untuk melihat error dan output console.log()
+4. **Debugging JavaScript**:
+   - Tambahkan `debugger;` pada kode JavaScript
+   - Atau tambahkan breakpoint via Sources panel
+   - Jalankan kode step by step untuk melihat perubahan
+5. **Cek Performance**: Gunakan Lighthouse atau Performance panel untuk menganalisis performa
+
+### Tips Menggunakan Developer Tools
+- Gunakan `console.log()`, `console.table()`, dan `console.dir()` untuk debugging
+- Gunakan fitur "device emulation" untuk menguji responsive design
+- Gunakan Network Throttling untuk menguji performa pada koneksi lambat
+- Gunakan fitur screenshot untuk mengambil gambar halaman web atau elemen tertentu
+- Simpan perubahan lokal dengan fitur Workspace
+
+### Latihan:
+1. Debugging JavaScript: Temukan dan perbaiki error pada sebuah kode JavaScript menggunakan Console dan Sources panel
+2. CSS Debugging: Ubah tampilan elemen menggunakan Inspector dan CSS panel
+3. Network Analysis: Analisis waktu loading website dan identifikasi resource yang bisa dioptimasi
+
+---
+
+## Project Akhir
+
+### Landing Page Sederhana dengan JavaScript Interaktif
+
+#### Tujuan Project:
+Membuat landing page sederhana untuk produk atau jasa fiktif dengan fitur interaktif menggunakan JavaScript.
+
+#### Persyaratan:
+1. **Struktur HTML5** yang rapi dengan semantic elements
+2. **Layout Responsif** menggunakan Flexbox atau Grid
+3. **Styling** yang menarik dengan CSS3
+4. **Fitur Interaktif** yang diimplementasikan dengan JavaScript:
+   - Form validasi
+   - Galeri gambar/slideshow
+   - Navigasi sticky/smooth scroll
+   - Toggle menu untuk mobile
+   - Fitur counter/timer/animasi sederhana
+5. **Clean Code** dengan komentar yang jelas
+6. **Cross Browser Compatibility** (Chrome, Firefox, Edge)
+
+#### Langkah-langkah:
+1. Buat struktur dasar HTML dengan semantic elements
+2. Buat wireframe/sketsa layout
+3. Implementasikan CSS untuk styling dan layout
+4. Tambahkan interaktivitas dengan JavaScript
+5. Uji responsivitas dan fungsionalitas
+6. Debug dan optimasi
+
+#### Contoh Struktur Project:
+```
+/project
+  index.html
+  /css
+    style.css
+  /js
+    script.js
+  /images
+    logo.png
+    banner.jpg
+    ...
 ```
 
-**Project Modul 6**:  
-Membuat Dashboard App dengan integrasi API:
-- Authentication dengan JWT
-- Admin dashboard dengan CRUD operations
-- Data visualization dengan real-time updates
-- Search dan filtering dengan API parameters
-- Pagination dan infinite scroll
-- Optimistic UI updates
-- Error handling dan retry mechanisms
+#### Tips:
+- Mulai dengan mobile-first approach
+- Gunakan variables CSS untuk konsistensi warna dan font
+- Implementasikan fitur satu per satu
+- Gunakan developer tools untuk debugging
+- Terapkan best practices yang telah dipelajari
 
+#### Kriteria Penilaian:
+- Kerapihan dan keterbacaan kode
+- Struktur HTML yang semantik
+- Responsivitas pada berbagai ukuran layar
+- Fungsionalitas JavaScript yang berjalan dengan baik
+- Kreativitas dan desain visual
+- Optimasi performa
+
+---
+
+Selamat belajar Web Development! Modul ini merupakan fondasi penting untuk melanjutkan ke tahap React Development pada modul berikutnya.
 # MODUL 7: ADVANCED HOOKS & PATTERNS
 
 ## Informasi Umum
