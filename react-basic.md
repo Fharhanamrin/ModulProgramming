@@ -93,6 +93,1301 @@
 
 ### LEVEL ADVANCED (Minggu 15-20)
 
+
+# MODUL 2: PENGENALAN REACT (Minggu 2-3)
+
+**Durasi**: 2 minggu  
+**Tujuan**: Memahami konsep dasar React dan cara kerjanya
+
+## Daftar Isi
+1. [Apa itu React dan Virtual DOM](#1-apa-itu-react-dan-virtual-dom)
+2. [Setting up React environment (Create React App)](#2-setting-up-react-environment-create-react-app)
+3. [JSX Syntax](#3-jsx-syntax)
+4. [Function Components vs Class Components](#4-function-components-vs-class-components)
+5. [Props dan Component Composition](#5-props-dan-component-composition)
+6. [Event Handling di React](#6-event-handling-di-react)
+7. [Project: Konversi Landing Page ke React](#7-project-konversi-landing-page-ke-react)
+
+---
+
+## 1. Apa itu React dan Virtual DOM
+
+### Pengenalan React
+
+React adalah library JavaScript yang dikembangkan oleh Facebook (sekarang Meta) untuk membangun antarmuka pengguna (UI) yang interaktif dan efisien. Dirilis pada tahun 2013, React kini menjadi salah satu library frontend paling populer dan banyak digunakan oleh perusahaan-perusahaan besar seperti Netflix, Instagram, dan Airbnb.
+
+#### Kelebihan React:
+
+- **Component-Based**: UI dipecah menjadi komponen-komponen kecil yang reusable
+- **Declarative**: Anda cukup mendeskripsikan UI dalam berbagai state, React akan otomatis memperbarui DOM saat data berubah
+- **Learn Once, Write Anywhere**: Dapat digunakan untuk web (React), mobile (React Native), dan platform lainnya
+- **Ekosistem yang besar**: Memiliki banyak library pendukung dan komunitas yang aktif
+
+### Virtual DOM
+
+Salah satu fitur utama React yang membuatnya sangat efisien adalah Virtual DOM.
+
+#### Apa itu DOM?
+
+DOM (Document Object Model) adalah representasi struktur HTML sebuah halaman web dalam bentuk pohon (tree) dari objek-objek. Browser menggunakan DOM untuk merender halaman web.
+
+#### Masalah dengan manipulasi DOM langsung:
+
+Memanipulasi DOM secara langsung bisa menjadi lambat, terutama pada aplikasi kompleks. Ketika satu elemen berubah, browser perlu merender ulang seluruh DOM.
+
+#### Cara kerja Virtual DOM:
+
+1. **Representasi Memori**: Virtual DOM adalah representasi ringan dari DOM asli yang disimpan dalam memori
+2. **Proses Pembaruan**:
+   - Saat state aplikasi berubah, React membuat Virtual DOM baru
+   - React membandingkan (diffing) Virtual DOM baru dengan yang sebelumnya
+   - React menghitung cara paling efisien untuk memperbarui DOM asli (reconciliation)
+   - Kemudian hanya memperbarui bagian DOM asli yang berubah
+
+#### Manfaat Virtual DOM:
+
+- **Performa lebih baik**: Hanya memperbarui bagian yang berubah, bukan seluruh DOM
+- **Proses rendering lebih efisien**: Manipulasi DOM digabungkan (batched) untuk mengurangi reflow dan repaint
+- **Cross-browser compatibility**: React menangani perbedaan implementasi DOM antar browser
+
+### React vs Framework lain
+
+React sering disebut sebagai library, bukan framework. Perbedaannya:
+
+- **Library**: Menyediakan fungsi-fungsi spesifik yang bisa digunakan dalam proyek (React fokus pada UI rendering)
+- **Framework**: Lebih komprehensif, menyediakan struktur dan aturan untuk membangun aplikasi (seperti Angular atau Vue.js dengan router, state management dll)
+
+React dapat dikombinasikan dengan library lain seperti React Router untuk routing dan Redux untuk state management.
+
+---
+
+## 2. Setting up React environment (Create React App)
+
+### Node.js dan npm
+
+Sebelum menggunakan React, pastikan komputer Anda sudah terinstal Node.js (termasuk npm - Node Package Manager). Node.js diperlukan untuk menjalankan JavaScript di sisi server dan npm untuk mengelola paket dan dependensi.
+
+#### Cara menginstal Node.js dan npm:
+
+1. Kunjungi [nodejs.org](https://nodejs.org/)
+2. Download versi LTS (Long Term Support)
+3. Ikuti instruksi instalasi
+4. Verifikasi instalasi dengan menjalankan di terminal/command prompt:
+   ```bash
+   node -v
+   npm -v
+   ```
+
+### Create React App
+
+Create React App (CRA) adalah alat resmi yang dibuat oleh tim React untuk memudahkan pembuatan aplikasi React baru. CRA menyiapkan lingkungan pengembangan dengan konfigurasi dan struktur proyek yang sudah siap pakai.
+
+#### Membuat proyek baru dengan Create React App:
+
+1. Buka terminal atau command prompt
+2. Jalankan perintah berikut:
+   ```bash
+   npx create-react-app nama-aplikasi-anda
+   ```
+3. Tunggu proses instalasi selesai
+4. Pindah ke direktori proyek:
+   ```bash
+   cd nama-aplikasi-anda
+   ```
+5. Jalankan aplikasi:
+   ```bash
+   npm start
+   ```
+6. Aplikasi akan terbuka di browser pada `http://localhost:3000`
+
+#### Struktur folder Create React App:
+
+```
+nama-aplikasi-anda/
+  ├── node_modules/      # Folder berisi semua paket dependensi
+  ├── public/            # File statis public, termasuk index.html
+  │   ├── favicon.ico
+  │   ├── index.html     # Template HTML utama
+  │   └── manifest.json
+  ├── src/               # Folder utama untuk kode aplikasi
+  │   ├── App.css        # Styling untuk komponen App
+  │   ├── App.js         # Komponen React utama
+  │   ├── App.test.js    # Testing untuk App
+  │   ├── index.css      # Styling global
+  │   ├── index.js       # Entry point aplikasi
+  │   ├── logo.svg
+  │   └── serviceWorker.js
+  ├── .gitignore         # File dan folder yang diabaikan git
+  ├── package.json       # Daftar dependensi dan skrip
+  └── README.md          # Dokumentasi dasar
+```
+
+#### Skrip npm yang tersedia:
+
+- `npm start`: Menjalankan aplikasi dalam mode development
+- `npm test`: Menjalankan test runner
+- `npm run build`: Membuat build produksi untuk deployment
+- `npm run eject`: Eject dari Create React App (tidak disarankan untuk pemula)
+
+### Alternatif Create React App
+
+Selain Create React App, ada beberapa alternatif untuk memulai proyek React:
+
+- **Vite**: Build tool yang lebih cepat dan lebih ringan
+- **Next.js**: Framework React dengan fitur server-side rendering
+- **Gatsby**: Untuk membuat static site dengan React
+
+Namun, untuk pemula, Create React App adalah cara termudah dan resmi untuk memulai.
+
+---
+
+## 3. JSX Syntax
+
+### Apa itu JSX?
+
+JSX (JavaScript XML) adalah ekstensi sintaks untuk JavaScript yang memungkinkan kita menulis struktur HTML dalam kode JavaScript. JSX terlihat seperti HTML tetapi sebenarnya adalah JavaScript.
+
+```jsx
+const element = <h1>Hello, world!</h1>;
+```
+
+Meskipun terlihat seperti HTML, JSX sebenarnya lebih dekat dengan JavaScript. Behind the scenes, Babel akan mengkompilasi JSX menjadi panggilan fungsi `React.createElement()`.
+
+### Keuntungan menggunakan JSX:
+
+- **Intuitif**: Memudahkan visualisasi UI dalam kode
+- **Struktur yang jelas**: Hubungan parent-child terlihat jelas
+- **Mudah untuk debugging**: Error message yang lebih jelas
+- **Memudahkan pemisahan concern**: Menjaga logika rendering bersama dengan UI
+
+### Aturan dasar JSX:
+
+1. **Elemen harus ditutup**:
+   ```jsx
+   <img src="image.jpg" /> // Self-closing tag
+   <div>Content</div> // Opening dan closing tag
+   ```
+
+2. **Hanya satu root element**: JSX harus memiliki satu elemen root (atau gunakan fragment)
+   ```jsx
+   // Benar
+   return (
+     <div>
+       <h1>Title</h1>
+       <p>Paragraph</p>
+     </div>
+   );
+   
+   // Atau dengan fragment
+   return (
+     <>
+       <h1>Title</h1>
+       <p>Paragraph</p>
+     </>
+   );
+   
+   // Salah
+   return (
+     <h1>Title</h1>
+     <p>Paragraph</p>
+   );
+   ```
+
+3. **Atribut menggunakan camelCase**: Kebanyakan atribut HTML ditulis dalam camelCase di JSX
+   ```jsx
+   <div className="container" onClick={handleClick}></div>
+   ```
+
+4. **JavaScript dalam JSX**: Gunakan curly braces `{}` untuk menyisipkan ekspresi JavaScript
+   ```jsx
+   const name = "John";
+   return <h1>Hello, {name}!</h1>;
+   ```
+
+5. **Styling inline**: Menggunakan objek dan camelCase untuk properti CSS
+   ```jsx
+   <div style={{ backgroundColor: 'blue', marginTop: '10px' }}></div>
+   ```
+
+6. **Komentar**: Menggunakan sintaks komentar JavaScript dalam curly braces
+   ```jsx
+   <div>
+     {/* Ini adalah komentar dalam JSX */}
+     <p>Some text</p>
+   </div>
+   ```
+
+### Expressions di JSX
+
+Anda bisa menyisipkan ekspresi JavaScript di dalam JSX menggunakan curly braces `{}`:
+
+```jsx
+// Variabel
+const name = "John";
+return <p>Hello, {name}</p>;
+
+// Operasi matematika
+return <p>2 + 2 = {2 + 2}</p>;
+
+// Pemanggilan fungsi
+return <p>Random number: {Math.random()}</p>;
+
+// Ternary operator (conditional rendering)
+return <p>{isLoggedIn ? 'Welcome back!' : 'Please log in'}</p>;
+```
+
+### Rendering bersyarat (Conditional Rendering)
+
+Ada beberapa cara untuk melakukan rendering bersyarat di React:
+
+1. **If statement** di luar JSX
+   ```jsx
+   let content;
+   if (isLoggedIn) {
+     content = <UserGreeting />;
+   } else {
+     content = <GuestGreeting />;
+   }
+   return <div>{content}</div>;
+   ```
+
+2. **Ternary operator** di dalam JSX
+   ```jsx
+   return (
+     <div>
+       {isLoggedIn ? <UserGreeting /> : <GuestGreeting />}
+     </div>
+   );
+   ```
+
+3. **Logical AND operator** (`&&`) untuk render kondisional
+   ```jsx
+   return (
+     <div>
+       {isLoggedIn && <UserGreeting />}
+     </div>
+   );
+   ```
+
+### Rendering list
+
+Untuk me-render list di React, gunakan `map()` untuk mengubah array menjadi element JSX:
+
+```jsx
+const numbers = [1, 2, 3, 4, 5];
+
+return (
+  <ul>
+    {numbers.map((number) => (
+      <li key={number}>{number}</li>
+    ))}
+  </ul>
+);
+```
+
+**Penting**: Selalu tambahkan atribut `key` yang unik untuk setiap element dalam list. Key membantu React mengidentifikasi item mana yang berubah, ditambahkan, atau dihapus.
+
+---
+
+## 4. Function Components vs Class Components
+
+Di React, ada dua cara utama untuk mendefinisikan komponen: Function Components (Komponen Fungsi) dan Class Components (Komponen Kelas).
+
+### Function Components
+
+Function components adalah cara modern dan lebih sederhana untuk mendefinisikan komponen React. Mereka hanyalah fungsi JavaScript yang menerima props sebagai parameter dan mengembalikan elemen React.
+
+#### Syntax Function Component:
+
+```jsx
+function Welcome(props) {
+  return <h1>Hello, {props.name}</h1>;
+}
+
+// Atau dengan arrow function
+const Welcome = (props) => {
+  return <h1>Hello, {props.name}</h1>;
+};
+
+// Penggunaan
+<Welcome name="Sara" />
+```
+
+#### Kelebihan Function Components:
+
+- **Sintaks lebih sederhana dan ringkas**
+- **Lebih mudah dibaca dan ditulis**
+- **Performa lebih baik** (dalam kebanyakan kasus)
+- **Lebih mudah diuji (test)**
+- **Tidak perlu memahami `this` keyword**
+- **Dukungan untuk Hooks**, fitur modern React untuk state dan lifecycle
+
+### Class Components
+
+Class components adalah cara tradisional untuk mendefinisikan komponen di React. Mereka didefinisikan dengan class JavaScript yang meng-extend `React.Component`.
+
+#### Syntax Class Component:
+
+```jsx
+import React, { Component } from 'react';
+
+class Welcome extends Component {
+  render() {
+    return <h1>Hello, {this.props.name}</h1>;
+  }
+}
+
+// Penggunaan
+<Welcome name="Sara" />
+```
+
+#### Kelebihan Class Components:
+
+- **State bawaan** (internal state)
+- **Lifecycle methods** (componentDidMount, componentDidUpdate, dll)
+- **Bisa menggunakan metode class** (untuk logic tambahan)
+
+### Perbandingan
+
+#### State Management:
+
+**Class Component:**
+```jsx
+class Counter extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { count: 0 };
+  }
+  
+  increment = () => {
+    this.setState({ count: this.state.count + 1 });
+  }
+  
+  render() {
+    return (
+      <div>
+        <p>Count: {this.state.count}</p>
+        <button onClick={this.increment}>Increment</button>
+      </div>
+    );
+  }
+}
+```
+
+**Function Component (dengan Hooks):**
+```jsx
+function Counter() {
+  const [count, setCount] = useState(0);
+  
+  const increment = () => {
+    setCount(count + 1);
+  }
+  
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={increment}>Increment</button>
+    </div>
+  );
+}
+```
+
+#### Lifecycle Methods:
+
+**Class Component:**
+```jsx
+class DataFetcher extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { data: null, loading: true };
+  }
+  
+  componentDidMount() {
+    fetch('https://api.example.com/data')
+      .then(response => response.json())
+      .then(data => this.setState({ data, loading: false }));
+  }
+  
+  render() {
+    const { data, loading } = this.state;
+    return loading ? <p>Loading...</p> : <p>Data: {JSON.stringify(data)}</p>;
+  }
+}
+```
+
+**Function Component (dengan Hooks):**
+```jsx
+function DataFetcher() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    fetch('https://api.example.com/data')
+      .then(response => response.json())
+      .then(data => {
+        setData(data);
+        setLoading(false);
+      });
+  }, []); // Empty dependency array = run once on mount (like componentDidMount)
+  
+  return loading ? <p>Loading...</p> : <p>Data: {JSON.stringify(data)}</p>;
+}
+```
+
+### Rekomendasi Modern
+
+Sejak diperkenalkannya Hooks di React 16.8 (2019), tim React merekomendasikan penggunaan Function Components dengan Hooks untuk kode baru. Class components masih didukung penuh, namun Function components dengan Hooks lebih ringkas, mudah dibaca, dan lebih sesuai dengan perkembangan React masa depan.
+
+---
+
+## 5. Props dan Component Composition
+
+### Props (Properties)
+
+Props adalah cara untuk meneruskan data dari komponen parent ke komponen child di React. Props bersifat read-only dan tidak dapat diubah oleh komponen yang menerimanya.
+
+#### Cara mengirim Props:
+
+```jsx
+// Parent Component
+function App() {
+  return <Welcome name="Sara" age={25} isAdmin={true} />;
+}
+```
+
+#### Cara menerima Props di Function Component:
+
+```jsx
+// Child Component
+function Welcome(props) {
+  return (
+    <div>
+      <h1>Hello, {props.name}</h1>
+      <p>Age: {props.age}</p>
+      <p>{props.isAdmin ? 'Admin User' : 'Regular User'}</p>
+    </div>
+  );
+}
+
+// Dengan destructuring untuk lebih ringkas
+function Welcome({ name, age, isAdmin }) {
+  return (
+    <div>
+      <h1>Hello, {name}</h1>
+      <p>Age: {age}</p>
+      <p>{isAdmin ? 'Admin User' : 'Regular User'}</p>
+    </div>
+  );
+}
+```
+
+#### Cara menerima Props di Class Component:
+
+```jsx
+class Welcome extends React.Component {
+  render() {
+    return (
+      <div>
+        <h1>Hello, {this.props.name}</h1>
+        <p>Age: {this.props.age}</p>
+        <p>{this.props.isAdmin ? 'Admin User' : 'Regular User'}</p>
+      </div>
+    );
+  }
+}
+```
+
+### Default Props
+
+Anda bisa menetapkan nilai default untuk props jika tidak diberikan:
+
+```jsx
+// Function component
+function Welcome({ name = 'Guest' }) {
+  return <h1>Hello, {name}</h1>;
+}
+
+// Atau
+Welcome.defaultProps = {
+  name: 'Guest'
+};
+
+// Class component
+class Welcome extends React.Component {
+  static defaultProps = {
+    name: 'Guest'
+  };
+  
+  render() {
+    return <h1>Hello, {this.props.name}</h1>;
+  }
+}
+```
+
+### PropTypes untuk Type Checking
+
+React menyediakan library PropTypes untuk verifikasi tipe pada props. Ini sangat membantu untuk debugging dan dokumentasi:
+
+```jsx
+import PropTypes from 'prop-types';
+
+function Welcome({ name, age }) {
+  return (
+    <div>
+      <h1>Hello, {name}</h1>
+      <p>Age: {age}</p>
+    </div>
+  );
+}
+
+Welcome.propTypes = {
+  name: PropTypes.string.isRequired,
+  age: PropTypes.number
+};
+```
+
+### Component Composition
+
+Component Composition adalah pola di React untuk membangun komponen kompleks dari komponen yang lebih sederhana. Ini adalah salah satu prinsip utama React: membangun UI dari potongan-potongan kecil yang dapat digunakan kembali.
+
+#### Containment:
+
+Menggunakan `children` prop untuk "menyuntikkan" konten ke dalam komponen:
+
+```jsx
+// Generic container component
+function Card({ title, children }) {
+  return (
+    <div className="card">
+      <div className="card-header">{title}</div>
+      <div className="card-body">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// Penggunaan
+function App() {
+  return (
+    <Card title="Welcome">
+      <h1>Hello, world!</h1>
+      <p>This is a paragraph inside the card.</p>
+    </Card>
+  );
+}
+```
+
+#### Specialization:
+
+Membuat komponen khusus dari komponen yang lebih generik:
+
+```jsx
+// Generic component
+function Button({ children, onClick, className }) {
+  return (
+    <button onClick={onClick} className={`btn ${className}`}>
+      {children}
+    </button>
+  );
+}
+
+// Specialized components
+function PrimaryButton({ children, onClick }) {
+  return (
+    <Button onClick={onClick} className="btn-primary">
+      {children}
+    </Button>
+  );
+}
+
+function DangerButton({ children, onClick }) {
+  return (
+    <Button onClick={onClick} className="btn-danger">
+      {children}
+    </Button>
+  );
+}
+
+// Penggunaan
+function App() {
+  return (
+    <div>
+      <PrimaryButton onClick={() => console.log('Saved')}>
+        Save
+      </PrimaryButton>
+      <DangerButton onClick={() => console.log('Deleted')}>
+        Delete
+      </DangerButton>
+    </div>
+  );
+}
+```
+
+### Komposisi vs Inheritance
+
+React sangat menekankan pada komposisi daripada inheritance untuk membangun komponen yang reusable. Hampir semua kasus penggunaan inheritance dapat diatasi dengan komposisi komponen dengan lebih baik.
+
+```jsx
+// Menghindari inheritance complex
+class SpecializedComponent extends BaseComponent {
+  // ...kompleks, sulit dimengerti
+}
+
+// Lebih baik menggunakan komposisi
+function SpecializedComponent() {
+  return (
+    <BaseComponent>
+      <CustomContent />
+    </BaseComponent>
+  );
+}
+```
+
+---
+
+## 6. Event Handling di React
+
+Event handling di React mirip dengan event handling di HTML, tetapi dengan beberapa perbedaan sintaks.
+
+### Perbedaan dengan HTML tradisional:
+
+1. Nama event menggunakan camelCase
+   ```jsx
+   // HTML: onclick, onchange
+   // React: onClick, onChange
+   ```
+
+2. Meneruskan fungsi (bukan string) sebagai event handler
+   ```jsx
+   // HTML
+   <button onclick="handleClick()">Click me</button>
+   
+   // React
+   <button onClick={handleClick}>Click me</button>
+   ```
+
+3. Mencegah perilaku default dengan `preventDefault()` secara eksplisit
+   ```jsx
+   // HTML
+   <a href="#" onclick="console.log('Clicked'); return false;">Click</a>
+   
+   // React
+   function handleClick(e) {
+     e.preventDefault();
+     console.log('Clicked');
+   }
+   
+   <a href="#" onClick={handleClick}>Click</a>
+   ```
+
+### Cara mendefinisikan event handler:
+
+#### Di Function Component:
+
+```jsx
+function Button() {
+  const handleClick = (e) => {
+    console.log('Button clicked');
+    console.log(e); // Event object
+  };
+  
+  return <button onClick={handleClick}>Click me</button>;
+}
+
+// Atau langsung inline
+function Button() {
+  return <button onClick={() => console.log('Button clicked')}>Click me</button>;
+}
+```
+
+#### Di Class Component:
+
+```jsx
+class Button extends React.Component {
+  handleClick = (e) => {
+    console.log('Button clicked');
+    console.log(e); // Event object
+  }
+  
+  render() {
+    return <button onClick={this.handleClick}>Click me</button>;
+  }
+}
+```
+
+### Binding di Class Component
+
+Perhatikan bahwa di class component, kita menggunakan arrow function (`handleClick = (e) => {...}`) untuk mendefinisikan method. Ini penting untuk mengikat `this` dengan benar.
+
+Alternatif lain untuk binding:
+
+```jsx
+class Button extends React.Component {
+  constructor(props) {
+    super(props);
+    // Bind di constructor
+    this.handleClick = this.handleClick.bind(this);
+  }
+  
+  handleClick(e) {
+    console.log('Button clicked');
+  }
+  
+  render() {
+    return <button onClick={this.handleClick}>Click me</button>;
+  }
+}
+```
+
+### Mengirim Parameter ke Event Handler:
+
+```jsx
+function ItemList() {
+  const deleteItem = (id) => {
+    console.log(`Deleting item ${id}`);
+  };
+  
+  return (
+    <ul>
+      <li>
+        Item 1
+        <button onClick={() => deleteItem(1)}>Delete</button>
+      </li>
+      <li>
+        Item 2
+        <button onClick={() => deleteItem(2)}>Delete</button>
+      </li>
+    </ul>
+  );
+}
+```
+
+### Jenis Event yang Umum Digunakan:
+
+1. **Click events**:
+   ```jsx
+   <button onClick={handleClick}>Click Me</button>
+   ```
+
+2. **Form events**:
+   ```jsx
+   <form onSubmit={handleSubmit}>
+     <input type="text" value={value} onChange={handleChange} />
+     <button type="submit">Submit</button>
+   </form>
+   ```
+
+3. **Keyboard events**:
+   ```jsx
+   <input onKeyDown={handleKeyDown} />
+   ```
+
+4. **Focus events**:
+   ```jsx
+   <input onFocus={handleFocus} onBlur={handleBlur} />
+   ```
+
+5. **Mouse events**:
+   ```jsx
+   <div 
+     onMouseEnter={handleMouseEnter}
+     onMouseLeave={handleMouseLeave}
+   >
+     Hover me
+   </div>
+   ```
+
+### Event Bubbling (Gelembung Event)
+
+Event di React mengikuti sistem propagasi yang sama dengan DOM biasa, di mana event "bubble up" dari anak ke parent.
+
+```jsx
+function Parent() {
+  const handleParentClick = () => {
+    console.log('Parent clicked');
+  };
+  
+  const handleChildClick = (e) => {
+    e.stopPropagation(); // Mencegah event bubbling
+    console.log('Child clicked');
+  };
+  
+  return (
+    <div onClick={handleParentClick} style={{ padding: '20px', background: 'lightgray' }}>
+      Parent
+      <button onClick={handleChildClick}>Child</button>
+    </div>
+  );
+}
+```
+
+### Synthetic Events
+
+React membungkus event native browser dalam sebuah wrapper yang disebut SyntheticEvent untuk memastikan konsistensi lintas browser. SyntheticEvent memiliki antarmuka yang sama dengan event native browser, tetapi bekerja secara identik di semua browser.
+
+```jsx
+function Button() {
+  const handleClick = (e) => {
+    console.log(e); // SyntheticEvent object
+    console.log(e.nativeEvent); // Underlying native browser event
+  };
+  
+  return <button onClick={handleClick}>Click me</button>;
+}
+```
+
+### Best Practices Event Handling:
+
+1. **Gunakan nama yang deskriptif** untuk handler (`handleClick`, `handleSubmit`, dll.)
+2. **Batasi inline functions** di JSX untuk performa yang lebih baik
+3. **Dekonstruksi props** untuk event handler yang diteruskan
+4. **Selalu handle errors** dalam event handlers
+5. **Validasi data** sebelum melakukan tindakan
+
+---
+
+## 7. Project: Konversi Landing Page ke React
+
+Sebagai proyek untuk memantapkan pemahaman Anda tentang React, kita akan mengkonversi landing page dari HTML dan CSS biasa ke React. Ini akan membantu Anda memahami cara berpikir dalam "React way" dan memecah UI menjadi komponen-komponen.
+
+### Tahapan Konversi:
+
+#### 1. Analisis dan Pecah UI menjadi Hierarki Komponen
+
+Langkah pertama adalah menganalisis design landing page dan memecahnya menjadi komponen-komponen yang logis.
+
+Contoh hierarki komponen untuk landing page sederhana:
+- `<App />` (root component)
+  - `<Header />` (logo, navigation, mungkin call-to-action)
+  - `<Hero />` (banner utama dengan headline dan CTA)
+  - `<Features />` (section fitur-fitur)
+    - `<FeatureCard />` (komponen untuk setiap fitur)
+  - `<Testimonials />` (section testimonial)
+    - `<TestimonialCard />` (komponen untuk setiap testimonial)
+  - `<Pricing />` (section pricing jika ada)
+    - `<PricingCard />` (komponen untuk setiap paket)
+  - `<Contact />` atau `<Newsletter />` (section untuk form kontak)
+  - `<Footer />` (footer dengan links, copyright, dll)
+
+#### 2. Setup Proyek React
+
+```bash
+npx create-react-app landing-page-react
+cd landing-page-react
+npm start
+```
+
+#### 3. Buat Struktur Folder
+
+Organisasi kode yang baik:
+
+```
+src/
+  ├── components/           # Folder untuk semua komponen
+  │   ├── Header/          
+  │   │   ├── Header.js    # Component code
+  │   │   ├── Header.css   # Component-specific styling
+  │   │   └── index.js     # Export file (optional)
+  │   ├── Hero/
+  │   ├── Features/
+  │   └── ...
+  ├── assets/               # Images, fonts, etc.
+  ├── App.js                # Root component
+  ├── App.css               # Global styles
+  └── index.js              # Entry point
+```
+
+#### 4. Buat Static Version Terlebih Dahulu
+
+Mulai dengan membuat versi statis tanpa interaktivitas. Fokus pada struktur komponen dan styling.
+
+Contoh untuk Header component:
+
+```jsx
+// src/components/Header/Header.js
+import React from 'react';
+import './Header.css';
+import logo from '../../assets/logo.png';
+
+function Header() {
+  return (
+    <header className="header">
+      <div className="logo-container">
+        <img src={logo} alt="Company Logo" className="logo" />
+      </div>
+      <nav className="nav">
+        <ul className="nav-list">
+          <li className="nav-item"><a href="#features">Features</a></li>
+          <li className="nav-item"><a href="#testimonials">Testimonials</a></li>
+          <li className="nav-item"><a href="#pricing">Pricing</a></li>
+          <li className="nav-item"><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <button className="cta-button">Get Started</button>
+    </header>
+  );
+}
+
+export default Header;
+```
+
+```css
+/* src/components/Header/Header.css */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  height: 40px;
+}
+
+.nav-list {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item {
+  margin: 0 1rem;
+}
+
+.nav-item a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-item a:hover {
+  color: #0070f3;
+}
+
+.cta-button {
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #0051cc;
+}
+```
+
+Contoh untuk Feature Card component:
+
+```jsx
+// src/components/Features/FeatureCard.js
+import React from 'react';
+import './FeatureCard.css';
+
+function FeatureCard({ icon, title, description }) {
+  return (
+    <div className="feature-card">
+      <div className="feature-icon">{icon}</div>
+      <h3 className="feature-title">{title}</h3>
+      <p className="feature-description">{description}</p>
+    </div>
+  );
+}
+
+export default FeatureCard;
+```
+
+```css
+/* src/components/Features/FeatureCard.css */
+.feature-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  margin: 1rem;
+  transition: transform 0.3s ease;
+  text-align: center;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #0070f3;
+}
+
+.feature-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.feature-description {
+  color: #666;
+  line-height: 1.6;
+}
+```
+
+#### 5. Tambahkan Interaktivitas
+
+Setelah versi statis selesai, mulai tambahkan interaktivitas sesuai kebutuhan, seperti:
+
+- Dropdown menu pada navigasi mobile
+- Form validations
+- Image sliders
+- Modal popups
+- Smooth scrolling ke section
+
+Contoh navigasi mobile dengan toggle:
+
+```jsx
+// src/components/Header/Header.js dengan toggle untuk mobile
+import React, { useState } from 'react';
+import './Header.css';
+import logo from '../../assets/logo.png';
+
+function Header() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+  
+  return (
+    <header className="header">
+      <div className="logo-container">
+        <img src={logo} alt="Company Logo" className="logo" />
+      </div>
+      
+      <div className="menu-toggle" onClick={toggleMenu}>
+        <div className={`hamburger ${menuOpen ? 'open' : ''}`}>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+      
+      <nav className={`nav ${menuOpen ? 'open' : ''}`}>
+        <ul className="nav-list">
+          <li className="nav-item"><a href="#features">Features</a></li>
+          <li className="nav-item"><a href="#testimonials">Testimonials</a></li>
+          <li className="nav-item"><a href="#pricing">Pricing</a></li>
+          <li className="nav-item"><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <button className="cta-button">Get Started</button>
+    </header>
+  );
+}
+
+export default Header;
+```
+
+Tambahan CSS untuk mobile menu:
+
+```css
+/* Add to Header.css */
+.menu-toggle {
+  display: none; /* Hidden on desktop */
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-wrap: wrap;
+  }
+  
+  .menu-toggle {
+    display: block;
+    cursor: pointer;
+  }
+  
+  .hamburger {
+    width: 30px;
+    height: 22px;
+    position: relative;
+  }
+  
+  .hamburger span {
+    display: block;
+    height: 3px;
+    width: 100%;
+    background: #333;
+    position: absolute;
+    transition: all 0.3s ease;
+  }
+  
+  .hamburger span:nth-child(1) {
+    top: 0;
+  }
+  
+  .hamburger span:nth-child(2) {
+    top: 9px;
+  }
+  
+  .hamburger span:nth-child(3) {
+    top: 18px;
+  }
+  
+  .hamburger.open span:nth-child(1) {
+    transform: rotate(45deg);
+    top: 9px;
+  }
+  
+  .hamburger.open span:nth-child(2) {
+    opacity: 0;
+  }
+  
+  .hamburger.open span:nth-child(3) {
+    transform: rotate(-45deg);
+    top: 9px;
+  }
+  
+  .nav {
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  
+  .nav.open {
+    max-height: 300px;
+  }
+  
+  .nav-list {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .nav-item {
+    margin: 0.5rem 0;
+  }
+  
+  .cta-button {
+    margin-top: 1rem;
+  }
+}
+```
+
+#### 6. Prop Drilling dan Komposisi Komponen
+
+Saat aplikasi bertambah kompleks, gunakan props untuk meneruskan data ke komponen-komponen yang membutuhkannya.
+
+```jsx
+// src/components/Features/Features.js
+import React from 'react';
+import FeatureCard from './FeatureCard';
+import { FaRocket, FaLock, FaClock } from 'react-icons/fa'; // Gunakan react-icons
+import './Features.css';
+
+function Features() {
+  const featuresData = [
+    {
+      id: 1,
+      icon: <FaRocket />,
+      title: 'Lightning Fast',
+      description: 'Our solution is optimized for speed and performance.'
+    },
+    {
+      id: 2,
+      icon: <FaLock />,
+      title: 'Secure by Design',
+      description: 'Built with security in mind at every level.'
+    },
+    {
+      id: 3,
+      icon: <FaClock />,
+      title: 'Time Saving',
+      description: 'Save hours of work with our automation tools.'
+    }
+  ];
+  
+  return (
+    <section id="features" className="features-section">
+      <h2 className="section-title">Our Features</h2>
+      <div className="features-container">
+        {featuresData.map(feature => (
+          <FeatureCard 
+            key={feature.id}
+            icon={feature.icon}
+            title={feature.title}
+            description={feature.description}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export default Features;
+```
+
+#### 7. App Assembly
+
+Akhirnya, gabungkan semua komponen dalam App.js:
+
+```jsx
+// src/App.js
+import React from 'react';
+import Header from './components/Header/Header';
+import Hero from './components/Hero/Hero';
+import Features from './components/Features/Features';
+import Testimonials from './components/Testimonials/Testimonials';
+import Contact from './components/Contact/Contact';
+import Footer from './components/Footer/Footer';
+import './App.css';
+
+function App() {
+  return (
+    <div className="App">
+      <Header />
+      <Hero 
+        title="Modern Web Solutions"
+        subtitle="Build beautiful, responsive websites with ease"
+        ctaText="Get Started"
+      />
+      <Features />
+      <Testimonials />
+      <Contact />
+      <Footer />
+    </div>
+  );
+}
+
+export default App;
+```
+
+### Tips untuk Konversi HTML/CSS ke React:
+
+1. **Mulai dengan struktur**: Identifikasi bagian-bagian yang dapat dijadikan komponen
+2. **Kode CSS**: Pindahkan CSS ke file terpisah untuk setiap komponen
+3. **Assets**: Pindahkan gambar dan aset ke folder assets dan import sesuai kebutuhan
+4. **Inline styles**: Ubah inline styles menjadi objek style React atau class
+5. **Event handlers**: Ubah atribut event HTML menjadi event handlers React
+6. **Form elements**: Ubah form elements jadi controlled components
+7. **Components**: Pikirkan reusability — buat komponen generik yang dapat digunakan kembali
+
+### Challenge dan Extensions:
+
+1. **Buat landing page responsive** untuk semua ukuran layar
+2. **Implementasikan dark mode** dengan context API
+3. **Tambahkan animasi** dengan CSS transitions atau library seperti Framer Motion
+4. **Buat form contact yang functional** dengan validasi
+5. **Implementasikan lazy loading** untuk gambar atau komponen
+6. **Tambahkan routing** dengan React Router untuk halaman multi-page
+
+---
+
+Dengan menyelesaikan proyek ini, Anda akan memperoleh pemahaman praktis tentang cara mengimplementasikan React dalam situasi nyata. Konversi dari HTML/CSS ke React akan membantu Anda memahami perbedaan pendekatan antara pengembangan web tradisional dengan model komponen React yang modular dan maintainable.
+
 #### MODUL 7: ADVANCED HOOKS & PATTERNS (Minggu 15-16)
 - **Durasi**: 2 minggu
 - **Tujuan**: Memahami hooks lanjutan dan pattern design React
