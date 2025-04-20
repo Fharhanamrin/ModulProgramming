@@ -3166,119 +3166,960 @@ Membuat Dashboard App dengan integrasi API:
 - Optimistic UI updates
 - Error handling dan retry mechanisms
 
-### MODUL 7: ADVANCED HOOKS & PATTERNS
+# MODUL 7: ADVANCED HOOKS & PATTERNS
 
-#### Topik 7.1: Advanced Hooks
-**Durasi**: 1 hari  
-**Materi**:
-- useCallback
-- useMemo
-- useRef
-- useLayoutEffect
-- useReducer vs useState
-- useImperativeHandle
-- useDebugValue
+## Informasi Umum
+- **Durasi**: 2 minggu (Minggu 15-16)
+- **Tujuan**: Memahami hooks lanjutan dan pattern design React
+- **Project Akhir**: Library of reusable React components
 
-**Hands-on Practice**:
+## Daftar Isi
+1. [useCallback, useMemo, dan useRef](#1-usecallback-usememo-dan-useref)
+2. [Custom Hooks Development](#2-custom-hooks-development)
+3. [Higher-Order Components](#3-higher-order-components)
+4. [Render Props Pattern](#4-render-props-pattern)
+5. [Compound Components](#5-compound-components)
+6. [Control Props Pattern](#6-control-props-pattern)
+7. [Project: Library of Reusable Components](#7-project-library-of-reusable-components)
+
+---
+
+## 1. useCallback, useMemo, dan useRef
+
+### useCallback
+
+`useCallback` adalah hook React yang memungkinkan kita menyimpan fungsi dalam memori (memoize) sehingga fungsi tersebut tidak dibuat ulang pada setiap render kecuali dependensinya berubah.
+
+#### Kenapa menggunakan useCallback?
+
+- Mencegah re-render yang tidak perlu pada child components
+- Meningkatkan performa aplikasi terutama untuk fungsi yang dioper sebagai props
+- Mencegah side effect yang tidak diinginkan
+
+#### Contoh penggunaan:
+
 ```jsx
-// useCallback example
-function SearchResults({ query, onResultClick }) {
-  const [results, setResults] = useState([]);
+import React, { useState, useCallback } from 'react';
+
+function ParentComponent() {
+  const [count, setCount] = useState(0);
   
-  // Prevent recreation of function on each render
-  const handleResultClick = useCallback((id) => {
-    console.log(`Result ${id} clicked`);
-    onResultClick(id);
-  }, [onResultClick]);
+  // Tanpa useCallback - fungsi ini dibuat ulang setiap render
+  // const handleClick = () => {
+  //   setCount(count + 1);
+  // };
   
-  // Memoize expensive calculation
-  const sortedResults = useMemo(() => {
-    console.log('Sorting results');
-    return [...results].sort((a, b) => a.name.localeCompare(b.name));
-  }, [results]);
-  
-  // useRef for previous value comparison
-  const prevQuery = useRef(query);
-  
-  useEffect(() => {
-    if (prevQuery.current !== query) {
-      console.log(`Query changed from ${prevQuery.current} to ${query}`);
-      prevQuery.current = query;
-    }
-  }, [query]);
-  
-  // useReducer for complex state
-  const [state, dispatch] = useReducer((state, action) => {
-    switch (action.type) {
-      case 'FETCH_START':
-        return { ...state, loading: true, error: null };
-      case 'FETCH_SUCCESS':
-        return { ...state, loading: false, data: action.payload };
-      case 'FETCH_ERROR':
-        return { ...state, loading: false, error: action.payload };
-      default:
-        return state;
-    }
-  }, {
-    loading: false,
-    data: null,
-    error: null
-  });
-  
-  // Component logic
+  // Dengan useCallback - fungsi hanya dibuat ulang jika dependensi berubah
+  const handleClick = useCallback(() => {
+    setCount(prevCount => prevCount + 1);
+  }, []);
   
   return (
     <div>
-      {sortedResults.map(result => (
-        <ResultItem
-          key={result.id}
-          result={result}
-          onClick={() => handleResultClick(result.id)}
-        />
-      ))}
+      <p>Count: {count}</p>
+      <ChildComponent onClick={handleClick} />
     </div>
   );
 }
 
-// useImperativeHandle example
-const FancyInput = forwardRef((props, ref) => {
-  const inputRef = useRef();
-  
-  useImperativeHandle(ref, () => ({
-    focus: () => {
-      inputRef.current.focus();
-    },
-    clear: () => {
-      inputRef.current.value = '';
-    },
-    getValue: () => {
-      return inputRef.current.value;
-    }
-  }), []);
-  
-  return <input ref={inputRef} {...props} />;
-});
+function ChildComponent({ onClick }) {
+  console.log('Child component rendered');
+  return <button onClick={onClick}>Increment</button>;
+}
+```
 
-// Using the imperative handle
-function Form() {
-  const inputRef = useRef();
+### useMemo
+
+`useMemo` adalah hook yang memungkinkan kita menyimpan hasil perhitungan dalam memori dan hanya menghitung ulang ketika dependensinya berubah.
+
+#### Kenapa menggunakan useMemo?
+
+- Menghindari perhitungan yang mahal pada setiap render
+- Mengoptimalkan performa untuk operasi yang berat
+- Menjaga referential equality untuk objek kompleks
+
+#### Contoh penggunaan:
+
+```jsx
+import React, { useState, useMemo } from 'react';
+
+function ExpensiveCalculation({ list, filter }) {
+  // Tanpa useMemo - perhitungan dilakukan setiap render
+  // const filteredList = list.filter(item => item.includes(filter));
+  
+  // Dengan useMemo - perhitungan hanya dilakukan jika list atau filter berubah
+  const filteredList = useMemo(() => {
+    console.log('Filtering list...');
+    return list.filter(item => item.includes(filter));
+  }, [list, filter]);
+  
+  return (
+    <ul>
+      {filteredList.map((item, index) => (
+        <li key={index}>{item}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+### useRef
+
+`useRef` adalah hook yang memberikan kita objek ref yang stabil (tidak berubah antar render) dengan property `.current` yang dapat dimutasi.
+
+#### Penggunaan useRef:
+
+1. **Mengakses DOM elements**:
+   Mendapatkan akses langsung ke elemen DOM
+
+2. **Menyimpan nilai yang persistant**:
+   Menyimpan data yang tetap ada antar render tanpa menyebabkan re-render
+
+3. **Menyimpan nilai previous**:
+   Menyimpan nilai sebelumnya dari suatu state
+
+#### Contoh penggunaan:
+
+```jsx
+import React, { useRef, useEffect, useState } from 'react';
+
+function TextInputWithFocusButton() {
+  // 1. Mengakses DOM element
+  const inputRef = useRef(null);
+  
+  const focusInput = () => {
+    inputRef.current.focus();
+  };
+
+  // 2. Menyimpan nilai yang persistent
+  const [count, setCount] = useState(0);
+  const countRef = useRef(0);
+  
+  const incrementWithState = () => {
+    setCount(count + 1); // Menyebabkan re-render
+  };
+  
+  const incrementWithRef = () => {
+    countRef.current += 1; // Tidak menyebabkan re-render
+    console.log('Current ref value:', countRef.current);
+  };
+  
+  // 3. Menyimpan nilai previous
+  const prevCountRef = useRef();
+  
+  useEffect(() => {
+    prevCountRef.current = count;
+  }, [count]);
+  
+  return (
+    <div>
+      <input ref={inputRef} type="text" />
+      <button onClick={focusInput}>Focus Input</button>
+      
+      <div>
+        <p>State Count: {count}</p>
+        <p>Previous State Count: {prevCountRef.current}</p>
+        <button onClick={incrementWithState}>Increment State</button>
+      </div>
+      
+      <div>
+        <p>Ref Count (check console): {countRef.current}</p>
+        <button onClick={incrementWithRef}>Increment Ref</button>
+      </div>
+    </div>
+  );
+}
+```
+
+---
+
+## 2. Custom Hooks Development
+
+Custom hooks adalah fungsi JavaScript yang dimulai dengan `use` dan dapat memanfaatkan hooks lain dari React. Mereka memungkinkan kita untuk mengekstrak logika komponen ke fungsi yang dapat digunakan kembali.
+
+### Keuntungan Custom Hooks:
+
+- **Reusability**: Menggunakan kembali logika antar komponen
+- **Separation of Concerns**: Memisahkan logika dari tampilan UI
+- **Clean Code**: Membuat komponen lebih ringkas dan fokus
+
+### Contoh Basic Custom Hook:
+
+```jsx
+// 1. useToggle - untuk menangani toggle state (on/off)
+import { useState } from 'react';
+
+function useToggle(initialValue = false) {
+  const [value, setValue] = useState(initialValue);
+  
+  const toggle = () => {
+    setValue(prevValue => !prevValue);
+  };
+  
+  return [value, toggle];
+}
+
+// Cara penggunaan:
+function ToggleComponent() {
+  const [isOn, toggleIsOn] = useToggle();
+  
+  return (
+    <button onClick={toggleIsOn}>
+      {isOn ? 'ON' : 'OFF'}
+    </button>
+  );
+}
+```
+
+### Contoh Custom Hook untuk Data Fetching:
+
+```jsx
+import { useState, useEffect } from 'react';
+
+function useFetch(url) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        setData(result);
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+        setData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [url]);
+
+  return { data, loading, error };
+}
+
+// Cara penggunaan:
+function UserComponent() {
+  const { data: user, loading, error } = useFetch('https://api.example.com/user/1');
+  
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+  
+  return (
+    <div>
+      <h1>{user.name}</h1>
+      <p>{user.email}</p>
+    </div>
+  );
+}
+```
+
+### Custom Hook untuk Form:
+
+```jsx
+import { useState } from 'react';
+
+function useForm(initialValues) {
+  const [values, setValues] = useState(initialValues);
+  
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setValues({
+      ...values,
+      [name]: value
+    });
+  };
+  
+  const resetForm = () => {
+    setValues(initialValues);
+  };
+  
+  return {
+    values,
+    handleChange,
+    resetForm
+  };
+}
+
+// Cara penggunaan:
+function ContactForm() {
+  const { values, handleChange, resetForm } = useForm({
+    name: '',
+    email: '',
+    message: ''
+  });
   
   const handleSubmit = (e) => {
     e.preventDefault();
-    const value = inputRef.current.getValue();
-    console.log('Input value:', value);
-    
-    // Clear the input
-    inputRef.current.clear();
+    console.log('Form submitted with values:', values);
+    resetForm();
   };
   
   return (
     <form onSubmit={handleSubmit}>
-      <FancyInput ref={inputRef} placeholder="Enter text" />
-      <button type="button" onClick={() => inputRef.current.focus()}>
-        Focus Input
-      </button>
+      <input
+        type="text"
+        name="name"
+        value={values.name}
+        onChange={handleChange}
+        placeholder="Name"
+      />
+      <input
+        type="email"
+        name="email"
+        value={values.email}
+        onChange={handleChange}
+        placeholder="Email"
+      />
+      <textarea
+        name="message"
+        value={values.message}
+        onChange={handleChange}
+        placeholder="Message"
+      />
       <button type="submit">Submit</button>
     </form>
   );
 }
+```
+
+---
+
+## 3. Higher-Order Components
+
+Higher-Order Component (HOC) adalah fungsi yang menerima sebuah komponen dan mengembalikan komponen baru dengan fungsionalitas tambahan.
+
+### Keuntungan HOC:
+
+- **Code Reuse**: Menggunakan kembali logika antar komponen
+- **Separation of Concerns**: Memisahkan logika dari tampilan UI
+- **Komposisi**: Dapat menggabungkan beberapa HOC
+
+### Contoh Basic HOC:
+
+```jsx
+// HOC untuk menambahkan props extraData ke komponen
+function withExtraData(WrappedComponent) {
+  // Mengembalikan komponen baru
+  return function WithExtraData(props) {
+    const extraData = { message: "This is extra data from HOC" };
+    
+    // Menggabungkan props dan extraData
+    return <WrappedComponent {...props} extraData={extraData} />;
+  };
+}
+
+// Komponen original
+function DisplayMessage({ message, extraData }) {
+  return (
+    <div>
+      <p>Original message: {message}</p>
+      <p>Extra data: {extraData.message}</p>
+    </div>
+  );
+}
+
+// Komponen yang sudah di-enhance dengan HOC
+const EnhancedDisplayMessage = withExtraData(DisplayMessage);
+
+// Penggunaan
+function App() {
+  return <EnhancedDisplayMessage message="Hello World!" />;
+}
+```
+
+### HOC untuk Loading State:
+
+```jsx
+function withLoading(WrappedComponent) {
+  return function WithLoading({ isLoading, ...props }) {
+    if (isLoading) {
+      return <div>Loading...</div>;
+    }
+    
+    return <WrappedComponent {...props} />;
+  };
+}
+
+// Komponen asli
+function UserList({ users }) {
+  return (
+    <ul>
+      {users.map(user => (
+        <li key={user.id}>{user.name}</li>
+      ))}
+    </ul>
+  );
+}
+
+// Komponen yang ditingkatkan
+const UserListWithLoading = withLoading(UserList);
+
+// Penggunaan
+function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [users, setUsers] = useState([]);
+  
+  useEffect(() => {
+    // Fetch users
+    fetch('https://api.example.com/users')
+      .then(response => response.json())
+      .then(data => {
+        setUsers(data);
+        setIsLoading(false);
+      });
+  }, []);
+  
+  return <UserListWithLoading isLoading={isLoading} users={users} />;
+}
+```
+
+### HOC untuk Authentication:
+
+```jsx
+function withAuth(WrappedComponent) {
+  return function WithAuth(props) {
+    // Logika authentication
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    
+    // Cek apakah user terautentikasi
+    useEffect(() => {
+      const token = localStorage.getItem('token');
+      setIsAuthenticated(!!token);
+    }, []);
+    
+    // Jika tidak terautentikasi, redirect ke login
+    if (!isAuthenticated) {
+      return (
+        <div>
+          <p>Please login to view this page</p>
+          <button onClick={() => console.log('Navigate to login')}>
+            Login
+          </button>
+        </div>
+      );
+    }
+    
+    // Jika terautentikasi, render komponen yang di-wrap
+    return <WrappedComponent {...props} />;
+  };
+}
+
+// Komponen Dashboard yang memerlukan authentication
+function Dashboard() {
+  return <div>Welcome to your Dashboard!</div>;
+}
+
+// Dashboard dengan authentication
+const AuthenticatedDashboard = withAuth(Dashboard);
+```
+
+---
+
+## 4. Render Props Pattern
+
+Render Props adalah pattern dimana sebuah komponen menerima fungsi sebagai prop yang merender apa yang akan ditampilkan komponen tersebut.
+
+### Keuntungan Render Props:
+
+- **Reusability**: Memungkinkan penggunaan ulang logika antar komponen
+- **Flexibility**: Memberikan kontrol yang lebih besar kepada komponen parent
+- **Composition**: Mudah dikombinasikan dengan pattern lain
+
+### Contoh Basic Render Props:
+
+```jsx
+import React, { useState } from 'react';
+
+// Komponen dengan Render Props
+function Counter({ render }) {
+  const [count, setCount] = useState(0);
+  
+  const increment = () => setCount(count + 1);
+  const decrement = () => setCount(count - 1);
+  
+  // Memanggil fungsi render dengan data yang dibutuhkan
+  return render({ count, increment, decrement });
+}
+
+// Penggunaan
+function App() {
+  return (
+    <Counter
+      render={({ count, increment, decrement }) => (
+        <div>
+          <h1>Count: {count}</h1>
+          <button onClick={increment}>Increment</button>
+          <button onClick={decrement}>Decrement</button>
+        </div>
+      )}
+    />
+  );
+}
+```
+
+### Alternatif dengan Children sebagai Function:
+
+```jsx
+function Counter({ children }) {
+  const [count, setCount] = useState(0);
+  
+  const increment = () => setCount(count + 1);
+  const decrement = () => setCount(count - 1);
+  
+  // Memanggil children sebagai fungsi
+  return children({ count, increment, decrement });
+}
+
+// Penggunaan
+function App() {
+  return (
+    <Counter>
+      {({ count, increment, decrement }) => (
+        <div>
+          <h1>Count: {count}</h1>
+          <button onClick={increment}>Increment</button>
+          <button onClick={decrement}>Decrement</button>
+        </div>
+      )}
+    </Counter>
+  );
+}
+```
+
+### Mouse Position dengan Render Props:
+
+```jsx
+function MouseTracker({ render }) {
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  
+  useEffect(() => {
+    const handleMouseMove = (event) => {
+      setPosition({
+        x: event.clientX,
+        y: event.clientY
+      });
+    };
+    
+    window.addEventListener('mousemove', handleMouseMove);
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+  
+  return render(position);
+}
+
+// Penggunaan
+function App() {
+  return (
+    <div>
+      <h1>Move your mouse around!</h1>
+      <MouseTracker
+        render={({ x, y }) => (
+          <p>Current mouse position: ({x}, {y})</p>
+        )}
+      />
+    </div>
+  );
+}
+```
+
+---
+
+## 5. Compound Components
+
+Compound Components adalah pattern yang memungkinkan kita membuat komponen yang bekerja sama untuk menyediakan state dan fungsionalitas bersama, namun tetap mempertahankan flexibilitas dalam komposisi tampilan.
+
+### Keuntungan Compound Components:
+
+- **Flexibilitas**: Memberikan kontrol lebih kepada developer dalam menentukan struktur komponen
+- **Implicit State Sharing**: Component children dapat mengakses state tanpa prop drilling
+- **Semantic API**: Membuat API komponen lebih intuitif dan mudah dibaca
+
+### Contoh Compound Components:
+
+```jsx
+import React, { createContext, useContext, useState } from 'react';
+
+// Buat context
+const TabsContext = createContext();
+
+// Komponen utama
+function Tabs({ children, defaultIndex = 0 }) {
+  const [activeIndex, setActiveIndex] = useState(defaultIndex);
+  
+  // Nilai yang dishare ke komponen lain
+  const value = {
+    activeIndex,
+    setActiveIndex
+  };
+  
+  return (
+    <TabsContext.Provider value={value}>
+      <div className="tabs">{children}</div>
+    </TabsContext.Provider>
+  );
+}
+
+// Sub komponen untuk Tab List
+Tabs.List = function TabList({ children }) {
+  return <div className="tabs-list">{children}</div>;
+};
+
+// Sub komponen untuk Tab
+Tabs.Tab = function Tab({ children, index }) {
+  const { activeIndex, setActiveIndex } = useContext(TabsContext);
+  const isActive = activeIndex === index;
+  
+  return (
+    <button
+      className={`tab ${isActive ? 'active' : ''}`}
+      onClick={() => setActiveIndex(index)}
+    >
+      {children}
+    </button>
+  );
+};
+
+// Sub komponen untuk Tab Panels
+Tabs.Panels = function TabPanels({ children }) {
+  return <div className="tabs-panels">{children}</div>;
+};
+
+// Sub komponen untuk Tab Panel
+Tabs.Panel = function TabPanel({ children, index }) {
+  const { activeIndex } = useContext(TabsContext);
+  
+  if (activeIndex !== index) return null;
+  
+  return <div className="tab-panel">{children}</div>;
+};
+
+// Penggunaan
+function App() {
+  return (
+    <Tabs defaultIndex={0}>
+      <Tabs.List>
+        <Tabs.Tab index={0}>Tab 1</Tabs.Tab>
+        <Tabs.Tab index={1}>Tab 2</Tabs.Tab>
+        <Tabs.Tab index={2}>Tab 3</Tabs.Tab>
+      </Tabs.List>
+      
+      <Tabs.Panels>
+        <Tabs.Panel index={0}>Content for Tab 1</Tabs.Panel>
+        <Tabs.Panel index={1}>Content for Tab 2</Tabs.Panel>
+        <Tabs.Panel index={2}>Content for Tab 3</Tabs.Panel>
+      </Tabs.Panels>
+    </Tabs>
+  );
+}
+```
+
+### Contoh Dropdown dengan Compound Components:
+
+```jsx
+import React, { createContext, useContext, useState } from 'react';
+
+const DropdownContext = createContext();
+
+function Dropdown({ children }) {
+  const [isOpen, setIsOpen] = useState(false);
+  
+  return (
+    <DropdownContext.Provider value={{ isOpen, setIsOpen }}>
+      <div className="dropdown">{children}</div>
+    </DropdownContext.Provider>
+  );
+}
+
+Dropdown.Toggle = function Toggle({ children }) {
+  const { isOpen, setIsOpen } = useContext(DropdownContext);
+  
+  return (
+    <button onClick={() => setIsOpen(!isOpen)}>
+      {children}
+    </button>
+  );
+};
+
+Dropdown.Menu = function Menu({ children }) {
+  const { isOpen } = useContext(DropdownContext);
+  
+  if (!isOpen) return null;
+  
+  return <div className="dropdown-menu">{children}</div>;
+};
+
+Dropdown.Item = function Item({ children, onClick }) {
+  const { setIsOpen } = useContext(DropdownContext);
+  
+  const handleClick = () => {
+    onClick?.();
+    setIsOpen(false);
+  };
+  
+  return (
+    <div className="dropdown-item" onClick={handleClick}>
+      {children}
+    </div>
+  );
+};
+
+// Penggunaan
+function App() {
+  return (
+    <Dropdown>
+      <Dropdown.Toggle>Options ▼</Dropdown.Toggle>
+      <Dropdown.Menu>
+        <Dropdown.Item onClick={() => console.log('Option 1 clicked')}>
+          Option 1
+        </Dropdown.Item>
+        <Dropdown.Item onClick={() => console.log('Option 2 clicked')}>
+          Option 2
+        </Dropdown.Item>
+        <Dropdown.Item onClick={() => console.log('Option 3 clicked')}>
+          Option 3
+        </Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
+  );
+}
+```
+
+---
+
+## 6. Control Props Pattern
+
+Control Props Pattern adalah teknik dimana komponen dapat dikontrol sepenuhnya oleh parent component tetapi juga bisa berfungsi secara independen (uncontrolled).
+
+### Keuntungan Control Props Pattern:
+
+- **Flexibility**: Memberikan opsi untuk mengontrol state dari luar
+- **Integration**: Memudahkan integrasi dengan form libraries
+- **Uncontrolled Fallback**: Berfungsi dengan baik bahkan tanpa eksternal state
+
+### Contoh Basic Control Props:
+
+```jsx
+import React, { useState } from 'react';
+
+function Counter({ count: controlledCount, onChange }) {
+  // Internal state untuk uncontrolled mode
+  const [internalCount, setInternalCount] = useState(0);
+  
+  // Cek apakah komponen controlled atau uncontrolled
+  const isControlled = controlledCount !== undefined;
+  const count = isControlled ? controlledCount : internalCount;
+  
+  const handleIncrement = () => {
+    if (isControlled) {
+      // Jika controlled, panggil callback
+      onChange?.(count + 1);
+    } else {
+      // Jika uncontrolled, update internal state
+      setInternalCount(internalCount + 1);
+    }
+  };
+  
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={handleIncrement}>Increment</button>
+    </div>
+  );
+}
+
+// Penggunaan sebagai Controlled Component
+function ControlledExample() {
+  const [count, setCount] = useState(0);
+  
+  return (
+    <div>
+      <h2>Controlled Counter:</h2>
+      <Counter count={count} onChange={setCount} />
+      <button onClick={() => setCount(0)}>Reset</button>
+    </div>
+  );
+}
+
+// Penggunaan sebagai Uncontrolled Component
+function UncontrolledExample() {
+  return (
+    <div>
+      <h2>Uncontrolled Counter:</h2>
+      <Counter />
+    </div>
+  );
+}
+```
+
+### Switch/Toggle Component dengan Control Props:
+
+```jsx
+import React, { useState } from 'react';
+
+function Toggle({ checked: controlledChecked, onChange, defaultChecked = false }) {
+  // Internal state untuk uncontrolled mode
+  const [internalChecked, setInternalChecked] = useState(defaultChecked);
+  
+  // Cek apakah controlled atau uncontrolled
+  const isControlled = controlledChecked !== undefined;
+  const checked = isControlled ? controlledChecked : internalChecked;
+  
+  const handleChange = () => {
+    if (isControlled) {
+      // Jika controlled, panggil callback
+      onChange?.(!checked);
+    } else {
+      // Jika uncontrolled, update internal state
+      setInternalChecked(!internalChecked);
+    }
+  };
+  
+  return (
+    <label className="toggle">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={handleChange}
+      />
+      <span className="slider" />
+    </label>
+  );
+}
+
+// Penggunaan sebagai Controlled Component
+function ControlledExample() {
+  const [checked, setChecked] = useState(false);
+  
+  return (
+    <div>
+      <h2>Controlled Toggle:</h2>
+      <Toggle checked={checked} onChange={setChecked} />
+      <p>Status: {checked ? 'ON' : 'OFF'}</p>
+      <button onClick={() => setChecked(!checked)}>
+        Toggle from outside
+      </button>
+    </div>
+  );
+}
+
+// Penggunaan sebagai Uncontrolled Component
+function UncontrolledExample() {
+  return (
+    <div>
+      <h2>Uncontrolled Toggle:</h2>
+      <Toggle defaultChecked={true} />
+    </div>
+  );
+}
+```
+
+---
+
+## 7. Project: Library of Reusable Components
+
+Untuk mengaplikasikan semua pattern yang telah dipelajari, Anda akan membuat library komponen React yang dapat digunakan kembali.
+
+### Tujuan Project:
+
+- Menerapkan semua pattern yang telah dipelajari
+- Membuat komponen yang reusable, maintainable, dan extensible
+- Membangun dokumentasi dan contoh penggunaan
+
+### Komponen yang Akan Dibuat:
+
+1. **Button Component**
+   - Berbagai variant (primary, secondary, danger)
+   - Berbagai ukuran
+   - Support untuk icons
+
+2. **Form Components**
+   - Input dengan validasi
+   - Select
+   - Checkbox
+   - Radio button
+   - Form group
+
+3. **Modal/Dialog**
+   - Menggunakan compound components pattern
+   - Support untuk berbagai ukuran dan animasi
+
+4. **Tabs Component**
+   - Menggunakan compound components pattern
+   - Support untuk berbagai styles
+
+5. **Dropdown Menu**
+   - Menggunakan compound components pattern
+   - Support untuk nested menus
+
+6. **Pagination**
+   - Menggunakan control props pattern
+   - Customizable appearance
+
+### Langkah-langkah Project:
+
+1. **Setup Project**
+   - Inisialisasi project React
+   - Setup development environment
+   - Setup testing library
+
+2. **Desain Komponen**
+   - Tentukan API dan perilaku komponen
+   - Buat prototype UI
+
+3. **Implementasi**
+   - Bangun komponen menggunakan pattern yang tepat
+   - Tulis unit tests untuk setiap komponen
+
+4. **Dokumentasi**
+   - Buat dokumentasi penggunaan
+   - Buat contoh implementasi
+
+5. **Publikasi**
+   - Publish ke npm (opsional)
+   - Share code di GitHub
+
+### Tips Implementasi:
+
+- Gunakan hooks yang tepat untuk setiap use case
+- Pertimbangkan aksesibilitas (a11y) untuk setiap komponen
+- Pastikan komponen berfungsi dengan baik di berbagai browser
+- Pertimbangkan dukungan untuk server-side rendering
+
+---
+
+## Kesimpulan
+
+Setelah menyelesaikan modul ini, Anda telah mempelajari beberapa pattern dan teknik lanjutan dalam pengembangan React:
+
+1. **Advanced Hooks**: useCallback, useMemo, dan useRef untuk mengoptimalkan performa dan menangani side-effects
+2. **Custom Hooks**: Untuk mengekstrak dan menggunakan kembali logika komponen
+3. **Higher-Order Components**: Untuk meningkatkan komponen dengan fungsionalitas tambahan
+4. **Render Props Pattern**: Untuk berbagi logika antar komponen dengan fleksibilitas
+5. **Compound Components**: Untuk membuat API komponen yang intuitif dan fleksibel
+6. **Control Props Pattern**: Untuk mengelola state komponen dengan fleksibilitas
+
+Pattern-pattern ini akan membantu Anda membangun aplikasi React yang lebih maintainable, reusable, dan scalable. Dengan menguasai pattern ini, Anda dapat membuat komponen-komponen yang kompleks namun tetap mudah digunakan dan dikembangkan.
+
+---
+
+## Referensi Tambahan
+
+- [React Hooks Documentation](https://reactjs.org/docs/hooks-intro.html)
+- [React Patterns](https://reactpatterns.com/)
+- [Advanced React Patterns](https://kentcdodds.com/blog/advanced-react-patterns)
+- [React Hooks Cookbook](https://usehooks.com/)
+- [Building a Design System with React](https://www.learnstorybook.com/design-systems-for-developers/)
