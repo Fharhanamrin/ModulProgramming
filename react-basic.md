@@ -4123,3 +4123,1127 @@ Pattern-pattern ini akan membantu Anda membangun aplikasi React yang lebih maint
 - [Advanced React Patterns](https://kentcdodds.com/blog/advanced-react-patterns)
 - [React Hooks Cookbook](https://usehooks.com/)
 - [Building a Design System with React](https://www.learnstorybook.com/design-systems-for-developers/)
+
+# MODUL 8: PERFORMANCE OPTIMIZATION REACT
+
+## Daftar Isi
+- [Pendahuluan](#pendahuluan)
+- [Minggu 1: Dasar-dasar Optimasi React](#minggu-1-dasar-dasar-optimasi-react)
+  - [React Profiler & Chrome DevTools](#react-profiler--chrome-devtools)
+  - [Code Splitting & Lazy Loading](#code-splitting--lazy-loading)
+  - [React.memo dan PureComponent](#reactmemo-dan-purecomponent)
+- [Minggu 2: Teknik Optimasi Lanjutan](#minggu-2-teknik-optimasi-lanjutan)
+  - [Virtualization dengan React Window](#virtualization-dengan-react-window)
+  - [Web Vitals Optimization](#web-vitals-optimization)
+  - [Bundle Analysis dan Optimization](#bundle-analysis-dan-optimization)
+- [Project: Optimasi Aplikasi React](#project-optimasi-aplikasi-react)
+- [Referensi dan Sumber Belajar Tambahan](#referensi-dan-sumber-belajar-tambahan)
+
+## Pendahuluan
+
+Performance Optimization (optimasi performa) adalah proses meningkatkan kecepatan, responsifitas, dan efisiensi aplikasi React. Sebagai developer, penting untuk memastikan aplikasi kita tidak hanya berfungsi dengan benar tetapi juga berjalan dengan cepat dan efisien.
+
+Mengapa optimasi performa penting?
+- Pengalaman pengguna yang lebih baik
+- Mengurangi bounce rate (tingkat pentalan) pengunjung
+- Meningkatkan SEO (Search Engine Optimization)
+- Mengurangi biaya hosting dan bandwidth
+- Aplikasi yang lebih hemat daya baterai pada perangkat mobile
+
+Dalam modul ini, kita akan mempelajari berbagai teknik untuk mengoptimalkan aplikasi React, mulai dari mengidentifikasi masalah performa hingga menerapkan solusi yang tepat.
+
+## Minggu 1: Dasar-dasar Optimasi React
+
+### React Profiler & Chrome DevTools
+
+#### Apa itu React Profiler?
+
+React Profiler adalah fitur bawaan React Developer Tools yang memungkinkan kita untuk mengukur seberapa sering aplikasi React melakukan rendering dan "biaya" (waktu) yang dibutuhkan untuk rendering.
+
+#### Cara Menggunakan React Profiler:
+
+1. **Instal React Developer Tools**
+   
+   React Developer Tools adalah ekstensi browser yang tersedia untuk Chrome dan Firefox.
+
+   ```bash
+   # Atau install melalui toko ekstensi browser
+   ```
+
+2. **Mengakses React Profiler**
+   
+   Setelah menginstal, buka DevTools browser (F12 atau klik kanan -> Inspect) dan pilih tab "Profiler".
+
+3. **Merekam Performa**
+   
+   - Klik tombol "Record" (lingkaran merah)
+   - Lakukan interaksi dengan aplikasi
+   - Klik "Stop" untuk menghentikan perekaman
+
+4. **Menganalisis Hasil**
+   
+   Profiler akan menampilkan "commit" (pembaruan) yang dilakukan oleh React. Untuk setiap commit, Anda dapat melihat:
+   - Waktu yang dibutuhkan
+   - Flame chart (diagram yang menunjukkan waktu rendering setiap komponen)
+   - Ranked chart (komponen yang diurutkan berdasarkan waktu rendering)
+   - Component chart (menampilkan berapa kali komponen di-render)
+
+#### Chrome DevTools untuk React
+
+Chrome DevTools memiliki beberapa fitur yang berguna untuk mengoptimasi aplikasi React:
+
+1. **Performance Tab**
+   
+   Memungkinkan analisis mendalam terhadap performa halaman web, termasuk:
+   - Waktu loading
+   - JavaScript execution time
+   - Layout dan render time
+   - Memory usage
+
+2. **Lighthouse**
+   
+   Alat audit dalam Chrome DevTools yang memberikan skor dan rekomendasi untuk:
+   - Performance
+   - Accessibility
+   - Best Practices
+   - SEO
+   - Progressive Web App
+
+3. **Memory Tab**
+   
+   Membantu mendeteksi memory leaks dengan:
+   - Heap Snapshot (menganalisis memory usage saat ini)
+   - Allocation Instrumentation (melacak alokasi objek JavaScript)
+
+#### Contoh Penggunaan Performance Tab
+
+```javascript
+// Contoh kode yang bisa dianalisis
+function SlowComponent() {
+  // Lakukan operasi yang berat
+  const startTime = performance.now();
+  while (performance.now() - startTime < 100) {
+    // Block thread selama 100ms (simulasi operasi berat)
+  }
+  
+  return <div>Komponen yang lambat</div>;
+}
+```
+
+Langkah analisis:
+1. Buka Chrome DevTools -> Performance tab
+2. Klik "Record"
+3. Render komponen SlowComponent
+4. Stop recording
+5. Analisis hasilnya untuk melihat berapa lama JavaScript berjalan
+
+### Code Splitting & Lazy Loading
+
+#### Apa itu Code Splitting?
+
+Code Splitting adalah teknik untuk memecah bundle JavaScript menjadi beberapa file yang lebih kecil, sehingga browser hanya perlu memuat kode yang dibutuhkan pada saat itu. Ini sangat membantu untuk aplikasi besar dengan banyak halaman.
+
+#### Implementasi Code Splitting dengan React.lazy dan Suspense
+
+React.lazy dan Suspense memungkinkan kita untuk melakukan code splitting dengan mudah:
+
+```javascript
+// Sebelum code splitting
+import BigComponent from './BigComponent';
+
+// Setelah code splitting
+import React, { Suspense, lazy } from 'react';
+const BigComponent = lazy(() => import('./BigComponent'));
+
+function App() {
+  return (
+    <div>
+      <Suspense fallback={<div>Loading...</div>}>
+        <BigComponent />
+      </Suspense>
+    </div>
+  );
+}
+```
+
+#### Lazy Loading untuk Routes
+
+Contoh penggunaan dengan React Router:
+
+```javascript
+import React, { Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+// Lazy load komponen halaman
+const Home = lazy(() => import('./routes/Home'));
+const About = lazy(() => import('./routes/About'));
+const Dashboard = lazy(() => import('./routes/Dashboard'));
+
+function App() {
+  return (
+    <Router>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      </Suspense>
+    </Router>
+  );
+}
+```
+
+#### Dynamic Import untuk Komponen Besar
+
+```javascript
+import React, { useState } from 'react';
+
+function App() {
+  const [showChart, setShowChart] = useState(false);
+  const [ChartComponent, setChartComponent] = useState(null);
+  
+  const loadChart = async () => {
+    // Hanya muat komponen chart ketika dibutuhkan
+    const module = await import('./HeavyChartComponent');
+    setChartComponent(() => module.default);
+    setShowChart(true);
+  };
+  
+  return (
+    <div>
+      <button onClick={loadChart}>Tampilkan Chart</button>
+      {showChart && ChartComponent && <ChartComponent />}
+    </div>
+  );
+}
+```
+
+### React.memo dan PureComponent
+
+#### Apa itu Rendering yang Tidak Perlu?
+
+React akan me-render ulang komponen ketika:
+- Props berubah
+- State berubah
+- Parent component di-render ulang
+
+Namun, jika props dan state tidak berubah, seringkali tidak perlu me-render ulang komponen.
+
+#### React.memo untuk Function Components
+
+React.memo adalah higher-order component (HOC) yang memungkinkan kita untuk "memoize" komponen fungsi. Ini berarti React akan melewati proses rendering jika props tidak berubah.
+
+```javascript
+import React from 'react';
+
+// Tanpa React.memo
+function ExpensiveComponent(props) {
+  console.log('Rendering ExpensiveComponent');
+  // Komponen dengan kalkulasi yang berat
+  return <div>{props.value}</div>;
+}
+
+// Dengan React.memo
+const MemoizedExpensiveComponent = React.memo(function ExpensiveComponent(props) {
+  console.log('Rendering ExpensiveComponent');
+  // Komponen dengan kalkulasi yang berat
+  return <div>{props.value}</div>;
+});
+
+// Penggunaan
+function App() {
+  const [count, setCount] = useState(0);
+  return (
+    <div>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+      <div>Count: {count}</div>
+      {/* Akan selalu di-render ulang ketika count berubah */}
+      <ExpensiveComponent value={42} />
+      {/* Hanya di-render ulang jika value berubah */}
+      <MemoizedExpensiveComponent value={42} />
+    </div>
+  );
+}
+```
+
+#### PureComponent untuk Class Components
+
+Untuk class components, kita dapat menggunakan PureComponent yang secara otomatis mengimplementasikan shouldComponentUpdate dengan shallow comparison terhadap props dan state.
+
+```javascript
+import React, { Component, PureComponent } from 'react';
+
+// Regular Component
+class RegularComponent extends Component {
+  render() {
+    console.log('Rendering RegularComponent');
+    return <div>{this.props.value}</div>;
+  }
+}
+
+// Pure Component
+class OptimizedComponent extends PureComponent {
+  render() {
+    console.log('Rendering OptimizedComponent');
+    return <div>{this.props.value}</div>;
+  }
+}
+```
+
+#### Custom Comparison dengan React.memo
+
+Jika kita membutuhkan logika perbandingan yang lebih kompleks, kita bisa memberikan fungsi comparison custom ke React.memo:
+
+```javascript
+const MemoizedComponent = React.memo(
+  function MyComponent(props) {
+    /* render menggunakan props */
+    return <div>{props.value}</div>;
+  },
+  (prevProps, nextProps) => {
+    // Return true jika ingin mencegah re-render
+    // Return false jika ingin memperbolehkan re-render
+    
+    // Contoh: hanya re-render jika nilai berubah lebih dari 5
+    return Math.abs(prevProps.value - nextProps.value) <= 5;
+  }
+);
+```
+
+#### Memoizing Expensive Calculations dengan useMemo
+
+Untuk kalkulasi yang berat, gunakan useMemo:
+
+```javascript
+import React, { useState, useMemo } from 'react';
+
+function ExpensiveCalculation({ number }) {
+  // Tanpa useMemo (akan dihitung ulang setiap render)
+  const expensiveResult = calculateExpensiveValue(number);
+  
+  // Dengan useMemo (hanya dihitung ulang jika number berubah)
+  const memoizedResult = useMemo(() => {
+    return calculateExpensiveValue(number);
+  }, [number]);
+  
+  return <div>Result: {memoizedResult}</div>;
+}
+
+function calculateExpensiveValue(number) {
+  console.log('Calculating...');
+  // Simulasi kalkulasi yang berat
+  let result = 0;
+  for (let i = 0; i < 1000000; i++) {
+    result += number;
+  }
+  return result;
+}
+```
+
+#### useCallback untuk Memoizing Functions
+
+Untuk memoizing functions, gunakan useCallback:
+
+```javascript
+import React, { useState, useCallback } from 'react';
+
+function ParentComponent() {
+  const [count, setCount] = useState(0);
+  
+  // Tanpa useCallback (fungsi baru akan dibuat setiap render)
+  const handleClick = () => {
+    console.log('Clicked!');
+  };
+  
+  // Dengan useCallback (fungsi yang sama akan digunakan kembali)
+  const memoizedHandleClick = useCallback(() => {
+    console.log('Clicked!');
+  }, []); // Array dependency kosong berarti fungsi ini tidak akan pernah dibuat ulang
+  
+  return (
+    <div>
+      <button onClick={() => setCount(count + 1)}>Count: {count}</button>
+      {/* Child akan selalu re-render karena handleClick selalu baru */}
+      <ChildComponent onClick={handleClick} />
+      {/* Child hanya re-render jika memoizedHandleClick berubah */}
+      <MemoizedChildComponent onClick={memoizedHandleClick} />
+    </div>
+  );
+}
+
+const ChildComponent = React.memo(function ChildComponent(props) {
+  console.log('Child rendering');
+  return <button onClick={props.onClick}>Click me</button>;
+});
+```
+
+## Minggu 2: Teknik Optimasi Lanjutan
+
+### Virtualization dengan React Window
+
+#### Apa itu Virtualization?
+
+Virtualization adalah teknik untuk merender hanya item yang terlihat pada viewport, bukan seluruh daftar panjang. Ini sangat berguna untuk daftar dengan ribuan item.
+
+#### Menggunakan React Window
+
+React Window adalah library populer untuk virtualisasi di React.
+
+Instalasi:
+```bash
+npm install react-window
+# atau
+yarn add react-window
+```
+
+Contoh penggunaan dasar:
+
+```javascript
+import React from 'react';
+import { FixedSizeList as List } from 'react-window';
+
+const ITEM_HEIGHT = 35; // Tinggi setiap item dalam pixel
+
+function Row({ index, style }) {
+  return (
+    <div style={style}>
+      Item {index}
+    </div>
+  );
+}
+
+function ExampleList({ items }) {
+  return (
+    <List
+      height={400} // Tinggi viewport
+      width={300} // Lebar list
+      itemCount={items.length} // Jumlah total item
+      itemSize={ITEM_HEIGHT} // Tinggi setiap item
+    >
+      {Row}
+    </List>
+  );
+}
+
+// Penggunaan:
+function App() {
+  // Simulasi daftar dengan 10,000 item
+  const items = Array.from({ length: 10000 }, (_, i) => ({ id: i, text: `Item ${i}` }));
+  
+  return <ExampleList items={items} />;
+}
+```
+
+#### FixedSizeList vs VariableSizeList
+
+React Window menyediakan dua jenis list utama:
+
+1. **FixedSizeList**: Untuk list dengan item berukuran sama
+   ```javascript
+   import { FixedSizeList } from 'react-window';
+   
+   <FixedSizeList
+     height={400}
+     width={300}
+     itemCount={1000}
+     itemSize={35}
+   >
+     {Row}
+   </FixedSizeList>
+   ```
+
+2. **VariableSizeList**: Untuk list dengan item berukuran bervariasi
+   ```javascript
+   import { VariableSizeList } from 'react-window';
+   
+   // Function untuk menentukan tinggi item berdasarkan index
+   const getItemSize = index => {
+     return index % 2 === 0 ? 30 : 50; // Item genap: 30px, ganjil: 50px
+   };
+   
+   <VariableSizeList
+     height={400}
+     width={300}
+     itemCount={1000}
+     itemSize={getItemSize}
+   >
+     {Row}
+   </VariableSizeList>
+   ```
+
+#### Menggunakan dengan Data Kompleks
+
+```javascript
+import React from 'react';
+import { FixedSizeList } from 'react-window';
+
+// Data contoh
+const users = Array.from({ length: 5000 }, (_, index) => ({
+  id: index,
+  name: `User ${index}`,
+  email: `user${index}@example.com`,
+  avatar: `https://randomuser.me/api/portraits/men/${index % 100}.jpg`
+}));
+
+// Komponen untuk setiap baris
+function UserRow({ index, style }) {
+  const user = users[index];
+  
+  return (
+    <div style={{
+      ...style,
+      display: 'flex',
+      alignItems: 'center',
+      padding: '10px',
+      borderBottom: '1px solid #eee'
+    }}>
+      <img 
+        src={user.avatar} 
+        alt={user.name}
+        style={{ width: 40, height: 40, borderRadius: '50%', marginRight: 10 }}
+      />
+      <div>
+        <div style={{ fontWeight: 'bold' }}>{user.name}</div>
+        <div style={{ fontSize: '0.8em', color: '#666' }}>{user.email}</div>
+      </div>
+    </div>
+  );
+}
+
+// Komponen list
+function UserList() {
+  return (
+    <FixedSizeList
+      height={500}
+      width={400}
+      itemCount={users.length}
+      itemSize={60} // Tinggi setiap baris
+    >
+      {UserRow}
+    </FixedSizeList>
+  );
+}
+```
+
+#### Infinite Loading dengan React Window
+
+Menambahkan infinite loading:
+
+```javascript
+import React, { useState, useEffect } from 'react';
+import { FixedSizeList } from 'react-window';
+import InfiniteLoader from 'react-window-infinite-loader';
+
+function InfiniteUserList() {
+  const [users, setUsers] = useState([]);
+  const [hasNextPage, setHasNextPage] = useState(true);
+  const [isNextPageLoading, setIsNextPageLoading] = useState(false);
+  
+  // Simulasi loading data dari API
+  const loadMoreItems = async (startIndex, stopIndex) => {
+    setIsNextPageLoading(true);
+    
+    // Simulasi network request
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const newUsers = Array.from({ length: stopIndex - startIndex + 1 }, (_, i) => ({
+      id: startIndex + i,
+      name: `User ${startIndex + i}`,
+      email: `user${startIndex + i}@example.com`
+    }));
+    
+    setUsers(prevUsers => [...prevUsers, ...newUsers]);
+    setIsNextPageLoading(false);
+    
+    // Simulasi akhir data setelah 500 item
+    if (stopIndex >= 500) {
+      setHasNextPage(false);
+    }
+  };
+  
+  // Item status: apakah sudah dimuat atau belum
+  const isItemLoaded = index => index < users.length;
+  
+  // Render setiap item
+  const Item = ({ index, style }) => {
+    if (!isItemLoaded(index)) {
+      return <div style={style}>Loading...</div>;
+    }
+    
+    const user = users[index];
+    return (
+      <div style={style}>
+        <div>{user.name}</div>
+        <div>{user.email}</div>
+      </div>
+    );
+  };
+  
+  return (
+    <InfiniteLoader
+      isItemLoaded={isItemLoaded}
+      itemCount={hasNextPage ? users.length + 1 : users.length}
+      loadMoreItems={loadMoreItems}
+    >
+      {({ onItemsRendered, ref }) => (
+        <FixedSizeList
+          height={400}
+          width={300}
+          itemCount={hasNextPage ? users.length + 1 : users.length}
+          itemSize={50}
+          onItemsRendered={onItemsRendered}
+          ref={ref}
+        >
+          {Item}
+        </FixedSizeList>
+      )}
+    </InfiniteLoader>
+  );
+}
+```
+
+### Web Vitals Optimization
+
+#### Apa itu Web Vitals?
+
+Web Vitals adalah inisiatif Google untuk menyediakan panduan terpadu tentang sinyal kualitas penting yang diperlukan untuk memberikan pengalaman pengguna yang baik di web.
+
+#### Core Web Vitals
+
+Ada tiga Core Web Vitals yang menjadi fokus utama:
+
+1. **Largest Contentful Paint (LCP)**: Kecepatan loading
+   - Mengukur waktu yang dibutuhkan untuk memuat konten terbesar yang terlihat
+   - Target: < 2.5 detik
+
+2. **First Input Delay (FID)**: Interaktivitas
+   - Mengukur waktu dari interaksi pertama pengguna hingga browser dapat merespon
+   - Target: < 100 ms
+
+3. **Cumulative Layout Shift (CLS)**: Stabilitas visual
+   - Mengukur seberapa banyak elemen halaman bergeser secara tidak terduga
+   - Target: < 0.1
+
+#### Mengukur Web Vitals
+
+Kita dapat mengukur Web Vitals menggunakan:
+
+1. **Lighthouse** (dalam Chrome DevTools)
+2. **PageSpeed Insights**: https://pagespeed.web.dev/
+3. **web-vitals library**
+
+```bash
+npm install web-vitals
+# atau
+yarn add web-vitals
+```
+
+```javascript
+import { getCLS, getFID, getLCP } from 'web-vitals';
+
+function sendToAnalytics(metric) {
+  // Kirim data ke analytics
+  console.log(metric);
+}
+
+getCLS(sendToAnalytics);
+getFID(sendToAnalytics);
+getLCP(sendToAnalytics);
+```
+
+#### Optimasi Largest Contentful Paint (LCP)
+
+1. **Optimalkan Server Response Time**
+   - Gunakan CDN
+   - Implementasi caching server-side
+   - Optimalkan database queries
+
+2. **Preload Resource Penting**
+   ```html
+   <link rel="preload" href="critical-image.jpg" as="image" />
+   ```
+
+3. **Optimalkan dan Compress Gambar**
+   - Gunakan format modern (WebP)
+   - Gunakan lazy loading untuk gambar di bawah fold
+
+4. **Minimalkan CSS yang Blocking**
+   - Ekstrak CSS kritikal dan inlinekan
+   - Defer CSS non-kritikal
+
+#### Optimasi First Input Delay (FID)
+
+1. **Minimalkan JavaScript yang Tidak Diperlukan**
+   - Code splitting
+   - Tree shaking
+   - Lazy loading
+
+2. **Break Up Long Tasks**
+   ```javascript
+   // Sebelum: Task yang panjang
+   function processData() {
+     for (let i = 0; i < 10000; i++) {
+       // Operasi berat
+     }
+   }
+   
+   // Sesudah: Dipecah menjadi chunk-chunk kecil
+   function processDataInChunks(i = 0) {
+     // Proses hanya 100 item per waktu
+     let end = Math.min(i + 100, 10000);
+     
+     for (let j = i; j < end; j++) {
+       // Operasi berat
+     }
+     
+     if (end < 10000) {
+       // Jadwalkan chunk berikutnya
+       setTimeout(() => processDataInChunks(end), 0);
+     }
+   }
+   ```
+
+3. **Gunakan Web Workers untuk Tugas Berat**
+   ```javascript
+   // main.js
+   const worker = new Worker('worker.js');
+   
+   // Kirim data ke worker
+   worker.postMessage({ data: complexData });
+   
+   // Terima hasil dari worker
+   worker.onmessage = function(e) {
+     console.log('Result:', e.data.result);
+   };
+   
+   // worker.js
+   self.onmessage = function(e) {
+     // Lakukan kalkulasi berat di sini
+     const result = doHeavyCalculation(e.data.data);
+     
+     // Kirim hasil kembali ke thread utama
+     self.postMessage({ result });
+   };
+   ```
+
+#### Optimasi Cumulative Layout Shift (CLS)
+
+1. **Selalu Tentukan Dimensi Gambar**
+   ```html
+   <!-- Buruk: Tidak ada dimensi -->
+   <img src="image.jpg" alt="Description">
+   
+   <!-- Baik: Ada dimensi -->
+   <img src="image.jpg" width="640" height="360" alt="Description">
+   ```
+
+2. **Hindari Memasukkan Konten Dinamis di Atas Konten yang Sudah Ada**
+   - Gunakan placeholder dengan ukuran yang tepat
+   - Alokasikan space untuk iklan dan embeds
+
+3. **Gunakan CSS transform untuk Animasi**
+   ```css
+   /* Buruk: Mengubah layout */
+   .box:hover {
+     margin-top: 20px;
+   }
+   
+   /* Baik: Menggunakan transform */
+   .box:hover {
+     transform: translateY(20px);
+   }
+   ```
+
+### Bundle Analysis dan Optimization
+
+#### Menganalisis Bundle Size
+
+Sebelum mengoptimasi bundle, kita perlu mengetahui apa yang menyebabkan bundle besar.
+
+1. **webpack-bundle-analyzer**
+   ```bash
+   npm install --save-dev webpack-bundle-analyzer
+   # atau
+   yarn add --dev webpack-bundle-analyzer
+   ```
+
+   Konfigurasi untuk create-react-app:
+   ```javascript
+   // Buat file craco.config.js
+   const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
+   module.exports = {
+     webpack: {
+       plugins: {
+         add: [
+           new BundleAnalyzerPlugin({
+             analyzerMode: 'server',
+           }),
+         ],
+       },
+     },
+   };
+   ```
+
+2. **source-map-explorer**
+   ```bash
+   npm install --save-dev source-map-explorer
+   # atau
+   yarn add --dev source-map-explorer
+   
+   # Tambahkan script ke package.json
+   "scripts": {
+     "analyze": "source-map-explorer 'build/static/js/*.js'"
+   }
+   ```
+
+#### Strategi Optimasi Bundle
+
+1. **Mengurangi Ukuran Dependencies**
+   - Gunakan [bundlephobia.com](https://bundlephobia.com/) untuk mencari alternativ package yang lebih kecil
+   - Contoh: moment.js (329kB) vs date-fns (13kB) atau dayjs (2kB)
+
+2. **Tree Shaking**
+   
+   Tree shaking adalah proses menghilangkan kode yang tidak digunakan dari bundle.
+
+   ```javascript
+   // Sebelum: Import seluruh lodash
+   import _ from 'lodash';
+   
+   // Sesudah: Import hanya yang dibutuhkan
+   import { debounce } from 'lodash-es';
+   
+   // Atau lebih baik lagi
+   import debounce from 'lodash/debounce';
+   ```
+
+3. **Dynamic Imports**
+   
+   Selain untuk code splitting, dynamic imports juga mengurangi ukuran bundle awal.
+
+   ```javascript
+   // Sebelum
+   import Chart from 'chart.js';
+   
+   function Dashboard() {
+     return (
+       <div>
+         <h1>Dashboard</h1>
+         <Chart data={...} />
+       </div>
+     );
+   }
+   
+   // Sesudah
+   function Dashboard() {
+     const [Chart, setChart] = useState(null);
+     
+     useEffect(() => {
+       import('chart.js').then(module => {
+         setChart(() => module.default);
+       });
+     }, []);
+     
+     return (
+       <div>
+         <h1>Dashboard</h1>
+         {Chart && <Chart data={...} />}
+       </div>
+     );
+   }
+   ```
+
+4. **Optimasi Gambar dan Assets**
+   - Compress gambar
+   - Gunakan WebP untuk gambar
+   - Sprite sheets untuk ikon
+   - Minifikasi CSS dan JavaScript
+
+5. **Mengurangi Polyfills**
+   
+   Jika tidak perlu mendukung browser lama, kurangi polyfills:
+
+   ```javascript
+   // Buat file .browserslistrc
+   
+   // Sebelum (mendukung banyak browser lama)
+   > 0.5%
+   last 2 versions
+   Firefox ESR
+   not dead
+   
+   // Sesudah (hanya browser modern)
+   last 2 Chrome versions
+   last 2 Firefox versions
+   last 2 Edge versions
+   last 2 Safari versions
+   ```
+
+6. **Menggunakan CDN untuk Libraries Besar**
+   
+   Untuk library besar, gunakan CDN dan externals:
+
+   ```html
+   <!-- Tambahkan di index.html -->
+   <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
+   <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
+   ```
+
+   ```javascript
+   // Konfigurasi webpack
+   module.exports = {
+     //...
+     externals: {
+       'react': 'React',
+       'react-dom': 'ReactDOM'
+     }
+   };
+   ```
+
+## Project: Optimasi Aplikasi React
+
+### Tujuan Project
+
+1. Mengidentifikasi dan memperbaiki masalah performa pada aplikasi React yang sudah ada
+2. Menerapkan teknik optimasi yang telah dipelajari
+3. Mengukur dampak optimasi yang dilakukan
+
+### Langkah-langkah Project
+
+#### 1. Analisis Awal
+
+1. **Audit dengan Lighthouse**
+   - Jalankan audit Lighthouse
+   - Catat skor awal (Performance, Accessibility, Best Practices, SEO)
+   - Identifikasi kesempatan perbaikan
+
+2. **Profiling dengan React Profiler**
+   - Identifikasi komponen yang sering di-render ulang
+   - Catat waktu rendering setiap komponen
+   - Identifikasi komponen yang membutuhkan waktu rendering lama
+
+3. **Analisis Bundle Size**
+   - Gunakan webpack-bundle-analyzer atau source-map-explorer
+   - Identifikasi package/dependencies yang besar
+   - Identifikasi code yang bisa di-split atau lazy load
+
+#### 2. Implementasi Optimasi
+
+1. **Optimasi Rendering**
+   - Terapkan React.memo atau PureComponent untuk komponen yang sering di-render
+   - Gunakan useMemo untuk kalkulasi berat
+   - Gunakan useCallback untuk memoizing functions
+
+2. **Code Splitting dan Lazy Loading**
+   - Identifikasi bagian aplikasi yang bisa di-lazy load
+   - Implementasikan React.lazy dan Suspense
+   - Gunakan dynamic imports untuk komponen besar
+
+3. **Virtualisasi untuk Daftar Panjang**
+   - Implementasikan React Window untuk daftar dengan banyak item
+   - Optimalkan rendering list yang kompleks
+
+4. **Optimasi Bundle Size**
+   - Kurangi size dependencies dengan alternative yang lebih kecil
+   - Implementasikan tree shaking
+   - Hapus dependencies yang tidak digunakan
+   - Minifikasi assets (gambar, fonts, dll)
+
+5. **Optimasi Web Vitals**
+   - Perbaiki Largest Contentful Paint (LCP)
+   - Tingkatkan First Input Delay (FID)
+   - Minimalkan Cumulative Layout Shift (CLS)
+
+#### 3. Pengukuran Hasil
+
+1. **Ukur Ulang dengan Lighthouse**
+   - Bandingkan skor sebelum dan sesudah optimasi
+   - Dokumentasikan peningkatan
+
+2. **Profiling Ulang dengan React Profiler**
+   - Bandingkan waktu rendering sebelum dan sesudah optimasi
+   - Catat komponen yang berhasil dioptimasi
+
+3. **Analisis Bundle Size Ulang**
+   - Bandingkan ukuran bundle sebelum dan sesudah optimasi
+   - Dokumentasikan pengurangan ukuran
+
+### Contoh Implementasi Project
+
+Berikut adalah contoh kerangka implementasi untuk project optimasi aplikasi React:
+
+#### 1. Identifikasi Masalah
+
+```javascript
+// Contoh komponen yang tidak optimal
+function UserList({ users }) {
+  // Tidak menggunakan virtualisasi
+  return (
+    <div>
+      {users.map(user => (
+        <UserCard key={user.id} user={user} />
+      ))}
+    </div>
+  );
+}
+
+// Komponen yang di-render ulang meskipun props tidak berubah
+function UserCard({ user }) {
+  // Tidak menggunakan memoization
+  return (
+    <div className="user-card">
+      <img src={user.avatar} alt={user.name} />
+      <h3>{user.name}</h3>
+      <p>{user.email}</p>
+    </div>
+  );
+}
+```
+
+#### 2. Solusi Optimasi
+
+```javascript
+import React, { useMemo } from 'react';
+import { FixedSizeList } from 'react-window';
+
+// Optimasi dengan virtualisasi
+function OptimizedUserList({ users }) {
+  const Row = ({ index, style }) => {
+    const user = users[index];
+    return <MemoizedUserCard style={style} user={user} />;
+  };
+
+  return (
+    <FixedSizeList
+      height={500}
+      width="100%"
+      itemCount={users.length}
+      itemSize={80}
+    >
+      {Row}
+    </FixedSizeList>
+  );
+}
+
+// Optimasi dengan memoization
+const MemoizedUserCard = React.memo(function UserCard({ user, style }) {
+  return (
+    <div className="user-card" style={style}>
+      <img src={user.avatar} alt={user.name} />
+      <h3>{user.name}</h3>
+      <p>{user.email}</p>
+    </div>
+  );
+});
+
+// Optimasi dengan useMemo untuk heavy calculations
+function UserStats({ users }) {
+  // Kalkulasi statistik yang berat
+  const stats = useMemo(() => {
+    console.log('Calculating stats...');
+    return {
+      totalUsers: users.length,
+      activeUsers: users.filter(u => u.isActive).length,
+      averageAge: users.reduce((acc, u) => acc + u.age, 0) / users.length
+    };
+  }, [users]); // Hanya hitung ulang jika users berubah
+
+  return (
+    <div className="stats">
+      <div>Total Users: {stats.totalUsers}</div>
+      <div>Active Users: {stats.activeUsers}</div>
+      <div>Average Age: {stats.averageAge.toFixed(1)}</div>
+    </div>
+  );
+}
+```
+
+#### 3. Implementasi Code Splitting
+
+```javascript
+// App.js sebelum
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import Dashboard from './pages/Dashboard';
+import Analytics from './pages/Analytics';
+import Settings from './pages/Settings';
+import NotFound from './pages/NotFound';
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/analytics" element={<Analytics />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+// App.js sesudah dengan code splitting
+import React, { Suspense, lazy } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+// Eager load homepage untuk pengalaman awal yang lebih baik
+import Home from './pages/Home';
+
+// Lazy load halaman lainnya
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Analytics = lazy(() => import('./pages/Analytics'));
+const Settings = lazy(() => import('./pages/Settings'));
+const NotFound = lazy(() => import('./pages/NotFound'));
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Suspense fallback={<div className="loading-spinner">Loading...</div>}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/analytics" element={<Analytics />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
+  );
+}
+```
+
+## Referensi dan Sumber Belajar Tambahan
+
+### Dokumentasi Resmi
+- [React Documentation: Optimizing Performance](https://reactjs.org/docs/optimizing-performance.html)
+- [React Developer Tools](https://reactjs.org/blog/2019/08/15/new-react-devtools.html)
+- [React.memo](https://reactjs.org/docs/react-api.html#reactmemo)
+- [Code Splitting in React](https://reactjs.org/docs/code-splitting.html)
+- [Web Vitals](https://web.dev/vitals/)
+
+### Library dan Tools
+- [React Window](https://github.com/bvaughn/react-window)
+- [webpack-bundle-analyzer](https://github.com/webpack-contrib/webpack-bundle-analyzer)
+- [source-map-explorer](https://github.com/danvk/source-map-explorer)
+- [Lighthouse](https://developers.google.com/web/tools/lighthouse)
+- [web-vitals library](https://github.com/GoogleChrome/web-vitals)
+
+### Artikel dan Tutorial
+- [A Complete Guide to useCallback](https://dmitripavlutin.com/react-usecallback/)
+- [When to useMemo and useCallback](https://kentcdodds.com/blog/usememo-and-usecallback)
+- [React Performance Optimization](https://medium.com/@ariklevliber/react-performance-optimization-techniques-in-2023-46a574f0d12a)
+- [Understanding Tree Shaking](https://developers.google.com/web/fundamentals/performance/optimizing-javascript/tree-shaking)
+- [The Ultimate Guide to Web Performance](https://developers.google.com/web/fundamentals/performance/get-started)
+
+### Video Courses
+- [Frontend Masters: React Performance](https://frontendmasters.com/courses/react-performance/)
+- [Egghead.io: Optimize React Apps](https://egghead.io/courses/optimize-react-apps)
+- [Pluralsight: React Performance Playbook](https://www.pluralsight.com/courses/react-performance-playbook)
+
+---
+
+Semoga modul ini membantu Anda memahami dan mengimplementasikan teknik-teknik optimasi performa pada aplikasi React. Ingat bahwa optimasi performa sebaiknya dilakukan setelah aplikasi berfungsi dengan benar, dan sebaiknya fokus pada perbaikan yang paling berdampak terlebih dahulu. Happy coding!
