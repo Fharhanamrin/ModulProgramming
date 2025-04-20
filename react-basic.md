@@ -3687,6 +3687,1112 @@ Dengan menyelesaikan modul ini, kamu sekarang memiliki pemahaman komprehensif te
 Selamat belajar Web Development! Modul ini merupakan fondasi penting untuk melanjutkan ke tahap React Development pada modul berikutnya.
 
 END MODULE 4
+# MODUL 5: STATE MANAGEMENT DI REACT
+
+## Daftar Isi
+- [Pendahuluan](#pendahuluan)
+- [Minggu 9: Pengenalan State Management](#minggu-9-pengenalan-state-management)
+  - [Context API dan useContext](#context-api-dan-usecontext)
+- [Minggu 10: Redux dan Redux Toolkit](#minggu-10-redux-dan-redux-toolkit)
+  - [React Redux](#react-redux)
+  - [Redux Toolkit](#redux-toolkit)
+  - [Immutability Patterns](#immutability-patterns)
+- [Minggu 11: Middleware dan Side Effects](#minggu-11-middleware-dan-side-effects)
+  - [Middleware dan Side Effects](#middleware-dan-side-effects-1)
+  - [Redux Thunk vs Redux Saga](#redux-thunk-vs-redux-saga)
+- [Project: E-Commerce App](#project-e-commerce-app)
+- [Referensi dan Belajar Lebih Lanjut](#referensi-dan-belajar-lebih-lanjut)
+
+## Pendahuluan
+
+State management adalah salah satu aspek paling penting dalam pengembangan aplikasi React yang kompleks. Seiring dengan bertambahnya ukuran aplikasi, mengelola state (data) menjadi semakin menantang. Modul ini akan membantu Anda memahami dan menguasai berbagai teknik state management di React, mulai dari Context API yang built-in hingga library eksternal seperti Redux.
+
+## Minggu 9: Pengenalan State Management
+
+### Context API dan useContext
+
+#### Apa itu State Management?
+
+State management adalah cara untuk mengelola dan menyimpan data dalam aplikasi. Pada aplikasi kecil, kita mungkin cukup menggunakan `useState` dan props, tetapi pada aplikasi yang lebih besar, pendekatan ini bisa menjadi rumit karena:
+
+1. **Prop Drilling**: Meneruskan props melalui banyak komponen yang tidak membutuhkannya
+2. **Kompleksitas State**: State yang saling berhubungan dan berubah di banyak tempat
+3. **Pemeliharaan Kode**: Lebih sulit melacak perubahan dan sumber bug
+
+#### Context API
+
+Context API adalah fitur built-in React yang memungkinkan kita berbagi state tanpa prop drilling.
+
+**Kapan Menggunakan Context API:**
+- Ketika data perlu diakses oleh banyak komponen pada level berbeda
+- Untuk menyimpan state global atau semi-global (theme, bahasa, autentikasi)
+- Ketika Anda ingin menghindari prop drilling
+
+**Komponen Utama Context API:**
+1. `React.createContext()`: Membuat context baru
+2. `Context.Provider`: Komponen yang menyediakan nilai context
+3. `Context.Consumer` atau `useContext`: Cara untuk mengkonsumsi nilai dari context
+
+#### Implementasi Context API
+
+**1. Membuat Context:**
+
+```jsx
+// ThemeContext.js
+import { createContext } from 'react';
+
+// Nilai default (opsional)
+const ThemeContext = createContext('light');
+
+export default ThemeContext;
+```
+
+**2. Menyediakan Context:**
+
+```jsx
+// App.js
+import { useState } from 'react';
+import ThemeContext from './ThemeContext';
+
+function App() {
+  const [theme, setTheme] = useState('light');
+  
+  return (
+    <ThemeContext.Provider value={{ theme, setTheme }}>
+      <MainComponent />
+    </ThemeContext.Provider>
+  );
+}
+```
+
+**3. Menggunakan Context dengan useContext:**
+
+```jsx
+// ThemedButton.js
+import { useContext } from 'react';
+import ThemeContext from './ThemeContext';
+
+function ThemedButton() {
+  const { theme, setTheme } = useContext(ThemeContext);
+  
+  return (
+    <button 
+      style={{ background: theme === 'dark' ? '#333' : '#fff', color: theme === 'dark' ? '#fff' : '#333' }}
+      onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+    >
+      Toggle Theme (Current: {theme})
+    </button>
+  );
+}
+```
+
+#### Pola Umum Context API
+
+**Context + Reducer Pattern:**
+
+```jsx
+// UserContext.js
+import { createContext, useReducer } from 'react';
+
+const initialState = { user: null, isLoading: false, error: null };
+
+function userReducer(state, action) {
+  switch (action.type) {
+    case 'LOGIN_START':
+      return { ...state, isLoading: true, error: null };
+    case 'LOGIN_SUCCESS':
+      return { ...state, user: action.payload, isLoading: false };
+    case 'LOGIN_FAILURE':
+      return { ...state, error: action.payload, isLoading: false };
+    case 'LOGOUT':
+      return { ...state, user: null };
+    default:
+      return state;
+  }
+}
+
+const UserContext = createContext();
+
+export function UserProvider({ children }) {
+  const [state, dispatch] = useReducer(userReducer, initialState);
+  
+  return (
+    <UserContext.Provider value={{ state, dispatch }}>
+      {children}
+    </UserContext.Provider>
+  );
+}
+
+export default UserContext;
+```
+
+#### Keuntungan Context API:
+- Built-in di React, tidak perlu library eksternal
+- Sederhana untuk kasus penggunaan yang tidak terlalu kompleks
+- Tidak menambah ukuran bundle aplikasi
+
+#### Keterbatasan Context API:
+- Tidak dioptimalkan untuk perubahan yang sering
+- Kurang terstruktur untuk aplikasi yang sangat besar
+- Tidak memiliki fitur middleware, time-travel debugging
+
+#### Latihan Context API
+
+**Latihan 1:** Buat aplikasi Todo List menggunakan Context API dan useReducer.
+
+**Latihan 2:** Implementasikan sistem autentikasi sederhana (login/logout) menggunakan Context.
+
+## Minggu 10: Redux dan Redux Toolkit
+
+### React Redux
+
+Redux adalah library state management yang populer untuk aplikasi JavaScript. Meskipun tidak terikat dengan React, keduanya sering digunakan bersama melalui library React Redux.
+
+#### Konsep Utama Redux
+
+1. **Single Source of Truth**: Seluruh state aplikasi disimpan dalam satu objek tree dalam satu store.
+2. **State is Read-Only**: Cara mengubah state adalah dengan mengirimkan (dispatch) action.
+3. **Changes Made with Pure Functions**: Reducer adalah fungsi murni yang menerima state dan action, lalu mengembalikan state baru.
+
+#### Komponen Redux
+
+1. **Store**: Objek yang menyimpan state aplikasi
+2. **Actions**: Objek yang menjelaskan apa yang terjadi
+3. **Reducers**: Fungsi yang menentukan bagaimana state berubah
+4. **Selectors**: Fungsi untuk mengambil bagian tertentu dari state
+
+#### Implementasi Redux Dasar
+
+**1. Membuat Action Types dan Action Creators:**
+
+```jsx
+// actions/counterActions.js
+export const INCREMENT = 'INCREMENT';
+export const DECREMENT = 'DECREMENT';
+export const RESET = 'RESET';
+
+export const increment = () => ({ type: INCREMENT });
+export const decrement = () => ({ type: DECREMENT });
+export const reset = () => ({ type: RESET });
+```
+
+**2. Membuat Reducer:**
+
+```jsx
+// reducers/counterReducer.js
+import { INCREMENT, DECREMENT, RESET } from '../actions/counterActions';
+
+const initialState = { count: 0 };
+
+function counterReducer(state = initialState, action) {
+  switch (action.type) {
+    case INCREMENT:
+      return { ...state, count: state.count + 1 };
+    case DECREMENT:
+      return { ...state, count: state.count - 1 };
+    case RESET:
+      return { ...state, count: 0 };
+    default:
+      return state;
+  }
+}
+
+export default counterReducer;
+```
+
+**3. Membuat Root Reducer (untuk aplikasi dengan banyak reducer):**
+
+```jsx
+// reducers/index.js
+import { combineReducers } from 'redux';
+import counterReducer from './counterReducer';
+import todosReducer from './todosReducer';
+
+const rootReducer = combineReducers({
+  counter: counterReducer,
+  todos: todosReducer
+});
+
+export default rootReducer;
+```
+
+**4. Membuat Store:**
+
+```jsx
+// store.js
+import { createStore } from 'redux';
+import rootReducer from './reducers';
+
+const store = createStore(
+  rootReducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
+
+export default store;
+```
+
+**5. Menghubungkan Redux dengan React:**
+
+```jsx
+// index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import store from './store';
+import App from './App';
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+);
+```
+
+**6. Menggunakan Redux dalam Komponen:**
+
+```jsx
+// Counter.js
+import { useSelector, useDispatch } from 'react-redux';
+import { increment, decrement, reset } from './actions/counterActions';
+
+function Counter() {
+  // Mengakses state dari store
+  const count = useSelector(state => state.counter.count);
+  // Mendapatkan fungsi dispatch
+  const dispatch = useDispatch();
+  
+  return (
+    <div>
+      <h2>Counter: {count}</h2>
+      <button onClick={() => dispatch(increment())}>Increment</button>
+      <button onClick={() => dispatch(decrement())}>Decrement</button>
+      <button onClick={() => dispatch(reset())}>Reset</button>
+    </div>
+  );
+}
+```
+
+### Redux Toolkit
+
+Redux Toolkit adalah opini resmi dan cara yang disarankan untuk menulis logika Redux. Itu dikembangkan untuk mengatasi tiga masalah utama yang sering dikeluhkan pengguna Redux:
+
+1. "Konfigurasi Redux terlalu rumit"
+2. "Saya harus menambahkan banyak paket untuk membuat Redux bermanfaat"
+3. "Redux membutuhkan terlalu banyak boilerplate code"
+
+#### Fitur Utama Redux Toolkit
+
+1. **`configureStore()`**: Membungkus `createStore` dengan cara opini yang lebih baik untuk mengatur store
+2. **`createReducer()`**: Memungkinkan Anda menulis reducers dengan logika mutasi karena menggunakan Immer di belakang layar
+3. **`createAction()`**: Menghasilkan action creator dengan tipe yang diberikan
+4. **`createSlice()`**: Menghasilkan slice reducers, action types, dan action creators
+5. **`createAsyncThunk`**: Membuat thunk untuk async operations
+
+#### Implementasi dengan Redux Toolkit
+
+**1. Membuat Store:**
+
+```jsx
+// store.js
+import { configureStore } from '@reduxjs/toolkit';
+import counterReducer from './features/counter/counterSlice';
+
+export const store = configureStore({
+  reducer: {
+    counter: counterReducer,
+  },
+});
+```
+
+**2. Membuat Slice (menggabungkan actions dan reducer):**
+
+```jsx
+// features/counter/counterSlice.js
+import { createSlice } from '@reduxjs/toolkit';
+
+const initialState = {
+  value: 0,
+};
+
+export const counterSlice = createSlice({
+  name: 'counter',
+  initialState,
+  reducers: {
+    increment: (state) => {
+      // Redux Toolkit mengizinkan kita untuk "mutasi" state karena menggunakan Immer di belakang layar
+      state.value += 1;
+    },
+    decrement: (state) => {
+      state.value -= 1;
+    },
+    incrementByAmount: (state, action) => {
+      state.value += action.payload;
+    },
+  },
+});
+
+// Export actions
+export const { increment, decrement, incrementByAmount } = counterSlice.actions;
+
+// Export reducer
+export default counterSlice.reducer;
+```
+
+**3. Menggunakan dalam Komponen:**
+
+```jsx
+// Counter.js
+import { useSelector, useDispatch } from 'react-redux';
+import { increment, decrement, incrementByAmount } from './counterSlice';
+
+export function Counter() {
+  const count = useSelector((state) => state.counter.value);
+  const dispatch = useDispatch();
+
+  return (
+    <div>
+      <div>
+        <button onClick={() => dispatch(increment())}>Increment</button>
+        <span>{count}</span>
+        <button onClick={() => dispatch(decrement())}>Decrement</button>
+        <button onClick={() => dispatch(incrementByAmount(5))}>+5</button>
+      </div>
+    </div>
+  );
+}
+```
+
+### Immutability Patterns
+
+Redux mengharuskan kita untuk memperbarui state secara immutable (tidak langsung memodifikasi objek state yang ada). Memahami pola immutability penting untuk menggunakan Redux dengan benar.
+
+#### Mengapa Immutability Penting?
+
+1. **Prediktabilitas**: Memudahkan untuk melacak perubahan state
+2. **Performa**: Memungkinkan optimasi rendering dengan cepat menentukan apakah state berubah
+3. **Debugging**: Memudahkan untuk time-travel debugging
+
+#### Pola Immutability Dasar
+
+**1. Untuk Objek:**
+
+```jsx
+// Menambah properti baru
+const newState = { ...oldState, name: 'John' };
+
+// Memperbarui properti yang ada
+const newState = { ...oldState, age: 30 };
+
+// Objek bersarang
+const newState = {
+  ...oldState,
+  user: {
+    ...oldState.user,
+    name: 'John'
+  }
+};
+```
+
+**2. Untuk Array:**
+
+```jsx
+// Menambah item
+const newArray = [...oldArray, newItem];
+
+// Menghapus item
+const newArray = oldArray.filter(item => item.id !== idToRemove);
+
+// Memperbarui item
+const newArray = oldArray.map(item => 
+  item.id === idToUpdate ? { ...item, name: 'New Name' } : item
+);
+```
+
+#### Library Helper
+
+Beberapa library yang membantu dengan immutability:
+
+1. **Immer**: Memungkinkan kita untuk menulis kode yang terlihat seperti "mutasi" tetapi tetap menghasilkan state baru (digunakan oleh Redux Toolkit di balik layar)
+2. **Immutable.js**: Library untuk objek immutable dengan banyak fungsi helper
+
+#### Contoh dengan Immer
+
+```jsx
+import produce from 'immer';
+
+const baseState = {
+  users: [
+    { id: 1, name: 'John' },
+    { id: 2, name: 'Mary' }
+  ]
+};
+
+// Tanpa Immer
+const newState = {
+  ...baseState,
+  users: baseState.users.map(user => 
+    user.id === 1 ? { ...user, name: 'John Smith' } : user
+  )
+};
+
+// Dengan Immer
+const newStateWithImmer = produce(baseState, draft => {
+  // Kita dapat "mutasi" draft secara langsung
+  const user = draft.users.find(u => u.id === 1);
+  if (user) user.name = 'John Smith';
+});
+```
+
+#### Latihan Immutability
+
+**Latihan 1:** Implementasikan fungsi untuk menambah, menghapus, dan memperbarui item dalam array todos secara immutable.
+
+**Latihan 2:** Gunakan Immer untuk menyederhanakan operasi immutable pada struktur objek bersarang.
+
+## Minggu 11: Middleware dan Side Effects
+
+### Middleware dan Side Effects
+
+Redux dirancang untuk menangani perubahan state yang sinkron dan murni. Namun, aplikasi dunia nyata sering membutuhkan operasi asinkron seperti permintaan API. Di sinilah middleware berperan.
+
+#### Apa itu Middleware?
+
+Middleware adalah lapisan antara tindakan dipancarkan (action dispatched) dan reducer. Middleware memberikan titik ekstensi untuk menjalankan logika ketika action dikirim, seperti logging, crash reporting, melakukan operasi asinkron, dll.
+
+#### Side Effects di Redux
+
+Side effect adalah operasi yang mengubah state di luar alur Redux murni, seperti:
+1. API calls (fetch)
+2. Mengakses localStorage
+3. Menggunakan timers
+4. Logging
+
+#### Implementasi Middleware Sederhana
+
+**Logger Middleware:**
+
+```jsx
+// Tanpa Redux Toolkit
+const logger = store => next => action => {
+  console.log('dispatching', action);
+  let result = next(action);
+  console.log('next state', store.getState());
+  return result;
+};
+
+// Penggunaan
+import { createStore, applyMiddleware } from 'redux';
+import rootReducer from './reducers';
+import logger from './middleware/logger';
+
+const store = createStore(
+  rootReducer,
+  applyMiddleware(logger)
+);
+```
+
+**Dengan Redux Toolkit:**
+
+```jsx
+import { configureStore } from '@reduxjs/toolkit';
+import rootReducer from './reducers';
+
+// Logger middleware
+const logger = store => next => action => {
+  console.log('dispatching', action);
+  let result = next(action);
+  console.log('next state', store.getState());
+  return result;
+};
+
+const store = configureStore({
+  reducer: rootReducer,
+  middleware: (getDefaultMiddleware) => 
+    getDefaultMiddleware().concat(logger)
+});
+```
+
+### Redux Thunk vs Redux Saga
+
+Untuk menangani side effects (terutama operasi asinkron), dua middleware yang paling populer adalah Redux Thunk dan Redux Saga.
+
+#### Redux Thunk
+
+Redux Thunk adalah middleware yang memungkinkan action creators mengembalikan fungsi (thunk) alih-alih objek action. Thunk ini menerima `dispatch` dan `getState` sebagai argumen.
+
+**Keuntungan Thunk:**
+- Sederhana dan mudah dipelajari
+- Ukuran kecil
+- Cocok untuk kasus penggunaan sederhana hingga menengah
+
+**Kelemahan Thunk:**
+- Logika asinkron bisa menjadi sulit untuk diuji
+- Menangani alur kompleks bisa jadi rumit
+- Kurang terstruktur untuk kasus yang sangat kompleks
+
+**Contoh Redux Thunk:**
+
+```jsx
+// actions/userActions.js
+export const fetchUserRequest = () => ({ type: 'FETCH_USER_REQUEST' });
+export const fetchUserSuccess = (user) => ({ type: 'FETCH_USER_SUCCESS', payload: user });
+export const fetchUserFailure = (error) => ({ type: 'FETCH_USER_FAILURE', payload: error });
+
+// Thunk action creator
+export const fetchUser = (userId) => {
+  return async (dispatch, getState) => {
+    dispatch(fetchUserRequest());
+    try {
+      const response = await fetch(`https://api.example.com/users/${userId}`);
+      const data = await response.json();
+      dispatch(fetchUserSuccess(data));
+    } catch (error) {
+      dispatch(fetchUserFailure(error.message));
+    }
+  };
+};
+
+// Penggunaan dalam komponen
+const UserProfile = ({ userId }) => {
+  const dispatch = useDispatch();
+  const { user, loading, error } = useSelector(state => state.user);
+  
+  useEffect(() => {
+    dispatch(fetchUser(userId));
+  }, [userId, dispatch]);
+  
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!user) return null;
+  
+  return <div>{user.name}</div>;
+};
+```
+
+**Dengan Redux Toolkit:**
+
+Redux Toolkit memiliki `createAsyncThunk` yang menyederhanakan pola ini:
+
+```jsx
+// features/users/usersSlice.js
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
+export const fetchUser = createAsyncThunk(
+  'users/fetchUser',
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`https://api.example.com/users/${userId}`);
+      if (!response.ok) throw new Error('Server error');
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+const usersSlice = createSlice({
+  name: 'users',
+  initialState: {
+    user: null,
+    loading: false,
+    error: null
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(fetchUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+  }
+});
+
+export default usersSlice.reducer;
+```
+
+#### Redux Saga
+
+Redux Saga adalah middleware yang menggunakan generator JavaScript untuk membuat alur asinkron yang lebih terstruktur dan deklaratif.
+
+**Keuntungan Saga:**
+- Alur asinkron yang lebih terstruktur
+- Lebih mudah diuji
+- Fitur bawaan untuk konkurensi, racing conditions, dan pembatalan
+- Cocok untuk aplikasi dengan alur asinkron kompleks
+
+**Kelemahan Saga:**
+- Kurva belajar yang lebih tinggi (perlu memahami generator)
+- Lebih banyak kode boilerplate
+- Mungkin berlebihan untuk kasus yang sederhana
+
+**Contoh Redux Saga:**
+
+```jsx
+// sagas/userSaga.js
+import { call, put, takeLatest } from 'redux-saga/effects';
+import { 
+  FETCH_USER_REQUEST, 
+  fetchUserSuccess, 
+  fetchUserFailure 
+} from '../actions/userActions';
+
+// Worker saga: akan melakukan tugas asinkron
+function* fetchUser(action) {
+  try {
+    const { userId } = action.payload;
+    const response = yield call(fetch, `https://api.example.com/users/${userId}`);
+    const user = yield response.json();
+    yield put(fetchUserSuccess(user));
+  } catch (error) {
+    yield put(fetchUserFailure(error.message));
+  }
+}
+
+// Watcher saga: memantau tindakan yang dikirim
+export function* userSaga() {
+  yield takeLatest(FETCH_USER_REQUEST, fetchUser);
+}
+```
+
+**Saga Root dan Setup:**
+
+```jsx
+// sagas/index.js
+import { all } from 'redux-saga/effects';
+import { userSaga } from './userSaga';
+import { cartSaga } from './cartSaga';
+
+export default function* rootSaga() {
+  yield all([
+    userSaga(),
+    cartSaga(),
+  ]);
+}
+
+// store.js
+import { createStore, applyMiddleware } from 'redux';
+import createSagaMiddleware from 'redux-saga';
+import rootReducer from './reducers';
+import rootSaga from './sagas';
+
+const sagaMiddleware = createSagaMiddleware();
+
+const store = createStore(
+  rootReducer,
+  applyMiddleware(sagaMiddleware)
+);
+
+sagaMiddleware.run(rootSaga);
+
+export default store;
+```
+
+#### Perbandingan Thunk vs Saga
+
+| Fitur | Redux Thunk | Redux Saga |
+|-------|-------------|------------|
+| Kurva Belajar | Rendah | Sedang-Tinggi |
+| Ukuran Bundle | Kecil | Lebih Besar |
+| Testing | Cukup Rumit | Lebih Mudah |
+| Pembatalan | Manual | Built-in |
+| Konkurensi | Manual | Built-in |
+| Kompleksitas | Sederhana | Lebih Kompleks |
+| Kasus Ideal | Aplikasi Kecil-Menengah | Aplikasi Kompleks |
+
+#### Latihan Middleware
+
+**Latihan 1:** Implementasikan Redux Thunk untuk mengambil data dari API dan tampilkan dalam komponen.
+
+**Latihan 2:** Konversi aplikasi Thunk ke Saga dan bandingkan pendekatan keduanya.
+
+## Project: E-Commerce App
+
+Sekarang saatnya menerapkan semua yang telah dipelajari dengan membangun aplikasi E-Commerce. Proyek ini akan mencakup:
+
+1. Manajemen state kompleks dengan Redux Toolkit
+2. Penanganan operasi asinkron untuk mengambil data produk
+3. Manajemen keranjang belanja
+4. Proses checkout
+5. Autentikasi pengguna
+
+### Struktur Proyek
+
+```
+e-commerce-app/
+│
+├── public/
+├── src/
+│   ├── app/
+│   │   ├── store.js             # Redux store configuration
+│   │   └── rootReducer.js       # Root reducer
+│   │
+│   ├── components/              # Shared components
+│   │   ├── Header/
+│   │   ├── Footer/
+│   │   ├── ProductCard/
+│   │   └── ...
+│   │
+│   ├── features/                # Feature modules with slice
+│   │   ├── auth/
+│   │   │   ├── authSlice.js
+│   │   │   ├── Login.js
+│   │   │   └── Register.js
+│   │   │
+│   │   ├── products/
+│   │   │   ├── productsSlice.js
+│   │   │   ├── ProductList.js
+│   │   │   └── ProductDetail.js
+│   │   │
+│   │   ├── cart/
+│   │   │   ├── cartSlice.js
+│   │   │   └── Cart.js
+│   │   │
+│   │   └── checkout/
+│   │       ├── checkoutSlice.js
+│   │       └── Checkout.js
+│   │
+│   ├── services/                # API services
+│   │   ├── api.js
+│   │   └── ...
+│   │
+│   ├── utils/                   # Utility functions
+│   ├── App.js
+│   └── index.js
+│
+└── package.json
+```
+
+### Implementasi Fitur Utama
+
+#### 1. Slice untuk Produk
+
+```jsx
+// features/products/productsSlice.js
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { fetchProducts } from '../../services/api';
+
+export const getProducts = createAsyncThunk(
+  'products/getProducts',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetchProducts();
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+const productsSlice = createSlice({
+  name: 'products',
+  initialState: {
+    items: [],
+    status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+    error: null
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(getProducts.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(getProducts.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.items = action.payload;
+      })
+      .addCase(getProducts.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      });
+  }
+});
+
+export default productsSlice.reducer;
+```
+
+#### 2. Slice untuk Keranjang
+
+```jsx
+// features/cart/cartSlice.js
+import { createSlice } from '@reduxjs/toolkit';
+
+const cartSlice = createSlice({
+  name: 'cart',
+  initialState: {
+    items: [],
+    totalQuantity: 0,
+    totalAmount: 0
+  },
+  reducers: {
+    addItemToCart(state, action) {
+      const newItem = action.payload;
+      const existingItem = state.items.find(item => item.id === newItem.id);
+      
+      if (!existingItem) {
+        state.items.push({
+          id: newItem.id,
+          price: newItem.price,
+          quantity: 1,
+          totalPrice: newItem.price,
+          name: newItem.title,
+          image: newItem.image
+        });
+      } else {
+        existingItem.quantity++;
+        existingItem.totalPrice += newItem.price;
+      }
+      
+      state.totalQuantity++;
+      state.totalAmount += newItem.price;
+    },
+    
+    removeItemFromCart(state, action) {
+      const id = action.payload;
+      const existingItem = state.items.find(item => item.id === id);
+      
+      if (existingItem.quantity === 1) {
+        state.items = state.items.filter(item => item.id !== id);
+      } else {
+        existingItem.quantity--;
+        existingItem.totalPrice -= existingItem.price;
+      }
+      
+      state.totalQuantity--;
+      state.totalAmount -= existingItem.price;
+    },
+    
+    clearCart(state) {
+      state.items = [];
+      state.totalQuantity = 0;
+      state.totalAmount = 0;
+    }
+  }
+});
+
+export const { addItemToCart, removeItemFromCart, clearCart } = cartSlice.actions;
+export default cartSlice.reducer;
+```
+
+#### 3. Komponen Produk dan Keranjang
+
+```jsx
+// features/products/ProductList.js
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getProducts } from './productsSlice';
+import { addItemToCart } from '../cart/cartSlice';
+import ProductCard from '../../components/ProductCard';
+
+const ProductList = () => {
+  const dispatch = useDispatch();
+  const { items, status, error } = useSelector(state => state.products);
+  
+  useEffect(() => {
+    if (status === 'idle') {
+      dispatch(getProducts());
+    }
+  }, [status, dispatch]);
+  
+  if (status === 'loading') {
+    return <div>Loading...</div>;
+  }
+  
+  if (status === 'failed') {
+    return <div>Error: {error}</div>;
+  }
+  
+  return (
+    <div className="product-grid">
+      {items.map(product => (
+        <ProductCard 
+          key={product.id}
+          product={product}
+          onAddToCart={() => dispatch(addItemToCart(product))}
+        />
+      ))}
+    </div>
+  );
+};
+
+export default ProductList;
+
+// features/cart/Cart.js
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { addItemToCart, removeItemFromCart, clearCart } from './cartSlice';
+
+const Cart = () => {
+  const dispatch = useDispatch();
+  const { items, totalQuantity, totalAmount } = useSelector(state => state.cart);
+  
+  if (items.length === 0) {
+    return <div>Your cart is empty.</div>;
+  }
+  
+  return (
+    <div className="cart">
+      <h2>Your Cart</h2>
+      <div className="cart-items">
+        {items.map(item => (
+          <div key={item.id} className="cart-item">
+            <img src={item.image} alt={item.name} width="50" />
+            <div>
+              <h3>{item.name}</h3>
+              <p>${item.price.toFixed(2)} x {item.quantity}</p>
+              <div className="item-actions">
+                <button onClick={() => dispatch(removeItemFromCart(item.id))}>-</button>
+                <span>{item.quantity}</span>
+                <button onClick={() => dispatch(addItemToCart({ id: item.id, price: item.price, title: item.name, image: item.image }))}>+</button>
+              </div>
+            </div>
+            <div className="item-total">${item.totalPrice.toFixed(2)}</div>
+          </div>
+        ))}
+      </div>
+      <div className="cart-summary">
+        <div>Total Items: {totalQuantity}</div>
+        <div>Total Amount: ${totalAmount.toFixed(2)}</div>
+        <button className="checkout-btn">Proceed to Checkout</button>
+        <button className="clear-cart-btn" onClick={() => dispatch(clearCart())}>Clear Cart</button>
+      </div>
+    </div>
+  );
+};
+
+export default Cart;
+
+#### 4. Store Configuration
+
+```jsx
+// app/store.js
+import { configureStore } from '@reduxjs/toolkit';
+import productsReducer from '../features/products/productsSlice';
+import cartReducer from '../features/cart/cartSlice';
+import authReducer from '../features/auth/authSlice';
+import checkoutReducer from '../features/checkout/checkoutSlice';
+
+export const store = configureStore({
+  reducer: {
+    products: productsReducer,
+    cart: cartReducer,
+    auth: authReducer,
+    checkout: checkoutReducer
+  },
+});
+```
+
+#### 5. API Service
+
+```jsx
+// services/api.js
+import axios from 'axios';
+
+const API_URL = 'https://fakestoreapi.com';
+
+export const fetchProducts = () => {
+  return axios.get(`${API_URL}/products`);
+};
+
+export const fetchProductById = (id) => {
+  return axios.get(`${API_URL}/products/${id}`);
+};
+
+export const loginUser = (credentials) => {
+  return axios.post(`${API_URL}/auth/login`, credentials);
+};
+
+// ... other API functions
+```
+
+### Pengembangan Proyek
+
+Berikut adalah beberapa langkah untuk mengembangkan proyek ini:
+
+1. **Setup Project Base**:
+   - Inisialisasi proyek React dengan create-react-app
+   - Instal dependensi: redux, react-redux, @reduxjs/toolkit, axios, react-router-dom
+
+2. **Implementasi Routing**:
+   - Konfigurasikan routes untuk halaman utama, detail produk, keranjang, dan checkout
+
+3. **Implementasi State Management**:
+   - Buat slices untuk produk, keranjang, autentikasi, dan checkout
+   - Konfigurasikan Redux store
+
+4. **Implementasi UI**:
+   - Buat komponen untuk setiap fitur
+   - Hubungkan komponen dengan Redux store
+
+5. **Handling API dan Side Effects**:
+   - Implementasikan API calls menggunakan createAsyncThunk
+   - Tangani loading states dan errors
+
+6. **Testing**:
+   - Tulis unit tests untuk reducers dan thunks
+   - Tulis integration tests untuk komponen
+
+### Tantangan Tambahan
+
+Setelah implementasi dasar selesai, coba tambahkan fitur-fitur ini untuk tantangan:
+
+1. **Wishlist/Favorit**:
+   - Implementasikan slice baru untuk menyimpan item favorit
+   - Tambahkan tombol untuk menambah/menghapus dari favorit
+
+2. **Filter dan Pencarian**:
+   - Implementasikan filter untuk kategori produk
+   - Tambahkan fitur pencarian
+
+3. **Paginasi**:
+   - Implementasikan paginasi untuk daftar produk
+
+4. **Persistensi State**:
+   - Gunakan redux-persist untuk menyimpan keranjang di localStorage
+
+5. **Multiple Middleware**:
+   - Tambahkan middleware untuk logging
+   - Implementasikan timer untuk checkout (countdown)
+
+## Referensi dan Belajar Lebih Lanjut
+
+### Dokumentasi Resmi
+- [React Context API](https://reactjs.org/docs/context.html)
+- [Redux Documentation](https://redux.js.org/)
+- [Redux Toolkit](https://redux-toolkit.js.org/)
+- [Redux Thunk](https://github.com/reduxjs/redux-thunk)
+- [Redux Saga](https://redux-saga.js.org/)
+
+### Sumber Belajar
+- [Egghead.io Redux Courses](https://egghead.io/courses/fundamentals-of-redux-course-from-dan-abramov-bd5cc867)
+- [Redux Essentials Tutorial](https://redux.js.org/tutorials/essentials/part-1-overview-concepts)
+- [React Redux Tutorials (Dave Ceddia)](https://daveceddia.com/redux-tutorial/)
+
+### Tools
+- [Redux DevTools Extension](https://github.com/zalmoxisus/redux-devtools-extension)
+- [Immer](https://immerjs.github.io/immer/)
+- [Reselect](https://github.com/reduxjs/reselect)
+
+### Pola dan Praktik Terbaik
+- [Redux Style Guide](https://redux.js.org/style-guide/style-guide)
+- [Immutable Update Patterns](https://redux.js.org/usage/structuring-reducers/immutable-update-patterns)
+- [Normalizing State Shape](https://redux.js.org/usage/structuring-reducers/normalizing-state-shape)
+
+### YouTube Channels
+- [Redux by Dan Abramov](https://www.youtube.com/watch?v=xsSnOQynTHs)
+- [Net Ninja Redux Series](https://www.youtube.com/watch?v=Jf9EfJBz2Fc&list=PL4cUxeGkcC9ij8CfkAY2RAGb-tmkNwQHG)
+- [Stephen Grider's Redux Courses](https://www.udemy.com/course/react-redux/)
+
+END MODULE 5
 # MODUL 7: ADVANCED HOOKS & PATTERNS
 
 ## Informasi Umum
